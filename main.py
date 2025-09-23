@@ -135,7 +135,7 @@ def main():
         placeholder.markdown(f"⏱️ *Next auto-refresh in {int(time_remaining)} seconds*")
         # Sleep for 1 second and rerun to update countdown
         time.sleep(1)
-        st.rerun()
+        st.rerun() #foo
 
 if __name__ == "__main__":
     main()
