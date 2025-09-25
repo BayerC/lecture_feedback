@@ -184,10 +184,14 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "streamlit" },
+    { name = "streamlit-autorefresh" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "streamlit", specifier = ">=1.49.1" }]
+requires-dist = [
+    { name = "streamlit", specifier = ">=1.49.1" },
+    { name = "streamlit-autorefresh", specifier = ">=1.0.1" },
+]
 
 [[package]]
 name = "markupsafe"
@@ -578,6 +582,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/24/17/c8024e4ef311dc7833987c603a7d0ebe82f8aa352aaca53b27be3f6b7f01/streamlit-1.49.1.tar.gz", hash = "sha256:6f213f1e43f035143a56f58ad50068d8a09482f0a2dad1050d7e7e99a9689818", size = 9640116, upload-time = "2025-08-29T18:35:45.055Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/85/9e/146cdef515ad07e56c3aa942d087562498592d441aa3bae845ef0cd8fca3/streamlit-1.49.1-py3-none-any.whl", hash = "sha256:ad7b6d0dc35db168587acf96f80378249467fc057ed739a41c511f6bf5aa173b", size = 10044388, upload-time = "2025-08-29T18:35:42.239Z" },
+]
+
+[[package]]
+name = "streamlit-autorefresh"
+version = "1.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "streamlit" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/88/8c/e48bee687408fe563652bda4a7f2f5ef85d5a527b1883513fdcb05f1e66b/streamlit-autorefresh-1.0.1.tar.gz", hash = "sha256:a89abf23f2c4e52d37be442115cd5566b41f382e3c09ff08817e17a25f50b8ed", size = 351385, upload-time = "2023-06-25T18:58:34.889Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/20/82/e378f178498f1d99a672d81df71ebe9693a106cec6a628ee52ce3288cd6d/streamlit_autorefresh-1.0.1-py3-none-any.whl", hash = "sha256:8f0a772eff9d56807d19dc422e44ef92d900bbb22b1b85de31d8d82ea7d875f1", size = 700771, upload-time = "2023-06-25T18:58:33.195Z" },
 ]
 
 [[package]]

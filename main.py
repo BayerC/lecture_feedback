@@ -1,8 +1,8 @@
 import streamlit as st
 import json
 import os
-import time
 from datetime import datetime
+from streamlit_autorefresh import st_autorefresh
 
 # Counter data file path
 COUNTER_FILE = "button_counts.json"
@@ -49,7 +49,8 @@ def reset_counters():
     return counters
 
 def main():
-    print("main")
+    st_autorefresh(interval=5000, key="data_refresh")
+
     st.title("Colored Buttons Demo")
     st.write("Click any of the colored buttons below:")
         
@@ -113,29 +114,7 @@ def main():
         last_updated = datetime.fromisoformat(current_counters["last_updated"])
         st.markdown(f"*Last updated: {last_updated.strftime('%Y-%m-%d %H:%M:%S')}*")
     
-    # Auto-refresh implementation
-    
-    # Use a placeholder to show countdown
-    placeholder = st.empty()
-    
-    # Initialize session state for timing
-    if 'last_refresh' not in st.session_state:
-        st.session_state.last_refresh = time.time()
-    
-    # Check if it's time to refresh
-    time_since_refresh = time.time() - st.session_state.last_refresh
-    time_remaining = 5 - time_since_refresh
-    
-    if time_remaining <= 0:
-        # Reset timer and rerun
-        st.session_state.last_refresh = time.time()
-        st.rerun()
-    else:
-        # Show countdown
-        placeholder.markdown(f"⏱️ *Next auto-refresh in {int(time_remaining)} seconds*")
-        # Sleep for 1 second and rerun to update countdown
-        time.sleep(1)
-        st.rerun() #foo
+  
 
 if __name__ == "__main__":
     main()
