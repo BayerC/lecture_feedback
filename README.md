@@ -6,4 +6,5 @@
 `uv run pre-commit install`
 
 # Run pre commit locally
-`uv run pre-commit run --all-files`
+- `uv run pre-commit install`
+- `uv run pre-commit run --all-files`
