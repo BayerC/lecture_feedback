@@ -80,9 +80,6 @@ def main():
     # Load current counters for display
     current_counters = load_counters()
 
-
-    
-
     # Display counter statistics
     st.markdown("---")
     st.markdown("### 📊 Click Statistics")
