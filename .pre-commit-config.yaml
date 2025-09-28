@@ -28,3 +28,8 @@ repos:
     hooks:
       - id: uv-lock
       - id: uv-export
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.36.3
+    hooks:
+      - id: typos

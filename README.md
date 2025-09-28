@@ -1,10 +1,9 @@
-# lecture_feedback
+# Lecture Feecback App
 
 ## Development
 
-# Install
-`uv run pre-commit install`
+1. Install uv: https://docs.astral.sh/uv/getting-started/installation/ 
+2. Install pre-commit: `uv run pre-commit install`
+3. To run pre-comit manually run: `uv run pre-commit run --all-files`
+4. To run app locally: `uv run streamlit run main.py`
 
-# Run pre commit locally
-- `uv run pre-commit install`
-- `uv run pre-commit run --all-files`
