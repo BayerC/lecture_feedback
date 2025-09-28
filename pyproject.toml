@@ -8,3 +8,8 @@ dependencies = [
     "streamlit>=1.49.1",
     "streamlit-autorefresh>=1.0.1",
 ]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.3.0",
+]
