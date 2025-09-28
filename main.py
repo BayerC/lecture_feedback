@@ -9,7 +9,7 @@ COUNTER_FILE = "button_counts.json"
 
 
 def load_counters():
-    """Load counter data from JSON file"""
+              """Load counter data from JSON file"""
     if os.path.exists(COUNTER_FILE):
         try:
             with open(COUNTER_FILE, "r") as f:
