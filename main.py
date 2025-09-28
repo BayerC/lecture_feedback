@@ -1,60 +1,51 @@
 import streamlit as st
-import json
-import os
 from datetime import datetime
 from streamlit_autorefresh import st_autorefresh
 
-# Counter data file path
-COUNTER_FILE = "button_counts.json"
+
+class CounterManager:
+    """Manages button counters with thread-safe operations"""
+
+    def __init__(self):
+        self.counters = {
+            "green": 0,
+            "yellow": 0,
+            "red": 0,
+            "last_updated": datetime.now().isoformat(),
+        }
+
+    def increment(self, button_type):
+        """Increment counter for a specific button type"""
+        self.counters[button_type] += 1
+        self.counters["last_updated"] = datetime.now().isoformat()
+        return self.counters.copy()
+
+    def reset(self):
+        """Reset all counters to zero"""
+        self.counters = {
+            "green": 0,
+            "yellow": 0,
+            "red": 0,
+            "last_updated": datetime.now().isoformat(),
+        }
+        return self.counters.copy()
+
+    def get_counters(self):
+        """Get current counter values"""
+        return self.counters.copy()
 
 
-def load_counters():
-    """Load counter data from JSON file"""
-    if os.path.exists(COUNTER_FILE):
-        try:
-            with open(COUNTER_FILE, "r") as f:
-                return json.load(f)
-        except (json.JSONDecodeError, FileNotFoundError):
-            pass
-
-    # Return default counters if file doesn't exist or is corrupted
-    return {
-        "green": 0,
-        "yellow": 0,
-        "red": 0,
-        "last_updated": datetime.now().isoformat(),
-    }
-
-
-def save_counters(counters):
-    """Save counter data to JSON file"""
-    counters["last_updated"] = datetime.now().isoformat()
-    with open(COUNTER_FILE, "w") as f:
-        json.dump(counters, f, indent=2)
-
-
-def increment_counter(button_type):
-    """Increment counter for a specific button type"""
-    counters = load_counters()
-    counters[button_type] += 1
-    save_counters(counters)
-    return counters
-
-
-def reset_counters():
-    """Reset all counters to zero"""
-    counters = {
-        "green": 0,
-        "yellow": 0,
-        "red": 0,
-        "last_updated": datetime.now().isoformat(),
-    }
-    save_counters(counters)
-    return counters
+@st.cache_resource
+def get_counter_manager():
+    """Get or create the shared counter manager instance"""
+    return CounterManager()
 
 
 def main():
-    st_autorefresh(interval=5000, key="data_refresh")
+    # Get the shared counter manager
+    counter_manager = get_counter_manager()
+
+    st_autorefresh(interval=2000, key="data_refresh")  # Faster refresh for better UX
 
     st.title("Colored Buttons Demo")
     st.write("Click any of the colored buttons below:")
@@ -64,21 +55,21 @@ def main():
 
     with col1:
         if st.button("🟢 Green Button", key="green", help="This is a green button"):
-            counters = increment_counter("green")
+            counters = counter_manager.increment("green")
             st.success(f"Green button clicked! Total clicks: {counters['green']}")
 
     with col2:
         if st.button("🟡 Yellow Button", key="yellow", help="This is a yellow button"):
-            counters = increment_counter("yellow")
+            counters = counter_manager.increment("yellow")
             st.warning(f"Yellow button clicked! Total clicks: {counters['yellow']}")
 
     with col3:
         if st.button("🔴 Red Button", key="red", help="This is a red button"):
-            counters = increment_counter("red")
+            counters = counter_manager.increment("red")
             st.error(f"Red button clicked! Total clicks: {counters['red']}")
 
-    # Load current counters for display
-    current_counters = load_counters()
+    # Get current counters for display
+    current_counters = counter_manager.get_counters()
 
     # Display counter statistics
     st.markdown("---")
@@ -111,7 +102,7 @@ def main():
         key="reset",
         help="Reset all button click counters to zero",
     ):
-        reset_counters()
+        counter_manager.reset()
         st.success("All counters have been reset!")
         st.rerun()
 
