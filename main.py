@@ -43,7 +43,7 @@ class UserStatsTracker:
         for user_id, user_data in self.user_stats.items():
             if time.time() - user_data["last_seen"] > 4:
                 users_to_delete.append(user_id)
-        
+
         for user_id in users_to_delete:
             del self.user_stats[user_id]
         self.is_locked = False
@@ -60,7 +60,6 @@ def main():
 
     if "user_id" not in st.session_state:
         st.session_state.user_id = str(uuid.uuid4())
-        
 
     user_stats_tracker = get_user_stats_tracker()
     user_stats_tracker.add_user(st.session_state.user_id)
@@ -70,8 +69,7 @@ def main():
     st.title("Lecture Feedback App")
     st.write(f"Num Users: {len(user_stats_tracker.get_user_stats())}")
 
-
-    st.title(f"Debug Output:")
+    st.title("Debug Output:")
     st.write(f"current User ID: {st.session_state.user_id}")
     st.write(f"Current active users: {len(user_stats_tracker.get_user_stats())}")
     for user_id, status in user_stats_tracker.get_user_stats().items():
