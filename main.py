@@ -67,9 +67,15 @@ def main():
 
     user_stats_tracker.clean_up_old_users()
 
-    # show all user ids
+    st.title("Lecture Feedback App")
+    st.write(f"Num Users: {len(user_stats_tracker.get_user_stats())}")
+
+
+    st.title(f"Debug Output:")
+    st.write(f"current User ID: {st.session_state.user_id}")
+    st.write(f"Current active users: {len(user_stats_tracker.get_user_stats())}")
     for user_id, status in user_stats_tracker.get_user_stats().items():
-        st.write(f"User ID: {user_id}, Status: {status}")
+        st.write(f"- active user ID: {user_id}, Status: {status}")
 
 
 if __name__ == "__main__":
