@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 import uuid
 from enum import Enum, auto
+import time
 
 
 class UserStatus(Enum):
@@ -16,12 +17,25 @@ class UserStatsTracker:
 
     def __init__(self):
         self.user_stats = {}
+        self.is_locked = False
 
     def add_user(self, user_id, status=UserStatus.UNKNOWN):
-        self.user_stats[user_id] = status
+        while self.is_locked:
+            time.sleep(0.1)
+        self.user_stats[user_id] = {"status": status, "last_seen": time.time()}
 
     def get_user_stats(self):
         return self.user_stats
+
+    def clean_up_old_users(self):
+        if self.is_locked:
+            return
+
+        self.is_locked = True
+        for user_id, user_data in self.user_stats.items():
+            if time.time() - user_data["last_seen"] > 4:
+                del self.user_stats[user_id]
+        self.is_locked = False
 
 
 @st.cache_resource
@@ -38,6 +52,8 @@ def main():
 
     user_stats_tracker = get_user_stats_tracker()
     user_stats_tracker.add_user(st.session_state.user_id)
+
+    user_stats_tracker.clean_up_old_users()
 
     # show all user ids
     for user_id, status in user_stats_tracker.get_user_stats().items():
