@@ -3,6 +3,7 @@ from streamlit_autorefresh import st_autorefresh
 import uuid
 from enum import Enum, auto
 import time
+import threading
 
 
 class UserStatus(Enum):
@@ -16,37 +17,26 @@ class UserStatsTracker:
     """Manages button counters with thread-safe operations"""
 
     def __init__(self):
-        self.user_stats = {}
-        self.is_locked = False
+        self._user_stats = {}
+        self._lock = threading.RLock()
 
     def add_user(self, user_id, status=UserStatus.UNKNOWN):
-        while self.is_locked:
-            time.sleep(0.1)
-        self.is_locked = True
-        self.user_stats[user_id] = {"status": status, "last_seen": time.time()}
-        self.is_locked = False
+        with self._lock:
+            self._user_stats[user_id] = {"status": status, "last_seen": time.time()}
 
     def get_user_stats(self):
-        while self.is_locked:
-            time.sleep(0.1)
-        self.is_locked = True
-        user_stats = self.user_stats.copy()
-        self.is_locked = False
-        return user_stats
+        with self._lock:
+            return self._user_stats.copy()
 
     def clean_up_old_users(self):
-        if self.is_locked:
-            return
+        with self._lock:
+            users_to_delete = []
+            for user_id, user_data in self._user_stats.items():
+                if time.time() - user_data["last_seen"] > 4:
+                    users_to_delete.append(user_id)
 
-        self.is_locked = True
-        users_to_delete = []
-        for user_id, user_data in self.user_stats.items():
-            if time.time() - user_data["last_seen"] > 4:
-                users_to_delete.append(user_id)
-
-        for user_id in users_to_delete:
-            del self.user_stats[user_id]
-        self.is_locked = False
+            for user_id in users_to_delete:
+                del self._user_stats[user_id]
 
 
 @st.cache_resource
