@@ -28,9 +28,3 @@ def test_basic_operations():
     del tsd["key1"]
     with pytest.raises(KeyError):
         _ = tsd["key1"]
-
-
-if __name__ == "__main__":
-    # Allow running the test directly for development
-    test_basic_operations()
-    print("✓ All tests passed!")
