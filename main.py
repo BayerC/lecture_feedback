@@ -1,8 +1,10 @@
-import streamlit as st
-from streamlit_autorefresh import st_autorefresh
+import time
 import uuid
 from enum import Enum, auto
-import time
+
+import streamlit as st
+from streamlit_autorefresh import st_autorefresh
+
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
 
 
