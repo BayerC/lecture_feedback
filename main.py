@@ -3,7 +3,7 @@ from streamlit_autorefresh import st_autorefresh
 import uuid
 from enum import Enum, auto
 import time
-import threading
+from thread_safe_dict import ThreadSafeDict
 
 
 class UserStatus(Enum):
@@ -17,30 +17,25 @@ class UserStatsTracker:
     """Manages button counters with thread-safe operations"""
 
     def __init__(self):
-        self._user_stats = {}
-        self._lock = threading.RLock()
+        self._user_stats = ThreadSafeDict()
 
     def set_user_status(self, user_id, status=UserStatus.UNKNOWN):
-        with self._lock:
-            self._user_stats[user_id] = {"status": status, "last_seen": time.time()}
+        self._user_stats[user_id] = {"status": status, "last_seen": time.time()}
 
     def set_user_active(self, user_id):
-        with self._lock:
-            self._user_stats[user_id]["last_seen"] = time.time()
+        self._user_stats[user_id]["last_seen"] = time.time()
 
     def get_user_stats(self):
-        with self._lock:
-            return self._user_stats.copy()
+        return self._user_stats.copy()
 
     def clean_up_old_users(self):
-        with self._lock:
-            users_to_delete = []
-            for user_id, user_data in self._user_stats.items():
-                if time.time() - user_data["last_seen"] > 4:
-                    users_to_delete.append(user_id)
+        users_to_delete = []
+        for user_id, user_data in self._user_stats.items():
+            if time.time() - user_data["last_seen"] > 4:
+                users_to_delete.append(user_id)
 
-            for user_id in users_to_delete:
-                del self._user_stats[user_id]
+        for user_id in users_to_delete:
+            del self._user_stats[user_id]
 
 
 @st.cache_resource
@@ -89,8 +84,8 @@ def main():
     user_stats = user_stats_tracker.get_user_stats()
     st.write(f"User stats: {user_stats}")
     st.write(f"User stats: {user_stats.values()}")
-    red_count = len(
-        [user for user in user_stats.values() if user["status"] == UserStatus.RED]
+    red_count = sum(
+        [1 for user in user_stats.values() if user["status"] == UserStatus.RED]
     )
     yellow_count = sum(
         1 for user in user_stats.values() if user["status"] == UserStatus.YELLOW
