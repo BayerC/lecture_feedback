@@ -3,7 +3,7 @@ from streamlit_autorefresh import st_autorefresh
 import uuid
 from enum import Enum, auto
 import time
-from thread_safe_dict import ThreadSafeDict
+from lecture_feedback.thread_safe_dict import ThreadSafeDict
 
 
 class UserStatus(Enum):

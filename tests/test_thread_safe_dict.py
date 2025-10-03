@@ -1,5 +1,5 @@
 import pytest
-from thread_safe_dict import ThreadSafeDict
+from lecture_feedback.thread_safe_dict import ThreadSafeDict
 
 
 def test_basic_operations():
