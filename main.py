@@ -101,9 +101,11 @@ def main():
     st.write(f"Green: {green_count}")
 
     st.title("Debug Output:")
+    user_stats = user_stats_tracker.get_user_stats()
+    current_status = user_stats[st.session_state.user_id]["status"]
     st.write(
         f"current User ID: {st.session_state.user_id}",
-        f"Status: {user_stats_tracker.get_user_stats()[st.session_state.user_id]['status']}",
+        f"Status: {current_status}",
     )
     st.write(f"Current active users: {len(user_stats_tracker.get_user_stats())}")
     for user_id, status in user_stats_tracker.get_user_stats().items():
