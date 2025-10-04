@@ -1,1 +1,4 @@
-- use uv as venv
+Use uv as venv, e.g.:
+- uv run pre-commit run --all-files
+- uv run streamlit run main.py
+- uv run pytest
