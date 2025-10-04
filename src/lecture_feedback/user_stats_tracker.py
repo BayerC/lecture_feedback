@@ -29,6 +29,9 @@ class UserStatsTracker:
     def add_user(self, user_id, status=UserStatus.UNKNOWN):
         self._user_stats[user_id] = UserData(status=status, last_seen=time.time())
 
+    def update_user_status(self, user_id, status):
+        self._user_stats[user_id].status = status
+
     def set_user_active(self, user_id):
         self._user_stats[user_id].last_seen = time.time()
 
@@ -43,3 +46,20 @@ class UserStatsTracker:
 
         for user_id in users_to_delete:
             del self._user_stats[user_id]
+
+    def get_status_counts(self):
+        """Return counts of users by status"""
+        user_stats = self.get_user_stats()
+        red_count = sum(
+            1 for user in user_stats.values() if user.status == UserStatus.RED
+        )
+        yellow_count = sum(
+            1 for user in user_stats.values() if user.status == UserStatus.YELLOW
+        )
+        green_count = sum(
+            1 for user in user_stats.values() if user.status == UserStatus.GREEN
+        )
+        unknown_count = sum(
+            1 for user in user_stats.values() if user.status == UserStatus.UNKNOWN
+        )
+        return red_count, yellow_count, green_count, unknown_count

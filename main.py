@@ -24,35 +24,33 @@ def draw(user_stats_tracker: UserStatsTracker):
 
     with col1:
         if st.button("🔴 Red"):
-            user_stats_tracker.add_user(st.session_state.user_id, UserStatus.RED)
+            user_stats_tracker.update_user_status(
+                st.session_state.user_id, UserStatus.RED
+            )
 
     with col2:
         if st.button("🟡 Yellow"):
-            user_stats_tracker.add_user(st.session_state.user_id, UserStatus.YELLOW)
+            user_stats_tracker.update_user_status(
+                st.session_state.user_id, UserStatus.YELLOW
+            )
 
     with col3:
         if st.button("🟢 Green"):
-            user_stats_tracker.add_user(st.session_state.user_id, UserStatus.GREEN)
+            user_stats_tracker.update_user_status(
+                st.session_state.user_id, UserStatus.GREEN
+            )
 
     # show accumulated color stats
     st.title("Accumulated Color Stats")
 
-    user_stats = user_stats_tracker.get_user_stats()
-    st.write(f"User stats: {user_stats}")
-    st.write(f"User stats: {user_stats.values()}")
-    red_count = sum(
-        [1 for user in user_stats.values() if user.status == UserStatus.RED]
-    )
-    yellow_count = sum(
-        1 for user in user_stats.values() if user.status == UserStatus.YELLOW
-    )
-    green_count = sum(
-        1 for user in user_stats.values() if user.status == UserStatus.GREEN
+    red_count, yellow_count, green_count, unknown_count = (
+        user_stats_tracker.get_status_counts()
     )
 
     st.write(f"Red: {red_count}")
     st.write(f"Yellow: {yellow_count}")
     st.write(f"Green: {green_count}")
+    st.write(f"Unknown: {unknown_count}")
 
     st.title("Debug Output:")
     user_stats = user_stats_tracker.get_user_stats()
