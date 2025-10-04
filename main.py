@@ -15,30 +15,103 @@ def get_user_stats_tracker():
     return UserStatsTracker()
 
 
+def draw_debug_output(user_stats_tracker: UserStatsTracker):
+    st.title("Debug Output:")
+    user_stats = user_stats_tracker.get_user_stats()
+    current_status = user_stats[st.session_state.user_id].status
+    st.write(f"current User ID: {st.session_state.user_id}, Status: {current_status}")
+    st.write(f"Current active users: {len(user_stats_tracker.get_user_stats())}")
+    for user_id, user_data in user_stats_tracker.get_user_stats().items():
+        st.write(f"- active user ID: {user_id}, Status: {user_data.status}")
+
+
 def draw(user_stats_tracker: UserStatsTracker):
     st.title("Lecture Feedback App")
     st.write(f"Num Users: {len(user_stats_tracker.get_user_stats())}")
 
-    # create red green yellow buttons
-    col1, col2, col3 = st.columns(3)
+    # Get current user status for highlighting
+    user_stats = user_stats_tracker.get_user_stats()
+    current_status = user_stats[st.session_state.user_id].status
+
+    # Create large buttons that fill the screen width
+    col1, col2, col3 = st.columns(3, gap="small")
 
     with col1:
-        if st.button("🔴 Red"):
-            user_stats_tracker.update_user_status(
-                st.session_state.user_id, UserStatus.RED
+        # Highlight red button if selected
+        if current_status == UserStatus.RED:
+            st.button(
+                "🔴 RED",
+                key="red_btn",
+                help="You need help",
+                use_container_width=True,
+                type="primary",
             )
+        else:
+            if st.button(
+                "🔴 Red",
+                key="red_btn",
+                help="Click to indicate you need help",
+                use_container_width=True,
+            ):
+                user_stats_tracker.update_user_status(
+                    st.session_state.user_id, UserStatus.RED
+                )
+                st.rerun()
 
     with col2:
-        if st.button("🟡 Yellow"):
-            user_stats_tracker.update_user_status(
-                st.session_state.user_id, UserStatus.YELLOW
+        # Highlight yellow button if selected
+        if current_status == UserStatus.YELLOW:
+            st.button(
+                "🟡 YELLOW",
+                key="yellow_btn",
+                help="You're somewhat confused",
+                use_container_width=True,
+                type="primary",
             )
+        else:
+            if st.button(
+                "🟡 Yellow",
+                key="yellow_btn",
+                help="Click to indicate you're somewhat confused",
+                use_container_width=True,
+            ):
+                user_stats_tracker.update_user_status(
+                    st.session_state.user_id, UserStatus.YELLOW
+                )
+                st.rerun()
 
     with col3:
-        if st.button("🟢 Green"):
-            user_stats_tracker.update_user_status(
-                st.session_state.user_id, UserStatus.GREEN
+        # Highlight green button if selected
+        if current_status == UserStatus.GREEN:
+            st.button(
+                "🟢 GREEN",
+                key="green_btn",
+                help="You understand",
+                use_container_width=True,
+                type="primary",
             )
+        else:
+            if st.button(
+                "🟢 Green",
+                key="green_btn",
+                help="Click to indicate you understand",
+                use_container_width=True,
+            ):
+                user_stats_tracker.update_user_status(
+                    st.session_state.user_id, UserStatus.GREEN
+                )
+                st.rerun()
+
+    # Add visual indicator for current selection
+    st.markdown("---")
+    if current_status == UserStatus.RED:
+        st.error("🔴 **Currently selected: Red** - You need help")
+    elif current_status == UserStatus.YELLOW:
+        st.warning("🟡 **Currently selected: Yellow** - You're somewhat confused")
+    elif current_status == UserStatus.GREEN:
+        st.success("🟢 **Currently selected: Green** - You understand")
+    else:
+        st.info("⚪ **No selection** - Please choose your feedback")
 
     # show accumulated color stats
     st.title("Accumulated Color Stats")
@@ -52,15 +125,7 @@ def draw(user_stats_tracker: UserStatsTracker):
     st.write(f"Green: {green_count}")
     st.write(f"Unknown: {unknown_count}")
 
-    st.title("Debug Output:")
-    user_stats = user_stats_tracker.get_user_stats()
-    current_status = user_stats[st.session_state.user_id].status
-    st.write(
-        f"current User ID: {st.session_state.user_id}", f"Status: {current_status}"
-    )
-    st.write(f"Current active users: {len(user_stats_tracker.get_user_stats())}")
-    for user_id, user_data in user_stats_tracker.get_user_stats().items():
-        st.write(f"- active user ID: {user_id}, Status: {user_data.status}")
+    draw_debug_output(user_stats_tracker)
 
 
 def main():
