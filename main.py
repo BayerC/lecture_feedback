@@ -10,12 +10,12 @@ from lecture_feedback.user_stats_tracker import (
 
 
 @st.cache_resource
-def get_user_stats_tracker():
+def get_user_stats_tracker() -> UserStatsTracker:
     """Get or create the shared counter manager instance"""
     return UserStatsTracker()
 
 
-def draw_debug_output(user_stats_tracker: UserStatsTracker):
+def draw_debug_output(user_stats_tracker: UserStatsTracker) -> None:
     st.title("Debug Output:")
     user_stats = user_stats_tracker.get_user_stats()
     current_status = user_stats[st.session_state.user_id].status
@@ -25,7 +25,7 @@ def draw_debug_output(user_stats_tracker: UserStatsTracker):
         st.write(f"- active user ID: {user_id}, Status: {user_data.status}")
 
 
-def draw(user_stats_tracker: UserStatsTracker):
+def draw(user_stats_tracker: UserStatsTracker) -> None:
     st.title("Lecture Feedback App")
     st.write(f"Num Users: {len(user_stats_tracker.get_user_stats())}")
 
@@ -128,7 +128,7 @@ def draw(user_stats_tracker: UserStatsTracker):
     draw_debug_output(user_stats_tracker)
 
 
-def main():
+def main() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
     user_stats_tracker = get_user_stats_tracker()

@@ -23,22 +23,22 @@ class UserStatsTracker:
 
     USER_TIMEOUT_SECONDS = 4
 
-    def __init__(self):
-        self._user_stats = ThreadSafeDict()
+    def __init__(self) -> None:
+        self._user_stats: ThreadSafeDict = ThreadSafeDict()
 
-    def add_user(self, user_id, status=UserStatus.UNKNOWN):
+    def add_user(self, user_id: str, status: UserStatus = UserStatus.UNKNOWN) -> None:
         self._user_stats[user_id] = UserData(status=status, last_seen=time.time())
 
-    def update_user_status(self, user_id, status):
+    def update_user_status(self, user_id: str, status: UserStatus) -> None:
         self._user_stats[user_id].status = status
 
-    def set_user_active(self, user_id):
+    def set_user_active(self, user_id: str) -> None:
         self._user_stats[user_id].last_seen = time.time()
 
-    def get_user_stats(self):
+    def get_user_stats(self) -> dict[str, UserData]:
         return self._user_stats.copy()
 
-    def clean_up_outdated_users(self):
+    def clean_up_outdated_users(self) -> None:
         users_to_delete = []
         for user_id, user_data in self._user_stats.items():
             if time.time() - user_data.last_seen > self.USER_TIMEOUT_SECONDS:
@@ -47,7 +47,7 @@ class UserStatsTracker:
         for user_id in users_to_delete:
             del self._user_stats[user_id]
 
-    def get_status_counts(self):
+    def get_status_counts(self) -> tuple[int, int, int, int]:
         """Return counts of users by status"""
         user_stats = self.get_user_stats()
         red_count = sum(
