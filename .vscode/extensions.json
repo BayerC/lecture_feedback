@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "charliermarsh.ruff",
+        "eamodio.gitlens",
+        "ms-python.python",
+        "tamasfe.even-better-toml",
+    ]
+}
