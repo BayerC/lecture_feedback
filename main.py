@@ -1,3 +1,5 @@
+"""Main Streamlit app for lecture feedback."""
+
 import uuid
 
 import streamlit as st
@@ -11,7 +13,7 @@ from lecture_feedback.user_stats_tracker import (
 
 @st.cache_resource
 def get_user_stats_tracker() -> UserStatsTracker:
-    """Get or create the shared counter manager instance"""
+    """Get or create the shared counter manager instance."""
     return UserStatsTracker()
 
 
@@ -46,17 +48,17 @@ def draw(user_stats_tracker: UserStatsTracker) -> None:
                 use_container_width=True,
                 type="primary",
             )
-        else:
-            if st.button(
-                "🔴 Red",
-                key="red_btn",
-                help="Click to indicate you need help",
-                use_container_width=True,
-            ):
-                user_stats_tracker.update_user_status(
-                    st.session_state.user_id, UserStatus.RED
-                )
-                st.rerun()
+        elif st.button(
+            "🔴 Red",
+            key="red_btn",
+            help="Click to indicate you need help",
+            use_container_width=True,
+        ):
+            user_stats_tracker.update_user_status(
+                st.session_state.user_id,
+                UserStatus.RED,
+            )
+            st.rerun()
 
     with col2:
         # Highlight yellow button if selected
@@ -68,17 +70,17 @@ def draw(user_stats_tracker: UserStatsTracker) -> None:
                 use_container_width=True,
                 type="primary",
             )
-        else:
-            if st.button(
-                "🟡 Yellow",
-                key="yellow_btn",
-                help="Click to indicate you're somewhat confused",
-                use_container_width=True,
-            ):
-                user_stats_tracker.update_user_status(
-                    st.session_state.user_id, UserStatus.YELLOW
-                )
-                st.rerun()
+        elif st.button(
+            "🟡 Yellow",
+            key="yellow_btn",
+            help="Click to indicate you're somewhat confused",
+            use_container_width=True,
+        ):
+            user_stats_tracker.update_user_status(
+                st.session_state.user_id,
+                UserStatus.YELLOW,
+            )
+            st.rerun()
 
     with col3:
         # Highlight green button if selected
@@ -90,17 +92,17 @@ def draw(user_stats_tracker: UserStatsTracker) -> None:
                 use_container_width=True,
                 type="primary",
             )
-        else:
-            if st.button(
-                "🟢 Green",
-                key="green_btn",
-                help="Click to indicate you understand",
-                use_container_width=True,
-            ):
-                user_stats_tracker.update_user_status(
-                    st.session_state.user_id, UserStatus.GREEN
-                )
-                st.rerun()
+        elif st.button(
+            "🟢 Green",
+            key="green_btn",
+            help="Click to indicate you understand",
+            use_container_width=True,
+        ):
+            user_stats_tracker.update_user_status(
+                st.session_state.user_id,
+                UserStatus.GREEN,
+            )
+            st.rerun()
 
     # Add visual indicator for current selection
     st.markdown("---")
@@ -129,6 +131,7 @@ def draw(user_stats_tracker: UserStatsTracker) -> None:
 
 
 def main() -> None:
+    """Run the main Streamlit loop."""
     st_autorefresh(interval=2000, key="data_refresh")
 
     user_stats_tracker = get_user_stats_tracker()

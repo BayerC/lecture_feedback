@@ -4,7 +4,7 @@ from lecture_feedback.thread_safe_dict import ThreadSafeDict
 
 
 def test_basic_operations() -> None:
-    """Test basic dictionary operations"""
+    """Test basic dictionary operations."""
     # Create a thread-safe dict
     tsd = ThreadSafeDict()
 

@@ -1,20 +1,22 @@
+"""A simple thread-safe dictionary implementation."""
+
 import threading
 from collections.abc import Iterator
 from typing import Any
 
 
 class ThreadSafeDict:
-    """A simple thread-safe dictionary with only the methods we need"""
+    """A simple thread-safe dictionary with only the methods we need."""
 
     def __init__(self) -> None:
         self._data: dict[str, Any] = {}
         self._lock = threading.RLock()
 
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, key: str, value: Any) -> None:  # noqa: ANN401
         with self._lock:
             self._data[key] = value
 
-    def __getitem__(self, key: str) -> Any:
+    def __getitem__(self, key: str) -> Any:  # noqa: ANN401
         with self._lock:
             return self._data[key]
 
