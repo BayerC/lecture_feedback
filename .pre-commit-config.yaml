@@ -5,7 +5,6 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-      - id: check-json
       - id: check-toml
       - id: check-added-large-files
       - id: check-merge-conflict
@@ -48,6 +47,12 @@ repos:
     rev: v1.37.2
     hooks:
       - id: typos
+
+  - repo: https://gitlab.com/bmares/check-json5  # in contrast to pre-commit's check-json, this allows trailing commas, comments, etc.
+    rev: v1.0.0
+    hooks:
+    - id: check-json5
+
 
   - repo: local
     hooks:
