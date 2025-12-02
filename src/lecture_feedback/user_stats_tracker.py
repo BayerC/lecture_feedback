@@ -1,15 +1,15 @@
 import time
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
 
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
 
 
 class UserStatus(Enum):
-    UNKNOWN = auto()
-    GREEN = auto()
-    YELLOW = auto()
-    RED = auto()
+    UNKNOWN = "Unknown"
+    GREEN = "🟢 Green"
+    YELLOW = "🟡 Yellow"
+    RED = "🔴 Red"
 
 
 @dataclass
