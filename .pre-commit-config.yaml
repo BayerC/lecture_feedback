@@ -53,7 +53,7 @@ repos:
     hooks:
       - id: pytest
         name: pytest
-        entry: uv run pytest
+        entry: uv run pytest --cov=lecture_feedback --cov-report=term-missing
         language: system
         types: [python]
         pass_filenames: false
