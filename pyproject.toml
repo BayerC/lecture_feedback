@@ -33,21 +33,20 @@ line-length = 88
 
 [tool.ruff.lint]
 # Enable comprehensive linting rules
-select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # pyflakes
-    "I",   # isort (import sorting)
-    "B",   # flake8-bugbear (common bugs)
-    "C90", # mccabe complexity
-    "UP",  # pyupgrade (modern Python syntax)
-    "SIM", # flake8-simplify
-    "RUF", # Ruff-specific rules
+select = [ "ALL" ]
+ignore = [
+    "D", # Docs enforcement is annoying, we write expressive code
 ]
-
 
 [tool.ruff.lint.isort]
 known-first-party = ["lecture_feedback"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "S101",  # Ignore use of assert detected in tests
+    "PLR2004", # Allow magic numbers in tests
+]
+
 
 [tool.mypy]
 python_version = "3.13"

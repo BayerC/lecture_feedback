@@ -10,11 +10,11 @@ class ThreadSafeDict:
         self._data: dict[str, Any] = {}
         self._lock = threading.RLock()
 
-    def __setitem__(self, key: str, value: Any) -> None:
+    def __setitem__(self, key: str, value: Any) -> None:  # noqa: ANN401
         with self._lock:
             self._data[key] = value
 
-    def __getitem__(self, key: str) -> Any:
+    def __getitem__(self, key: str) -> Any:  # noqa: ANN401
         with self._lock:
             return self._data[key]
 
