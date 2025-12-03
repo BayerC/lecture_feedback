@@ -5,7 +5,6 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-      - id: check-json
       - id: check-toml
       - id: check-added-large-files
       - id: check-merge-conflict
@@ -49,11 +48,18 @@ repos:
     hooks:
       - id: typos
 
+  - repo: https://gitlab.com/bmares/check-json5  # in contrast to pre-commit's check-json, this allows trailing commas, comments, etc.
+    rev: v1.0.0
+    hooks:
+    - id: check-json5
+
+
   - repo: local
     hooks:
       - id: pytest
         name: pytest
-        entry: uv run pytest
+        # Unset PYTHONPATH to ensure no external packages are loaded.
+        entry: env -u PYTHONPATH uv run pytest --cov=lecture_feedback --cov-report=term-missing
         language: system
         types: [python]
         pass_filenames: false
