@@ -16,3 +16,14 @@ jobs:
       - run: uv python install
       - run: uv sync --group dev
       - run: uv run pre-commit run --all-files
+
+      # Create the XML report for Codecov
+      - name: Generate coverage.xml
+        run: uv run coverage xml
+
+      # Upload to Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: coverage.xml
+          fail_ci_if_error: true
