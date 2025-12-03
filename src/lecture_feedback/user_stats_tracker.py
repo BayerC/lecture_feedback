@@ -6,8 +6,6 @@ from lecture_feedback.thread_safe_dict import ThreadSafeDict
 
 
 class UserStatus(Enum):
-    """Enumeration of possible user statuses."""
-
     UNKNOWN = auto()
     GREEN = auto()
     YELLOW = auto()
