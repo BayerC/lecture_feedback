@@ -26,7 +26,6 @@ def test_user_stats_tracker(monkeypatch: pytest.MonkeyPatch) -> None:
     assert green_count == 0
     assert unknown_count == 0
 
-
     fake_time = time.time()
     monkeypatch.setattr(time, "time", lambda: fake_time)
 
