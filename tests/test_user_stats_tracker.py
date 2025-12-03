@@ -1,3 +1,5 @@
+import time
+
 import pytest
 
 from lecture_feedback.user_stats_tracker import UserStatsTracker, UserStatus
@@ -24,12 +26,10 @@ def test_user_stats_tracker(monkeypatch: pytest.MonkeyPatch) -> None:
     assert green_count == 0
     assert unknown_count == 0
 
-    import time
 
-    fake_time = [time.time()]
-    monkeypatch.setattr(time, "time", lambda: fake_time[0])
+    fake_time = time.time()
+    monkeypatch.setattr(time, "time", lambda: fake_time)
 
-    # advance time past the timeout
-    fake_time[0] += UserStatsTracker.USER_TIMEOUT_SECONDS + 1
+    fake_time += UserStatsTracker.USER_TIMEOUT_SECONDS + 1
     tracker.clean_up_outdated_users()
     assert len(tracker.get_user_stats()) == 0
