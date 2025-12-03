@@ -1,12 +1,10 @@
-"""A simple thread-safe dictionary implementation."""
-
 import threading
 from collections.abc import Iterator
 from typing import Any
 
 
 class ThreadSafeDict:
-    """A simple thread-safe dictionary with only the methods we need."""
+    """A simple thread-safe dictionary with only the methods we need"""
 
     def __init__(self) -> None:
         self._data: dict[str, Any] = {}

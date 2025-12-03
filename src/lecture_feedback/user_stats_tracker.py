@@ -1,5 +1,3 @@
-"""A module for tracking user statistics in a thread-safe manner."""
-
 import time
 from dataclasses import dataclass
 from enum import Enum, auto
@@ -18,14 +16,12 @@ class UserStatus(Enum):
 
 @dataclass
 class UserData:
-    """Holds user status and last seen timestamp."""
-
     status: UserStatus
     last_seen: float
 
 
 class UserStatsTracker:
-    """Manages button counters with thread-safe operations."""
+    """Manages button counters with thread-safe operations"""
 
     USER_TIMEOUT_SECONDS = 4
 
@@ -54,7 +50,7 @@ class UserStatsTracker:
             del self._user_stats[user_id]
 
     def get_status_counts(self) -> tuple[int, int, int, int]:
-        """Return counts of users by status."""
+        """Return counts of users by status"""
         user_stats = self.get_user_stats()
         red_count = sum(
             1 for user in user_stats.values() if user.status == UserStatus.RED

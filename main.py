@@ -1,5 +1,3 @@
-"""Main Streamlit app for lecture feedback."""
-
 import uuid
 
 import streamlit as st
@@ -13,7 +11,7 @@ from lecture_feedback.user_stats_tracker import (
 
 @st.cache_resource
 def get_user_stats_tracker() -> UserStatsTracker:
-    """Get or create the shared counter manager instance."""
+    """Get or create the shared counter manager instance"""
     return UserStatsTracker()
 
 
@@ -131,7 +129,6 @@ def draw(user_stats_tracker: UserStatsTracker) -> None:
 
 
 def main() -> None:
-    """Run the main Streamlit loop."""
     st_autorefresh(interval=2000, key="data_refresh")
 
     user_stats_tracker = get_user_stats_tracker()
