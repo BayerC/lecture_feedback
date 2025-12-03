@@ -58,7 +58,8 @@ repos:
     hooks:
       - id: pytest
         name: pytest
-        entry: uv run pytest --cov=lecture_feedback --cov-report=term-missing
+        # Unset PYTHONPATH to ensure no external packages are loaded.
+        entry: env -u PYTHONPATH uv run pytest --cov=lecture_feedback --cov-report=term-missing
         language: system
         types: [python]
         pass_filenames: false
