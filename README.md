@@ -1,5 +1,7 @@
 # Lecture Feedback App
 
+![CI](https://github.com/BayerC/lecture_feedback/actions/workflows/ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/BayerC/lecture_feedback/branch/main/graph/badge.svg)](https://codecov.io/gh/BayerC/lecture_feedback)
 
 ## Development
 
