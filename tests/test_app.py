@@ -7,10 +7,6 @@ def test_app_initial_load() -> None:
     at = AppTest.from_file("src/lecture_feedback/app.py")
     at.run()
 
-    # Check that no exceptions occurred
-    assert not at.exception
-
-    # Check that no exceptions occurred
     assert not at.exception
 
     # Check that main title is present
