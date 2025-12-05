@@ -11,7 +11,6 @@ def run_wrapper() -> None:
 
 def test_app_initial_load() -> None:
     at = AppTest.from_function(run_wrapper)
-
     at.run()
 
     assert len(at.title) > 0
@@ -22,17 +21,14 @@ def test_app_initial_load() -> None:
 
     red_button = next(btn for btn in at.button if UserStatus.RED.value in btn.label)
     red_button.click()
-
     at.run()
 
     yellow_button = next(
         btn for btn in at.button if UserStatus.YELLOW.value in btn.label
     )
     yellow_button.click()
-
     at.run()
 
     green_button = next(btn for btn in at.button if UserStatus.GREEN.value in btn.label)
     green_button.click()
-
     at.run()
