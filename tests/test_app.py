@@ -10,25 +10,27 @@ def run_wrapper() -> None:
 
 
 def test_app_initial_load() -> None:
-    at = AppTest.from_function(run_wrapper)
-    at.run()
+    app = AppTest.from_function(run_wrapper)
+    app.run()
 
-    assert len(at.title) > 0
-    assert "Lecture Feedback App" in at.title[0].value
+    assert len(app.title) > 0
+    assert "Lecture Feedback App" in app.title[0].value
 
-    assert len(at.button) >= 3
-    assert "user_id" in at.session_state
+    assert len(app.button) >= 3
+    assert "user_id" in app.session_state
 
-    red_button = next(btn for btn in at.button if UserStatus.RED.value in btn.label)
+    red_button = next(btn for btn in app.button if UserStatus.RED.value in btn.label)
     red_button.click()
-    at.run()
+    app.run()
 
     yellow_button = next(
-        btn for btn in at.button if UserStatus.YELLOW.value in btn.label
+        btn for btn in app.button if UserStatus.YELLOW.value in btn.label
     )
     yellow_button.click()
-    at.run()
+    app.run()
 
-    green_button = next(btn for btn in at.button if UserStatus.GREEN.value in btn.label)
+    green_button = next(
+        btn for btn in app.button if UserStatus.GREEN.value in btn.label
+    )
     green_button.click()
-    at.run()
+    app.run()
