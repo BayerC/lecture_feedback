@@ -3,18 +3,19 @@
 from streamlit.testing.v1 import AppTest
 
 
+def run_wrapper() -> None:
+    from lecture_feedback.app import run  # noqa: PLC0415
+
+    run()
+
+
 def test_app_initial_load() -> None:
-    at = AppTest.from_file("src/lecture_feedback/app.py")
-    at.run()
+    at = AppTest.from_function(run_wrapper)
 
-    assert not at.exception
+    at.run()  # <-- this is required
 
-    # Check that main title is present
     assert len(at.title) > 0
     assert "Lecture Feedback App" in at.title[0].value
 
-    # Check that buttons are present
     assert len(at.button) >= 3
-
-    # Check that user_id is set in session state
     assert "user_id" in at.session_state

@@ -1,3 +1,4 @@
+import os
 import uuid
 
 import streamlit as st
@@ -108,5 +109,5 @@ def run() -> None:
     draw(user_stats_tracker)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" or "PYTEST_CURRENT_TEST" in os.environ:
     run()
