@@ -25,6 +25,28 @@ def draw_debug_output(user_stats_tracker: UserStatsTracker) -> None:
         st.write(f"- active user ID: {user_id}, Status: {user_data.status}")
 
 
+def create_button(
+    current_status: UserStatus,
+    button_status: UserStatus,
+    user_stats_tracker: UserStatsTracker,
+) -> None:
+    if current_status == button_status:
+        st.button(
+            button_status.value,
+            use_container_width=True,
+            type="primary",  # Highlight button if selected
+        )
+    elif st.button(
+        button_status.value,
+        use_container_width=True,
+    ):
+        user_stats_tracker.update_user_status(
+            st.session_state.user_id,
+            button_status,
+        )
+        st.rerun()
+
+
 def draw(user_stats_tracker: UserStatsTracker) -> None:
     st.title("Lecture Feedback App")
     st.write(f"Num Users: {len(user_stats_tracker.get_user_stats())}")
@@ -37,70 +59,13 @@ def draw(user_stats_tracker: UserStatsTracker) -> None:
     col1, col2, col3 = st.columns(3, gap="small")
 
     with col1:
-        # Highlight red button if selected
-        if current_status == UserStatus.RED:
-            st.button(
-                "🔴 RED",
-                key="red_btn",
-                help="You need help",
-                use_container_width=True,
-                type="primary",
-            )
-        elif st.button(
-            "🔴 Red",
-            key="red_btn",
-            help="Click to indicate you need help",
-            use_container_width=True,
-        ):
-            user_stats_tracker.update_user_status(
-                st.session_state.user_id,
-                UserStatus.RED,
-            )
-            st.rerun()
+        create_button(current_status, UserStatus.RED, user_stats_tracker)
 
     with col2:
-        # Highlight yellow button if selected
-        if current_status == UserStatus.YELLOW:
-            st.button(
-                "🟡 YELLOW",
-                key="yellow_btn",
-                help="You're somewhat confused",
-                use_container_width=True,
-                type="primary",
-            )
-        elif st.button(
-            "🟡 Yellow",
-            key="yellow_btn",
-            help="Click to indicate you're somewhat confused",
-            use_container_width=True,
-        ):
-            user_stats_tracker.update_user_status(
-                st.session_state.user_id,
-                UserStatus.YELLOW,
-            )
-            st.rerun()
+        create_button(current_status, UserStatus.YELLOW, user_stats_tracker)
 
     with col3:
-        # Highlight green button if selected
-        if current_status == UserStatus.GREEN:
-            st.button(
-                "🟢 GREEN",
-                key="green_btn",
-                help="You understand",
-                use_container_width=True,
-                type="primary",
-            )
-        elif st.button(
-            "🟢 Green",
-            key="green_btn",
-            help="Click to indicate you understand",
-            use_container_width=True,
-        ):
-            user_stats_tracker.update_user_status(
-                st.session_state.user_id,
-                UserStatus.GREEN,
-            )
-            st.rerun()
+        create_button(current_status, UserStatus.GREEN, user_stats_tracker)
 
     # Add visual indicator for current selection
     st.markdown("---")
