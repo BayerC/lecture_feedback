@@ -3,6 +3,8 @@
 ![CI](https://github.com/BayerC/lecture_feedback/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/BayerC/lecture_feedback/branch/main/graph/badge.svg)](https://codecov.io/gh/BayerC/lecture_feedback)
 
+The app (currently beta! All users globally still share the same session) is available at <https://lecture-feedback.streamlit.app/>.
+
 ## Development
 
 1. Install uv: https://docs.astral.sh/uv/getting-started/installation/
