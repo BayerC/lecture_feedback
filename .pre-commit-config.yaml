@@ -1,3 +1,4 @@
+---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -48,10 +49,35 @@ repos:
     hooks:
       - id: typos
 
-  - repo: https://gitlab.com/bmares/check-json5  # in contrast to pre-commit's check-json, this allows trailing commas, comments, etc.
+  # Allows trailing commas, comments, etc. (unlike check-json)
+  - repo: https://gitlab.com/bmares/check-json5
     rev: v1.0.0
     hooks:
-    - id: check-json5
+      - id: check-json5
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.0
+    hooks:
+      - id: bandit
+        args: ["-c", "pyproject.toml"]
+        additional_dependencies: ["bandit[toml]"]
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.3
+    hooks:
+      - id: python-safety-dependencies-check
+        files: pyproject.toml
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.19.0
+    hooks:
+      - id: pyupgrade
+        args: [--py313-plus]
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.37.0
+    hooks:
+      - id: yamllint
 
 
   - repo: local
@@ -59,7 +85,9 @@ repos:
       - id: pytest
         name: pytest
         # Unset PYTHONPATH to ensure no external packages are loaded.
-        entry: env -u PYTHONPATH uv run pytest --cov=lecture_feedback --cov-report=term-missing --cov-fail-under=50
+        entry: >
+          env -u PYTHONPATH uv run pytest
+          --cov=lecture_feedback --cov-report=term-missing --cov-fail-under=100
         language: system
         types: [python]
         pass_filenames: false

@@ -1,0 +1,14 @@
+---
+extends: default
+
+rules:
+  line-length:
+    max: 88  # Matches Python line length
+    level: error
+
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
+
+  truthy:
+    allowed-values: ['true', 'false']
