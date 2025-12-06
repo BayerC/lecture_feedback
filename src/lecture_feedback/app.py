@@ -11,12 +11,6 @@ from lecture_feedback.user_stats_tracker import (
 
 
 @st.cache_resource
-def get_user_stats_tracker() -> UserStatsTracker:
-    """Get or create the shared counter manager instance"""
-    return UserStatsTracker()
-
-
-@st.cache_resource
 def get_session_store() -> dict[str, UserStatsTracker]:
     """Return a shared map of session_id -> UserStatsTracker.
 
