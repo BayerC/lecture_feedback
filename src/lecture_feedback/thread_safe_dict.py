@@ -1,6 +1,6 @@
 import threading
 from collections.abc import Iterator
-from typing import Any
+from typing import Any, Self
 
 
 class ThreadSafeDict:
@@ -29,3 +29,10 @@ class ThreadSafeDict:
     def items(self) -> Iterator[tuple[str, Any]]:
         with self._lock:
             return iter(self._data.copy().items())
+
+    def __enter__(self) -> Self:
+        self._lock.acquire()
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        self._lock.release()

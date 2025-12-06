@@ -28,3 +28,10 @@ def test_basic_operations() -> None:
     del tsd["key1"]
     with pytest.raises(KeyError):
         _ = tsd["key1"]
+
+    # Test context manager for atomic operations
+    tsd["counter"] = 0
+    with tsd:
+        current = tsd["counter"]
+        tsd["counter"] = current + 1
+    assert tsd["counter"] == 1
