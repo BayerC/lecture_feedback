@@ -130,13 +130,9 @@ def run() -> None:
 
     user_stats_tracker.set_user_active(st.session_state.user_id)
 
-    # During tests auto-create a session so tests still see the main UI
     if "session_id" not in st.session_state:
-        if "PYTEST_CURRENT_TEST" in os.environ:
-            st.session_state.session_id = f"test-session-{uuid.uuid4()!s}"
-        else:
-            show_welcome_screen()
-            return
+        show_welcome_screen()
+        return
 
     draw(user_stats_tracker)
 

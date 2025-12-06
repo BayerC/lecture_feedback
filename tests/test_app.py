@@ -13,6 +13,12 @@ def test_app_initial_load() -> None:
     app = AppTest.from_function(run_wrapper)
     app.run()
 
+    new_session_button = next(
+        btn for btn in app.button if "Start New Session" in btn.label
+    )
+    new_session_button.click()
+    app.run()
+
     assert len(app.title) > 0
     assert "Lecture Feedback App" in app.title[0].value
 
