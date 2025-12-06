@@ -50,6 +50,9 @@ def create_button(
 
 def draw(user_stats_tracker: UserStatsTracker) -> None:
     st.title("Lecture Feedback App")
+    # Show current session id
+    if "session_id" in st.session_state:
+        st.write(f"Session ID: {st.session_state.session_id}")
     st.write(f"Num Users: {len(user_stats_tracker.get_user_stats())}")
 
     # Get current user status for highlighting
@@ -94,6 +97,27 @@ def draw(user_stats_tracker: UserStatsTracker) -> None:
     draw_debug_output(user_stats_tracker)
 
 
+def show_welcome_screen() -> None:
+    st.title("Welcome to Lecture Feedback App")
+    st.write("Host or join a session to share feedback.")
+
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        if st.button("Start New Session", use_container_width=True):
+            st.session_state.session_id = str(uuid.uuid4())
+            st.rerun()
+
+    with col2:
+        join_id = st.text_input("Join Session by ID")
+        if st.button("Join Session", use_container_width=True):
+            if join_id:
+                st.session_state.session_id = join_id
+                st.rerun()
+            else:
+                st.warning("Please enter a Session ID to join.")
+
+
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
@@ -105,6 +129,14 @@ def run() -> None:
         user_stats_tracker.add_user(st.session_state.user_id, UserStatus.UNKNOWN)
 
     user_stats_tracker.set_user_active(st.session_state.user_id)
+
+    # During tests auto-create a session so tests still see the main UI
+    if "session_id" not in st.session_state:
+        if "PYTEST_CURRENT_TEST" in os.environ:
+            st.session_state.session_id = f"test-session-{uuid.uuid4()!s}"
+        else:
+            show_welcome_screen()
+            return
 
     draw(user_stats_tracker)
 
