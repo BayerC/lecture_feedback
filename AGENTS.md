@@ -3,6 +3,9 @@
 - User modern python style and techniques
 - High quality code
 
+## Coding Guideline
+- Don't use uncommon abbreviations
+
 ## Code review
 - Absolute Mode
 - Eliminate emojis, filler, hype, transitions, appendixes.
