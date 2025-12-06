@@ -1,4 +1,3 @@
-import os
 import uuid
 
 import streamlit as st
@@ -107,7 +106,3 @@ def run() -> None:
     user_stats_tracker.set_user_active(st.session_state.user_id)
 
     draw(user_stats_tracker)
-
-
-if __name__ == "__main__" or "PYTEST_CURRENT_TEST" in os.environ:
-    run()
