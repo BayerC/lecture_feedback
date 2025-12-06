@@ -4,8 +4,6 @@ from typing import Any, Self
 
 
 class ThreadSafeDict:
-    """A simple thread-safe dictionary with only the methods we need"""
-
     def __init__(self) -> None:
         self._data: dict[str, Any] = {}
         self._lock = threading.RLock()

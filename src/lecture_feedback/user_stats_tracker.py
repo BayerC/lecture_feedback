@@ -19,8 +19,6 @@ class UserData:
 
 
 class UserStatsTracker:
-    """Manages button counters with thread-safe operations"""
-
     USER_TIMEOUT_SECONDS = 4
 
     def __init__(self) -> None:
@@ -50,7 +48,6 @@ class UserStatsTracker:
             del self._user_stats[user_id]
 
     def get_status_counts(self) -> tuple[int, int, int, int]:
-        """Return counts of users by status"""
         user_stats = self.get_user_stats()
         red_count = sum(
             1 for user in user_stats.values() if user.status == UserStatus.RED

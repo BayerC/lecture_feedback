@@ -11,7 +11,6 @@ from lecture_feedback.user_stats_tracker import (
 
 @st.cache_resource
 def get_user_stats_tracker() -> UserStatsTracker:
-    """Get or create the shared counter manager instance"""
     return UserStatsTracker()
 
 
