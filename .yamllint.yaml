@@ -11,4 +11,4 @@ rules:
     indent-sequences: consistent
 
   truthy:
-    allowed-values: ['true', 'false']
+    allowed-values: ['true', 'false', 'on', 'off']
