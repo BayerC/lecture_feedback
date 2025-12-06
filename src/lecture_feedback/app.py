@@ -10,6 +10,7 @@ from lecture_feedback.user_stats_tracker import (
 )
 
 
+# TODO(#20): does this need locking for thread safety?  # noqa: FIX002
 @st.cache_resource
 def get_session_store() -> dict[str, UserStatsTracker]:
     """Return a shared map of shared_session_id -> UserStatsTracker.
