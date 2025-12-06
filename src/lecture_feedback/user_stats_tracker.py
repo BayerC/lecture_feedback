@@ -1,4 +1,5 @@
 import time
+from collections import Counter
 from dataclasses import dataclass
 from enum import Enum
 
@@ -47,18 +48,5 @@ class UserStatsTracker:
         for user_id in users_to_delete:
             del self._user_stats[user_id]
 
-    def get_status_counts(self) -> tuple[int, int, int, int]:
-        user_stats = self.get_user_stats()
-        red_count = sum(
-            1 for user in user_stats.values() if user.status == UserStatus.RED
-        )
-        yellow_count = sum(
-            1 for user in user_stats.values() if user.status == UserStatus.YELLOW
-        )
-        green_count = sum(
-            1 for user in user_stats.values() if user.status == UserStatus.GREEN
-        )
-        unknown_count = sum(
-            1 for user in user_stats.values() if user.status == UserStatus.UNKNOWN
-        )
-        return red_count, yellow_count, green_count, unknown_count
+    def get_status_counts(self) -> Counter[UserStatus]:
+        return Counter(user.status for user in self.get_user_stats().values())

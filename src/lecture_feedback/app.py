@@ -80,14 +80,12 @@ def draw(user_stats_tracker: UserStatsTracker) -> None:
     # show accumulated color stats
     st.title("Accumulated Color Stats")
 
-    red_count, yellow_count, green_count, unknown_count = (
-        user_stats_tracker.get_status_counts()
-    )
+    counts = user_stats_tracker.get_status_counts()
 
-    st.write(f"Red: {red_count}")
-    st.write(f"Yellow: {yellow_count}")
-    st.write(f"Green: {green_count}")
-    st.write(f"Unknown: {unknown_count}")
+    st.write(f"Red: {counts[UserStatus.RED]}")
+    st.write(f"Yellow: {counts[UserStatus.YELLOW]}")
+    st.write(f"Green: {counts[UserStatus.GREEN]}")
+    st.write(f"Unknown: {counts[UserStatus.UNKNOWN]}")
 
     draw_debug_output(user_stats_tracker)
 

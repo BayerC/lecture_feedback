@@ -26,11 +26,11 @@ def test_user_stats_tracker(monkeypatch: pytest.MonkeyPatch) -> None:
     assert stats["user2"].status == UserStatus.YELLOW
     assert stats["user3"].status == UserStatus.RED
 
-    red_count, yellow_count, green_count, unknown_count = tracker.get_status_counts()
-    assert red_count == 2
-    assert yellow_count == 1
-    assert green_count == 0
-    assert unknown_count == 0
+    counts = tracker.get_status_counts()
+    assert counts[UserStatus.RED] == 2
+    assert counts[UserStatus.YELLOW] == 1
+    assert counts[UserStatus.GREEN] == 0
+    assert counts[UserStatus.UNKNOWN] == 0
 
     tracker.clean_up_outdated_users()
     assert len(tracker.get_user_stats()) == 3
