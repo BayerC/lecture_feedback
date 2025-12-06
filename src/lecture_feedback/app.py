@@ -16,6 +16,23 @@ def get_user_stats_tracker() -> UserStatsTracker:
     return UserStatsTracker()
 
 
+@st.cache_resource
+def get_session_store() -> dict[str, UserStatsTracker]:
+    """Return a shared map of session_id -> UserStatsTracker.
+
+    This is stored as a cached resource so it's shared across reruns and
+    across users in the same Streamlit process.
+    """
+    return {}
+
+
+def get_tracker_for_session(session_id: str) -> UserStatsTracker:
+    store = get_session_store()
+    if session_id not in store:
+        store[session_id] = UserStatsTracker()
+    return store[session_id]
+
+
 def draw_debug_output(user_stats_tracker: UserStatsTracker) -> None:
     st.title("Debug Output:")
     user_stats = user_stats_tracker.get_user_stats()
@@ -105,34 +122,49 @@ def show_welcome_screen() -> None:
 
     with col1:
         if st.button("Start New Session", use_container_width=True):
-            st.session_state.session_id = str(uuid.uuid4())
+            # Create a new session id and ensure a tracker exists for it
+            new_id = str(uuid.uuid4())
+            # create tracker entry in the shared session store
+            get_tracker_for_session(new_id)
+            st.session_state.session_id = new_id
             st.rerun()
 
     with col2:
         join_id = st.text_input("Join Session by ID")
         if st.button("Join Session", use_container_width=True):
-            if join_id:
-                st.session_state.session_id = join_id
-                st.rerun()
-            else:
+            if not join_id:
                 st.warning("Please enter a Session ID to join.")
+            else:
+                store = get_session_store()
+                if join_id in store:
+                    st.session_state.session_id = join_id
+                    st.rerun()
+                else:
+                    st.error("Session ID not found")
 
 
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    user_stats_tracker = get_user_stats_tracker()
-    user_stats_tracker.clean_up_outdated_users()
-
+    # Ensure we have a per-browser/user id
     if "user_id" not in st.session_state:
         st.session_state.user_id = str(uuid.uuid4())
-        user_stats_tracker.add_user(st.session_state.user_id, UserStatus.UNKNOWN)
 
-    user_stats_tracker.set_user_active(st.session_state.user_id)
-
+    # If no session has been selected/created yet, show welcome screen.
+    # The session id must exist before we retrieve the per-session tracker.
     if "session_id" not in st.session_state:
         show_welcome_screen()
         return
+
+    # Get the per-session tracker (creates one if necessary)
+    user_stats_tracker = get_tracker_for_session(st.session_state.session_id)
+    user_stats_tracker.clean_up_outdated_users()
+
+    # Ensure this user is present in the tracker
+    if st.session_state.user_id not in user_stats_tracker.get_user_stats():
+        user_stats_tracker.add_user(st.session_state.user_id, UserStatus.UNKNOWN)
+
+    user_stats_tracker.set_user_active(st.session_state.user_id)
 
     draw(user_stats_tracker)
 
