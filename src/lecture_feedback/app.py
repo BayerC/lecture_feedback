@@ -12,7 +12,7 @@ from lecture_feedback.user_stats_tracker import (
 
 @st.cache_resource
 def get_session_store() -> dict[str, UserStatsTracker]:
-    """Return a shared map of session_id -> UserStatsTracker.
+    """Return a shared map of shared_session_id -> UserStatsTracker.
 
     This is stored as a cached resource so it's shared across reruns and
     across users in the same Streamlit process.
@@ -20,11 +20,13 @@ def get_session_store() -> dict[str, UserStatsTracker]:
     return {}
 
 
-def get_tracker_for_session(session_id: str) -> UserStatsTracker:
+def add_tracker_for_session(shared_session_id: str) -> None:
     store = get_session_store()
-    if session_id not in store:
-        store[session_id] = UserStatsTracker()
-    return store[session_id]
+    if shared_session_id in store:
+        msg = f"Session ID '{shared_session_id}' already exists"
+        raise ValueError(msg)
+
+    store[shared_session_id] = UserStatsTracker()
 
 
 def draw_debug_output(user_stats_tracker: UserStatsTracker) -> None:
@@ -61,9 +63,7 @@ def create_button(
 
 def draw(user_stats_tracker: UserStatsTracker) -> None:
     st.title("Lecture Feedback App")
-    # Show current session id
-    if "session_id" in st.session_state:
-        st.write(f"Session ID: {st.session_state.session_id}")
+    st.write(f"Session ID: {st.session_state.shared_session_id}")
     st.write(f"Num Users: {len(user_stats_tracker.get_user_stats())}")
 
     # Get current user status for highlighting
@@ -108,7 +108,7 @@ def draw(user_stats_tracker: UserStatsTracker) -> None:
     draw_debug_output(user_stats_tracker)
 
 
-def show_welcome_screen() -> None:
+def show_session_selection_screen() -> None:
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a session to share feedback.")
 
@@ -116,11 +116,9 @@ def show_welcome_screen() -> None:
 
     with col1:
         if st.button("Start New Session", use_container_width=True):
-            # Create a new session id and ensure a tracker exists for it
             new_id = str(uuid.uuid4())
-            # create tracker entry in the shared session store
-            get_tracker_for_session(new_id)
-            st.session_state.session_id = new_id
+            add_tracker_for_session(new_id)
+            st.session_state.shared_session_id = new_id
             st.rerun()
 
     with col2:
@@ -131,7 +129,7 @@ def show_welcome_screen() -> None:
             else:
                 store = get_session_store()
                 if join_id in store:
-                    st.session_state.session_id = join_id
+                    st.session_state.shared_session_id = join_id
                     st.rerun()
                 else:
                     st.error("Session ID not found")
@@ -140,21 +138,16 @@ def show_welcome_screen() -> None:
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    # Ensure we have a per-browser/user id
     if "user_id" not in st.session_state:
         st.session_state.user_id = str(uuid.uuid4())
 
-    # If no session has been selected/created yet, show welcome screen.
-    # The session id must exist before we retrieve the per-session tracker.
-    if "session_id" not in st.session_state:
-        show_welcome_screen()
+    if "shared_session_id" not in st.session_state:
+        show_session_selection_screen()
         return
 
-    # Get the per-session tracker (creates one if necessary)
-    user_stats_tracker = get_tracker_for_session(st.session_state.session_id)
+    user_stats_tracker = get_session_store()[st.session_state.shared_session_id]
     user_stats_tracker.clean_up_outdated_users()
 
-    # Ensure this user is present in the tracker
     if st.session_state.user_id not in user_stats_tracker.get_user_stats():
         user_stats_tracker.add_user(st.session_state.user_id, UserStatus.UNKNOWN)
 
