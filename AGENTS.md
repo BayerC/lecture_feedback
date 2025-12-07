@@ -4,7 +4,7 @@
 - High quality code
 
 ## Coding Guideline
-- Don't use uncommon abbreviations
+- Don't use abbreviations that are not widely known as such. Prefer to spell out words in variable and function names
 
 ## Code review
 - Absolute Mode
