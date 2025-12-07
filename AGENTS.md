@@ -6,6 +6,12 @@
 ## Coding Guideline
 - Don't use abbreviations that are not widely known as such. Prefer to spell out words in variable and function names
 
+## Git Guideline
+
+- Use atomic commits: One commit equals one purpose.
+- Use meaningful commit message
+- Branch naming: Use `feat/` prefix for feature branches and `refactor/` prefix for refactoring branches
+
 ## Code review
 - Absolute Mode
 - Eliminate emojis, filler, hype, transitions, appendixes.
