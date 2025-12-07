@@ -1,4 +1,5 @@
 import os
+import time
 import uuid
 
 import streamlit as st
@@ -21,6 +22,15 @@ def get_session_store() -> ThreadSafeDict:
     return ThreadSafeDict()
 
 
+@st.cache_resource
+def get_cleanup_throttle() -> ThreadSafeDict:
+    """Store the last cleanup timestamp to throttle cleanup runs.
+
+    Returns a dict with key 'last_cleanup_time' holding a float timestamp.
+    """
+    return ThreadSafeDict({"last_cleanup_time": 0.0})
+
+
 def add_tracker_for_session(shared_session_id: str) -> None:
     store = get_session_store()
     if shared_session_id in store:
@@ -30,12 +40,25 @@ def add_tracker_for_session(shared_session_id: str) -> None:
     store[shared_session_id] = UserStatsTracker()
 
 
-def clean_up_empty_sessions() -> None:
+def clean_up_empty_sessions(minimum_time_between_cleanups: float = 60.0) -> None:
     """Remove sessions that have no active users.
 
+    Throttled to run at most once per minute across all sessions.
     Note: Do not remove the current user's session to avoid KeyError
     if the session was just joined.
     """
+    throttle = get_cleanup_throttle()
+    now = time.time()
+
+    if now - throttle["last_cleanup_time"] < minimum_time_between_cleanups:
+        return
+
+    throttle["last_cleanup_time"] = now
+
+    clean_up_empty_sessions_impl()
+
+
+def clean_up_empty_sessions_impl() -> None:
     store = get_session_store()
     sessions_to_delete = []
     current_session = getattr(st.session_state, "shared_session_id", None)
