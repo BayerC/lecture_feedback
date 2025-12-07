@@ -71,6 +71,3 @@ module = [
     "streamlit_autorefresh.*",
 ]
 ignore_missing_imports = true
-
-[tool.bandit]
-exclude_dirs = ["tests"]

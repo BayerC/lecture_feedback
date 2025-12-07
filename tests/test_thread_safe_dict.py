@@ -5,33 +5,33 @@ from lecture_feedback.thread_safe_dict import ThreadSafeDict
 
 def test_basic_operations() -> None:
     # Create a thread-safe dict
-    tsd = ThreadSafeDict()
+    thread_safe_dict = ThreadSafeDict()
 
     # Test setting and getting values
-    tsd["key1"] = "value1"
-    tsd["key2"] = {"nested": "dict"}
+    thread_safe_dict["key1"] = "value1"
+    thread_safe_dict["key2"] = {"nested": "dict"}
 
-    assert tsd["key1"] == "value1"
-    assert tsd["key2"]["nested"] == "dict"
+    assert thread_safe_dict["key1"] == "value1"
+    assert thread_safe_dict["key2"]["nested"] == "dict"
 
     # Test copy
-    copy_dict = tsd.copy()
+    copy_dict = thread_safe_dict.copy()
     assert copy_dict["key1"] == "value1"
     assert copy_dict["key2"]["nested"] == "dict"
 
     # Test items
-    items = list(tsd.items())
+    items = list(thread_safe_dict.items())
     assert len(items) == 2
     assert ("key1", "value1") in items
 
     # Test deletion
-    del tsd["key1"]
+    del thread_safe_dict["key1"]
     with pytest.raises(KeyError):
-        _ = tsd["key1"]
+        _ = thread_safe_dict["key1"]
 
     # Test context manager for atomic operations
-    tsd["counter"] = 0
-    with tsd:
-        current = tsd["counter"]
-        tsd["counter"] = current + 1
-    assert tsd["counter"] == 1
+    thread_safe_dict["counter"] = 0
+    with thread_safe_dict:
+        current = thread_safe_dict["counter"]
+        thread_safe_dict["counter"] = current + 1
+    assert thread_safe_dict["counter"] == 1
