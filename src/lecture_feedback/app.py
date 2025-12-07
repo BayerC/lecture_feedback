@@ -11,8 +11,6 @@ from lecture_feedback.user_stats_tracker import (
 )
 
 
-# TODO(#20): Also, should we clean up stale sessions? Maybe # noqa: FIX002
-# remove sessions with empty user_stats_tracker
 @st.cache_resource
 def get_session_store() -> ThreadSafeDict:
     """Return a shared map of shared_session_id -> UserStatsTracker.
@@ -30,6 +28,27 @@ def add_tracker_for_session(shared_session_id: str) -> None:
         raise ValueError(msg)
 
     store[shared_session_id] = UserStatsTracker()
+
+
+def clean_up_empty_sessions() -> None:
+    """Remove sessions that have no active users.
+
+    Note: Do not remove the current user's session to avoid KeyError
+    if the session was just joined.
+    """
+    store = get_session_store()
+    sessions_to_delete = []
+    current_session = getattr(st.session_state, "shared_session_id", None)
+
+    for session_id, tracker in store.items():
+        # Skip the current user's session to avoid cleaning it up mid-use
+        if session_id == current_session:
+            continue
+        if len(tracker.get_user_stats()) == 0:
+            sessions_to_delete.append(session_id)
+
+    for session_id in sessions_to_delete:
+        del store[session_id]
 
 
 def draw_debug_output(user_stats_tracker: UserStatsTracker) -> None:
@@ -150,6 +169,7 @@ def run() -> None:
 
     user_stats_tracker = get_session_store()[st.session_state.shared_session_id]
     user_stats_tracker.clean_up_outdated_users()
+    clean_up_empty_sessions()
 
     if st.session_state.user_id not in user_stats_tracker.get_user_stats():
         user_stats_tracker.add_user(st.session_state.user_id, UserStatus.UNKNOWN)
