@@ -1,4 +1,5 @@
 import time
+from collections import Counter
 from dataclasses import dataclass
 from enum import Enum
 
@@ -19,8 +20,6 @@ class UserData:
 
 
 class UserStatsTracker:
-    """Manages button counters with thread-safe operations"""
-
     USER_TIMEOUT_SECONDS = 4
 
     def __init__(self) -> None:
@@ -30,10 +29,12 @@ class UserStatsTracker:
         self._user_stats[user_id] = UserData(status=status, last_seen=time.time())
 
     def update_user_status(self, user_id: str, status: UserStatus) -> None:
-        self._user_stats[user_id].status = status
+        with self._user_stats:
+            self._user_stats[user_id].status = status
 
     def set_user_active(self, user_id: str) -> None:
-        self._user_stats[user_id].last_seen = time.time()
+        with self._user_stats:
+            self._user_stats[user_id].last_seen = time.time()
 
     def get_user_stats(self) -> dict[str, UserData]:
         return self._user_stats.copy()
@@ -47,19 +48,5 @@ class UserStatsTracker:
         for user_id in users_to_delete:
             del self._user_stats[user_id]
 
-    def get_status_counts(self) -> tuple[int, int, int, int]:
-        """Return counts of users by status"""
-        user_stats = self.get_user_stats()
-        red_count = sum(
-            1 for user in user_stats.values() if user.status == UserStatus.RED
-        )
-        yellow_count = sum(
-            1 for user in user_stats.values() if user.status == UserStatus.YELLOW
-        )
-        green_count = sum(
-            1 for user in user_stats.values() if user.status == UserStatus.GREEN
-        )
-        unknown_count = sum(
-            1 for user in user_stats.values() if user.status == UserStatus.UNKNOWN
-        )
-        return red_count, yellow_count, green_count, unknown_count
+    def get_status_counts(self) -> Counter[UserStatus]:
+        return Counter(user.status for user in self.get_user_stats().values())
