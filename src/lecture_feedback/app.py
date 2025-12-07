@@ -4,23 +4,23 @@ import uuid
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
+from lecture_feedback.thread_safe_dict import ThreadSafeDict
 from lecture_feedback.user_stats_tracker import (
     UserStatsTracker,
     UserStatus,
 )
 
 
-# TODO(#20): does this need locking for thread safety?  # noqa: FIX002
 # TODO(#20): Also, should we clean up stale sessions? Maybe # noqa: FIX002
 # remove sessions with empty user_stats_tracker
 @st.cache_resource
-def get_session_store() -> dict[str, UserStatsTracker]:
+def get_session_store() -> ThreadSafeDict:
     """Return a shared map of shared_session_id -> UserStatsTracker.
 
     This is stored as a cached resource so it's shared across reruns and
     across users in the same Streamlit process.
     """
-    return {}
+    return ThreadSafeDict()
 
 
 def add_tracker_for_session(shared_session_id: str) -> None:

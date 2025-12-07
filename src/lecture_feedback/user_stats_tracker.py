@@ -36,7 +36,8 @@ class UserStatsTracker:
         self._user_stats[user_id].last_seen = time.time()
 
     def get_user_stats(self) -> dict[str, UserData]:
-        return self._user_stats.copy()
+        # Return a plain dict view (shallow copy) of the current user stats
+        return dict(self._user_stats.copy().data)
 
     def clean_up_outdated_users(self) -> None:
         users_to_delete = []
