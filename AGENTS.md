@@ -10,7 +10,7 @@
 
 - Use atomic commits: One commit equals one purpose.
 - Use meaningful commit message
-- Branch naming: Use `feat/` prefix for feature branches and `refactor/` prefix for refactoring branches
+- Branch naming: Use `feat/` prefix for feature branches, `refactor/` prefix for refactoring branches, `docs/` prefix for documentation changes, `fix/` prefix for bug fixes, and `test/` prefix for test additions or modifications
 
 ## Code review
 - Absolute Mode
