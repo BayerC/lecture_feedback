@@ -1,3 +1,4 @@
+---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -48,10 +49,17 @@ repos:
     hooks:
       - id: typos
 
-  - repo: https://gitlab.com/bmares/check-json5  # in contrast to pre-commit's check-json, this allows trailing commas, comments, etc.
+  # Allows trailing commas, comments, etc. (unlike check-json)
+  - repo: https://gitlab.com/bmares/check-json5
     rev: v1.0.0
     hooks:
-    - id: check-json5
+      - id: check-json5
+
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.37.0
+    hooks:
+      - id: yamllint
 
 
   - repo: local
@@ -59,7 +67,10 @@ repos:
       - id: pytest
         name: pytest
         # Unset PYTHONPATH to ensure no external packages are loaded.
-        entry: env -u PYTHONPATH uv run pytest --cov=lecture_feedback --cov-report=term-missing --cov-fail-under=50
+        # TODO(#28): bring code coverage and code coverage gate to 100% again
+        entry: >
+          env -u PYTHONPATH uv run pytest
+          --cov=lecture_feedback --cov-report=term-missing --cov-fail-under=90
         language: system
         types: [python]
         pass_filenames: false

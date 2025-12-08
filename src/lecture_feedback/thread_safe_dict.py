@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import threading
 from collections import UserDict
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Self
 
 if TYPE_CHECKING:
     from collections.abc import ItemsView, Iterator
@@ -45,3 +45,10 @@ class ThreadSafeDict(UserDict[str, Any]):
             # Return a view over a shallow copy of the underlying dict so
             # callers don't accidentally iterate over a mutating mapping.
             return self.data.copy().items()
+
+    def __enter__(self) -> Self:
+        self._lock.acquire()
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        self._lock.release()
