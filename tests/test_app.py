@@ -14,7 +14,7 @@ def test_app_initial_load() -> None:
     app.run()
 
     new_session_button = next(
-        btn for btn in app.button if "Start New Session" in btn.label
+        btn for btn in app.button if "Create Session" in btn.label
     )
     new_session_button.click()
     app.run()

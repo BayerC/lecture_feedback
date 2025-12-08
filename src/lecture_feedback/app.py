@@ -157,18 +157,20 @@ def show_session_selection_screen() -> None:
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a session to share feedback.")
 
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.columns(2, gap="medium")
 
     with col1:
-        if st.button("Start New Session", use_container_width=True):
+        st.subheader("Start New Session")
+        if st.button("Create Session", use_container_width=True, key="start_session"):
             new_id = str(uuid.uuid4())
             add_tracker_for_session(new_id)
             st.session_state.shared_session_id = new_id
             st.rerun()
 
     with col2:
-        join_id = st.text_input("Join Session by ID")
-        if st.button("Join Session", use_container_width=True):
+        st.subheader("Join Existing Session")
+        join_id = st.text_input("Session ID", key="join_session_id")
+        if st.button("Join Session", use_container_width=True, key="join_session"):
             if not join_id:
                 st.warning("Please enter a Session ID to join.")
             else:
