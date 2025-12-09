@@ -66,7 +66,7 @@ def clean_up_empty_sessions_impl() -> None:
         # Skip the current user's session to avoid cleaning it up mid-use
         if session_id == current_session:
             continue
-        if len(tracker.get_user_stats()) == 0:
+        if len(tracker.get_user_stats_copy()) == 0:
             sessions_to_delete.append(session_id)
 
     for session_id in sessions_to_delete:
@@ -75,11 +75,11 @@ def clean_up_empty_sessions_impl() -> None:
 
 def draw_debug_output(user_stats_tracker: UserStatsTracker) -> None:
     st.title("Debug Output:")
-    user_stats = user_stats_tracker.get_user_stats()
+    user_stats = user_stats_tracker.get_user_stats_copy()
     current_status = user_stats[st.session_state.user_id].status
     st.write(f"current User ID: {st.session_state.user_id}, Status: {current_status}")
-    st.write(f"Current active users: {len(user_stats_tracker.get_user_stats())}")
-    for user_id, user_data in user_stats_tracker.get_user_stats().items():
+    st.write(f"Current active users: {len(user_stats_tracker.get_user_stats_copy())}")
+    for user_id, user_data in user_stats_tracker.get_user_stats_copy().items():
         st.write(f"- active user ID: {user_id}, Status: {user_data.status}")
 
 
@@ -108,10 +108,10 @@ def create_button(
 def draw(user_stats_tracker: UserStatsTracker) -> None:
     st.title("Lecture Feedback App")
     st.write(f"Session ID: {st.session_state.shared_session_id}")
-    st.write(f"Num Users: {len(user_stats_tracker.get_user_stats())}")
+    st.write(f"Num Users: {len(user_stats_tracker.get_user_stats_copy())}")
 
     # Get current user status for highlighting
-    user_stats = user_stats_tracker.get_user_stats()
+    user_stats = user_stats_tracker.get_user_stats_copy()
     current_status = user_stats[st.session_state.user_id].status
 
     # Create large buttons that fill the screen width
@@ -193,7 +193,7 @@ def run() -> None:
     user_stats_tracker.clean_up_outdated_users()
     clean_up_empty_sessions()
 
-    if st.session_state.user_id not in user_stats_tracker.get_user_stats():
+    if st.session_state.user_id not in user_stats_tracker.get_user_stats_copy():
         user_stats_tracker.add_user(st.session_state.user_id, UserStatus.UNKNOWN)
 
     user_stats_tracker.set_user_active(st.session_state.user_id)
