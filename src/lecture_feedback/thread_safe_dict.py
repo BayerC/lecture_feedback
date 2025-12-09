@@ -13,7 +13,7 @@ class ThreadSafeDict(UserDict[str, Any]):
         self._lock = threading.RLock()
         super().__init__(*args, **kwargs)
 
-    def __getitem__(self, key: str) -> Any:  # noqa: ANN401
+    def __getitem__(self, key: Any) -> Any:  # noqa: ANN401
         with self._lock:
             return super().__getitem__(key)
 
@@ -27,7 +27,7 @@ class ThreadSafeDict(UserDict[str, Any]):
 
     def __iter__(self) -> Iterator[str]:
         with self._lock:
-            return iter(list(self.data))  # safe copy
+            return iter(list(self.data))  # safe copy, in contrast to normal dict
 
     def copy(self) -> ThreadSafeDict:
         """Return a shallow copy as a ThreadSafeDict instance."""
