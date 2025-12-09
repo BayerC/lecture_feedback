@@ -14,7 +14,7 @@ def test_app_initial_load() -> None:
     app.run()
 
     new_session_button = next(
-        btn for btn in app.button if "Create Session" in btn.label
+        button for button in app.button if "Create Session" in button.label
     )
     new_session_button.click()
     app.run()
@@ -25,18 +25,20 @@ def test_app_initial_load() -> None:
     assert len(app.button) >= 3
     assert "user_id" in app.session_state
 
-    red_button = next(btn for btn in app.button if UserStatus.RED.value in btn.label)
+    red_button = next(
+        button for button in app.button if UserStatus.RED.value in button.label
+    )
     red_button.click()
     app.run()
 
     yellow_button = next(
-        btn for btn in app.button if UserStatus.YELLOW.value in btn.label
+        button for button in app.button if UserStatus.YELLOW.value in button.label
     )
     yellow_button.click()
     app.run()
 
     green_button = next(
-        btn for btn in app.button if UserStatus.GREEN.value in btn.label
+        button for button in app.button if UserStatus.GREEN.value in button.label
     )
     green_button.click()
     app.run()
