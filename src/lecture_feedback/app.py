@@ -1,5 +1,7 @@
+import functools
 import time
 import uuid
+from collections.abc import Callable
 
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
@@ -34,25 +36,27 @@ def add_tracker_for_session(shared_session_id: str) -> None:
     store[shared_session_id] = UserStatsTracker()
 
 
-def clean_up_empty_sessions(minimum_time_between_cleanups: float = 60.0) -> None:
-    """Remove sessions that have no active users.
+def throttled_invocation(minimum_time_between_executions: float = 60.0) -> Callable:
+    def decorator(function: Callable) -> Callable:
+        @functools.wraps(function)
+        def wrapper(*args: object, **kwargs: object) -> None:
+            throttle = get_cleanup_throttle()
+            now = time.time()
 
-    Throttled to run at most once per minute across all sessions.
-    Note: Do not remove the current user's session to avoid KeyError
-    if the session was just joined.
-    """
-    throttle = get_cleanup_throttle()
-    now = time.time()
+            if now - throttle["last_cleanup_time"] < minimum_time_between_executions:
+                return
 
-    if now - throttle["last_cleanup_time"] < minimum_time_between_cleanups:
-        return
+            throttle["last_cleanup_time"] = now
 
-    throttle["last_cleanup_time"] = now
+            function(*args, **kwargs)
 
-    clean_up_empty_sessions_impl()
+        return wrapper
+
+    return decorator
 
 
-def clean_up_empty_sessions_impl() -> None:
+@throttled_invocation()
+def clean_up_empty_sessions() -> None:
     store = get_session_store()
     sessions_to_delete = []
     current_session = getattr(st.session_state, "shared_session_id", None)
