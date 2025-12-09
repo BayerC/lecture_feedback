@@ -13,11 +13,6 @@ from lecture_feedback.user_stats_tracker import (
 
 @st.cache_resource
 def get_session_store() -> ThreadSafeDict:
-    """Return a shared map of shared_session_id -> UserStatsTracker.
-
-    This is stored as a cached resource so it's shared across reruns and
-    across users in the same Streamlit process.
-    """
     return ThreadSafeDict()
 
 
