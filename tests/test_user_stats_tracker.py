@@ -21,7 +21,7 @@ def test_user_stats_tracker(monkeypatch: pytest.MonkeyPatch) -> None:
     tracker.update_user_status("user1", UserStatus.RED)
     tracker.set_user_active("user2")
 
-    stats = tracker.get_user_stats()
+    stats = tracker.get_user_stats_copy()
     assert stats["user1"].status == UserStatus.RED
     assert stats["user2"].status == UserStatus.YELLOW
     assert stats["user3"].status == UserStatus.RED
@@ -33,14 +33,16 @@ def test_user_stats_tracker(monkeypatch: pytest.MonkeyPatch) -> None:
     assert counts[UserStatus.UNKNOWN] == 0
 
     tracker.clean_up_outdated_users()
-    assert len(tracker.get_user_stats()) == 3
+    assert len(tracker.get_user_stats_copy()) == 3
     fake_time += 2.5
     tracker.clean_up_outdated_users()
-    assert len(tracker.get_user_stats()) == 2
+    assert len(tracker.get_user_stats_copy()) == 2
     fake_time += 1
     tracker.clean_up_outdated_users()
-    assert len(tracker.get_user_stats()) == 1
-    assert "user2" in tracker.get_user_stats()  # since this user was set active later
+    assert len(tracker.get_user_stats_copy()) == 1
+    assert (
+        "user2" in tracker.get_user_stats_copy()
+    )  # since this user was set active later
     fake_time += 1
     tracker.clean_up_outdated_users()
-    assert len(tracker.get_user_stats()) == 0
+    assert len(tracker.get_user_stats_copy()) == 0
