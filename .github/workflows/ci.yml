@@ -1,5 +1,5 @@
 ---
-name: CI and deployment
+name: CI
 
 on:
   push:
