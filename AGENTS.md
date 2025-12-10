@@ -13,7 +13,7 @@
 - Branch naming: Use `feat/` prefix for feature branches, `refactor/` prefix for refactoring branches, `docs/` prefix for documentation changes, `fix/` prefix for bug fixes, and `test/` prefix for test additions or modifications
 
 ## Documentation
-- Link files in markdown using `[text](path/to/file)` syntax
+- Whenever mentioning repository-local files in markdown, link to them using a local link (using `[text](path/to/file)`)
 - Avoid redundant comments that merely restate function names (e.g., `def get_data()` with docstring `"""Gets data"""`)
 
 ## Code review
