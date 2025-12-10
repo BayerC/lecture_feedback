@@ -6,3 +6,4 @@
 - Codecov is free for open source projects
 - Streamlit has a [nice testing framework](https://docs.streamlit.io/develop/api-reference/app-testing)
 - [There are special GitHub action triggers for fork-based workflows](https://github.com/amannn/action-semantic-pull-request?tab=readme-ov-file#event-triggers)
+- GitHub requires explicit configuration of required status checks: Settings → Branches → Branch protection rules → Require status checks to pass before merging
