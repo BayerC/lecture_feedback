@@ -22,10 +22,7 @@ def show_session_selection_screen(
         st.subheader("Start New Session")
         if st.button("Create Session", use_container_width=True, key="start_session"):
             session_id = sessions_tracker.create_session()
-            user_session.join_session(session_id)
-            sessions_tracker.add_user_to_session(
-                session_id, user_session.get_user_id(),
-            )
+            sessions_tracker.join_session(user_session, session_id)
             st.rerun()
 
     with col2:
@@ -34,14 +31,12 @@ def show_session_selection_screen(
         if st.button("Join Session", use_container_width=True, key="join_session"):
             if not join_id:
                 st.warning("Please enter a Session ID to join.")
-            elif sessions_tracker.session_exists(join_id):
-                user_session.join_session(join_id)
-                sessions_tracker.add_user_to_session(
-                    join_id, user_session.get_user_id(),
-                )
-                st.rerun()
             else:
-                st.error("Session ID not found")
+                try:
+                    sessions_tracker.join_session(user_session, join_id)
+                    st.rerun()
+                except ValueError:
+                    st.error("Session ID not found")
 
 
 def show_active_session(
