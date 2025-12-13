@@ -26,12 +26,12 @@ class RoomManager:
         return self.rooms[room_id]
 
     def add_user_to_room(self, room_id: str, user_id: str) -> None:
-        tracker = self.get_user_stats_tracker(room_id)
-        tracker.add_user(user_id)
+        user_stats_tracker = self.get_user_stats_tracker(room_id)
+        user_stats_tracker.add_user(user_id)
 
     def join_room(self, user_session: SessionManager, room_id: str) -> None:
-        if user_session.is_in_session:
-            msg = "User is already in a session"
+        if user_session.is_in_room:
+            msg = "User is already in a room"
             raise RuntimeError(msg)
 
         if not self.room_exists(room_id):
@@ -41,4 +41,4 @@ class RoomManager:
         user_id = user_session.user_id
         self.add_user_to_room(room_id, user_id)
 
-        user_session.join_session_internal(room_id)
+        user_session.join_room_internal(room_id)

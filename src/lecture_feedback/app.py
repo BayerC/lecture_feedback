@@ -44,7 +44,7 @@ def show_active_room(
     room_manager: RoomManager,
     session_manager: SessionManager,
 ) -> None:
-    room_id = session_manager.joined_session_id
+    room_id = session_manager.joined_room_id
     st.title("Active Room")
     st.write(f"**Room ID:** `{room_id}`")
     st.divider()
@@ -62,7 +62,7 @@ def run() -> None:
     room_manager = get_room_manager()
     session_manager = SessionManager()
 
-    if not session_manager.is_in_session:
+    if not session_manager.is_in_room:
         show_room_selection_screen(room_manager, session_manager)
     else:
         show_active_room(room_manager, session_manager)
