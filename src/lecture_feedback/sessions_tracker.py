@@ -1,7 +1,7 @@
 import uuid
 
+from lecture_feedback.session_manager import SessionManager
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
-from lecture_feedback.user_session import UserSession
 from lecture_feedback.user_stats_tracker import UserStatsTracker
 
 
@@ -29,8 +29,8 @@ class SessionsTracker:
         tracker = self.get_user_stats_tracker(session_id)
         tracker.add_user(user_id)
 
-    def join_session(self, user_session: UserSession, session_id: str) -> None:
-        if user_session.is_in_session():
+    def join_session(self, user_session: SessionManager, session_id: str) -> None:
+        if user_session.is_in_session:
             msg = "User is already in a session"
             raise RuntimeError(msg)
 
@@ -38,7 +38,7 @@ class SessionsTracker:
             msg = f"Session {session_id} does not exist"
             raise ValueError(msg)
 
-        user_id = user_session.get_user_id()
+        user_id = user_session.user_id
         self.add_user_to_session(session_id, user_id)
 
         user_session.join_session_internal(session_id)

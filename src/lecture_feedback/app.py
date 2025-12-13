@@ -1,8 +1,8 @@
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
+from lecture_feedback.session_manager import SessionManager
 from lecture_feedback.sessions_tracker import SessionsTracker
-from lecture_feedback.user_session import UserSession
 
 
 @st.cache_resource
@@ -11,7 +11,8 @@ def get_sessions_tracker() -> SessionsTracker:
 
 
 def show_session_selection_screen(
-    sessions_tracker: SessionsTracker, user_session: UserSession,
+    sessions_tracker: SessionsTracker,
+    user_session: SessionManager,
 ) -> None:
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a session to share feedback.")
@@ -40,9 +41,10 @@ def show_session_selection_screen(
 
 
 def show_active_session(
-    sessions_tracker: SessionsTracker, user_session: UserSession,
+    sessions_tracker: SessionsTracker,
+    user_session: SessionManager,
 ) -> None:
-    session_id = user_session.get_session_id()
+    session_id = user_session.joined_session_id
     st.title("Active Session")
     st.write(f"**Session ID:** `{session_id}`")
     st.divider()
@@ -58,9 +60,9 @@ def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
     sessions_tracker = get_sessions_tracker()
-    user_session = UserSession()
+    user_session = SessionManager()
 
-    if not user_session.is_in_session():
+    if not user_session.is_in_session:
         show_session_selection_screen(sessions_tracker, user_session)
     else:
         show_active_session(sessions_tracker, user_session)
