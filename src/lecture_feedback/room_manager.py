@@ -9,7 +9,7 @@ class RoomManager:
     """Global room manager for all rooms and users."""
 
     def __init__(self) -> None:
-        self.rooms = ThreadSafeDict()
+        self.rooms: ThreadSafeDict[UserStatsTracker] = ThreadSafeDict()
 
     def create_room(self) -> str:
         room_id = str(uuid.uuid4())

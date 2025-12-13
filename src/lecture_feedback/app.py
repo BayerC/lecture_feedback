@@ -45,6 +45,10 @@ def show_active_room(
     session_manager: SessionManager,
 ) -> None:
     room_id = session_manager.joined_room_id
+    if room_id is None:
+        msg = "User is not in a room"
+        raise RuntimeError(msg)
+
     st.title("Active Room")
     st.write(f"**Room ID:** `{room_id}`")
     st.divider()
