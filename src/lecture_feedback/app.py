@@ -12,7 +12,7 @@ def get_sessions_tracker() -> SessionsTracker:
 
 def show_session_selection_screen(
     sessions_tracker: SessionsTracker,
-    user_session: SessionManager,
+    session_manager: SessionManager,
 ) -> None:
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a session to share feedback.")
@@ -23,7 +23,7 @@ def show_session_selection_screen(
         st.subheader("Start New Session")
         if st.button("Create Session", use_container_width=True, key="start_session"):
             session_id = sessions_tracker.create_session()
-            sessions_tracker.join_session(user_session, session_id)
+            sessions_tracker.join_session(session_manager, session_id)
             st.rerun()
 
     with col2:
@@ -34,7 +34,7 @@ def show_session_selection_screen(
                 st.warning("Please enter a Session ID to join.")
             else:
                 try:
-                    sessions_tracker.join_session(user_session, join_id)
+                    sessions_tracker.join_session(session_manager, join_id)
                     st.rerun()
                 except ValueError:
                     st.error("Session ID not found")
@@ -42,9 +42,9 @@ def show_session_selection_screen(
 
 def show_active_session(
     sessions_tracker: SessionsTracker,
-    user_session: SessionManager,
+    session_manager: SessionManager,
 ) -> None:
-    session_id = user_session.joined_session_id
+    session_id = session_manager.joined_session_id
     st.title("Active Session")
     st.write(f"**Session ID:** `{session_id}`")
     st.divider()
@@ -60,9 +60,9 @@ def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
     sessions_tracker = get_sessions_tracker()
-    user_session = SessionManager()
+    session_manager = SessionManager()
 
-    if not user_session.is_in_session:
-        show_session_selection_screen(sessions_tracker, user_session)
+    if not session_manager.is_in_session:
+        show_session_selection_screen(sessions_tracker, session_manager)
     else:
-        show_active_session(sessions_tracker, user_session)
+        show_active_session(sessions_tracker, session_manager)
