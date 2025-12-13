@@ -1,200 +1,72 @@
-import functools
-import time
-import uuid
-from collections.abc import Callable
-
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
-from lecture_feedback.thread_safe_dict import ThreadSafeDict
-from lecture_feedback.user_stats_tracker import (
-    UserStatsTracker,
-    UserStatus,
-)
+from lecture_feedback.room_manager import RoomManager
+from lecture_feedback.session_manager import SessionManager
 
 
 @st.cache_resource
-def get_session_store() -> ThreadSafeDict:
-    return ThreadSafeDict()
+def get_room_manager() -> RoomManager:
+    return RoomManager()
 
 
-@st.cache_resource
-def get_cleanup_throttle() -> ThreadSafeDict:
-    """Store the last cleanup timestamp to throttle cleanup runs.
-
-    Returns a dict with key 'last_cleanup_time' holding a float timestamp.
-    """
-    return ThreadSafeDict({"last_cleanup_time": 0.0})
-
-
-def add_tracker_for_session(shared_session_id: str) -> None:
-    store = get_session_store()
-    if shared_session_id in store:
-        msg = f"Session ID '{shared_session_id}' already exists"
-        raise ValueError(msg)
-
-    store[shared_session_id] = UserStatsTracker()
-
-
-def throttled_invocation(minimum_time_between_executions: float = 60.0) -> Callable:
-    def decorator(function: Callable) -> Callable:
-        @functools.wraps(function)
-        def wrapper(*args: object, **kwargs: object) -> None:
-            throttle = get_cleanup_throttle()
-            now = time.time()
-
-            if now - throttle["last_cleanup_time"] < minimum_time_between_executions:
-                return
-
-            throttle["last_cleanup_time"] = now
-
-            function(*args, **kwargs)
-
-        return wrapper
-
-    return decorator
-
-
-@throttled_invocation()
-def clean_up_empty_sessions() -> None:
-    store = get_session_store()
-    sessions_to_delete = []
-    current_session = getattr(st.session_state, "shared_session_id", None)
-
-    for session_id, tracker in store.items():
-        # Skip the current user's session to avoid cleaning it up mid-use
-        if session_id == current_session:
-            continue
-        if len(tracker.get_user_stats_copy()) == 0:
-            sessions_to_delete.append(session_id)
-
-    for session_id in sessions_to_delete:
-        del store[session_id]
-
-
-def draw_debug_output(user_stats_tracker: UserStatsTracker) -> None:
-    st.title("Debug Output:")
-    user_stats = user_stats_tracker.get_user_stats_copy()
-    current_status = user_stats[st.session_state.user_id].status
-    st.write(f"current User ID: {st.session_state.user_id}, Status: {current_status}")
-    st.write(f"Current active users: {len(user_stats_tracker.get_user_stats_copy())}")
-    for user_id, user_data in user_stats_tracker.get_user_stats_copy().items():
-        st.write(f"- active user ID: {user_id}, Status: {user_data.status}")
-
-
-def create_button(
-    current_status: UserStatus,
-    button_status: UserStatus,
-    user_stats_tracker: UserStatsTracker,
+def show_room_selection_screen(
+    room_manager: RoomManager,
+    session_manager: SessionManager,
 ) -> None:
-    if current_status == button_status:
-        st.button(
-            button_status.value,
-            use_container_width=True,
-            type="primary",  # Highlight button if selected
-        )
-    elif st.button(
-        button_status.value,
-        use_container_width=True,
-    ):
-        user_stats_tracker.update_user_status(
-            st.session_state.user_id,
-            button_status,
-        )
-        st.rerun()
-
-
-def draw(user_stats_tracker: UserStatsTracker) -> None:
-    st.title("Lecture Feedback App")
-    st.write(f"Session ID: {st.session_state.shared_session_id}")
-    st.write(f"Num Users: {len(user_stats_tracker.get_user_stats_copy())}")
-
-    # Get current user status for highlighting
-    user_stats = user_stats_tracker.get_user_stats_copy()
-    current_status = user_stats[st.session_state.user_id].status
-
-    # Create large buttons that fill the screen width
-    col1, col2, col3 = st.columns(3, gap="small")
-
-    with col1:
-        create_button(current_status, UserStatus.RED, user_stats_tracker)
-
-    with col2:
-        create_button(current_status, UserStatus.YELLOW, user_stats_tracker)
-
-    with col3:
-        create_button(current_status, UserStatus.GREEN, user_stats_tracker)
-
-    # Add visual indicator for current selection
-    st.markdown("---")
-    if current_status == UserStatus.RED:
-        st.error("🔴 **Currently selected: Red** - You need help")
-    elif current_status == UserStatus.YELLOW:
-        st.warning("🟡 **Currently selected: Yellow** - You're somewhat confused")
-    elif current_status == UserStatus.GREEN:
-        st.success("🟢 **Currently selected: Green** - You understand")
-    else:
-        st.info("⚪ **No selection** - Please choose your feedback")
-
-    # show accumulated color stats
-    st.title("Accumulated Color Stats")
-
-    counts = user_stats_tracker.get_status_counts()
-
-    st.write(f"Red: {counts[UserStatus.RED]}")
-    st.write(f"Yellow: {counts[UserStatus.YELLOW]}")
-    st.write(f"Green: {counts[UserStatus.GREEN]}")
-    st.write(f"Unknown: {counts[UserStatus.UNKNOWN]}")
-
-    draw_debug_output(user_stats_tracker)
-
-
-def show_session_selection_screen() -> None:
     st.title("Welcome to Lecture Feedback App")
-    st.write("Host or join a session to share feedback.")
+    st.write("Host or join a room to share feedback.")
 
     col1, col2 = st.columns(2, gap="medium")
 
     with col1:
-        st.subheader("Start New Session")
-        if st.button("Create Session", use_container_width=True, key="start_session"):
-            new_id = str(uuid.uuid4())
-            add_tracker_for_session(new_id)
-            st.session_state.shared_session_id = new_id
+        st.subheader("Start New Room")
+        if st.button("Create Room", use_container_width=True, key="start_room"):
+            room_id = room_manager.create_room()
+            room_manager.join_room(session_manager, room_id)
             st.rerun()
 
     with col2:
-        st.subheader("Join Existing Session")
-        join_id = st.text_input("Session ID", key="join_session_id")
-        if st.button("Join Session", use_container_width=True, key="join_session"):
+        st.subheader("Join Existing Room")
+        join_id = st.text_input("Room ID", key="join_room_id")
+        if st.button("Join Room", use_container_width=True, key="join_room"):
             if not join_id:
-                st.warning("Please enter a Session ID to join.")
+                st.warning("Please enter a Room ID to join.")
             else:
-                store = get_session_store()
-                if join_id in store:
-                    st.session_state.shared_session_id = join_id
+                try:
+                    room_manager.join_room(session_manager, join_id)
                     st.rerun()
-                else:
-                    st.error("Session ID not found")
+                except ValueError:
+                    st.error("Room ID not found")
+
+
+def show_active_room(
+    room_manager: RoomManager,
+    session_manager: SessionManager,
+) -> None:
+    room_id = session_manager.joined_room_id
+    if room_id is None:
+        msg = "User is not in a room"
+        raise RuntimeError(msg)
+
+    st.title("Active Room")
+    st.write(f"**Room ID:** `{room_id}`")
+    st.divider()
+
+    user_stats_tracker = room_manager.get_user_stats_tracker(room_id)
+    user_stats = user_stats_tracker.get_user_stats_copy()
+    st.subheader(f"{len(user_stats)} users joined")
+    for user_id, user_data in user_stats.items():
+        st.write(f"• User ID: `{user_id}` - Status: {user_data.status.value}")
 
 
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    if "user_id" not in st.session_state:
-        st.session_state.user_id = str(uuid.uuid4())
+    room_manager = get_room_manager()
+    session_manager = SessionManager()
 
-    if "shared_session_id" not in st.session_state:
-        show_session_selection_screen()
-        return
-
-    user_stats_tracker = get_session_store()[st.session_state.shared_session_id]
-    user_stats_tracker.clean_up_outdated_users()
-    clean_up_empty_sessions()
-
-    if st.session_state.user_id not in user_stats_tracker.get_user_stats_copy():
-        user_stats_tracker.add_user(st.session_state.user_id, UserStatus.UNKNOWN)
-
-    user_stats_tracker.set_user_active(st.session_state.user_id)
-
-    draw(user_stats_tracker)
+    if not session_manager.is_in_room:
+        show_room_selection_screen(room_manager, session_manager)
+    else:
+        show_active_room(room_manager, session_manager)
