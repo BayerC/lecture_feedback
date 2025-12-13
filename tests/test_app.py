@@ -1,7 +1,5 @@
 from streamlit.testing.v1 import AppTest
 
-from lecture_feedback.user_stats_tracker import UserStatus
-
 
 def run_wrapper() -> None:
     from lecture_feedback.app import run  # noqa: PLC0415
@@ -9,36 +7,30 @@ def run_wrapper() -> None:
     run()
 
 
+def is_on_room_selection_screen(app: AppTest) -> bool:
+    return (
+        len(app.title) == 1 and app.title[0].value == "Welcome to Lecture Feedback App"
+    )
+
+
+def is_on_active_room_screen(app: AppTest) -> bool:
+    return len(app.title) == 1 and app.title[0].value == "Active Room"
+
+
 def test_app_initial_load() -> None:
     app = AppTest.from_function(run_wrapper)
     app.run()
 
-    new_session_button = next(
-        button for button in app.button if "Create Session" in button.label
-    )
-    new_session_button.click()
-    app.run()
+    assert is_on_room_selection_screen(app)
 
-    assert len(app.title) > 0
-    assert "Lecture Feedback App" in app.title[0].value
+    app.button(key="join_room").click().run()
+    assert is_on_room_selection_screen(app)
 
-    assert len(app.button) >= 3
-    assert "user_id" in app.session_state
+    app.text_input(key="join_room_id").set_value("1337").run()
+    app.button(key="join_room").click().run()
+    assert len(app.error) == 1
+    assert app.error[0].value == "Room ID not found"
+    assert is_on_room_selection_screen(app)
 
-    red_button = next(
-        button for button in app.button if UserStatus.RED.value in button.label
-    )
-    red_button.click()
-    app.run()
-
-    yellow_button = next(
-        button for button in app.button if UserStatus.YELLOW.value in button.label
-    )
-    yellow_button.click()
-    app.run()
-
-    green_button = next(
-        button for button in app.button if UserStatus.GREEN.value in button.label
-    )
-    green_button.click()
-    app.run()
+    app.button(key="start_room").click().run()
+    assert is_on_active_room_screen(app)

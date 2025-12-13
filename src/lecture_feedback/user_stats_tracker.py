@@ -26,6 +26,9 @@ class UserStatsTracker:
         self._user_stats: ThreadSafeDict = ThreadSafeDict()
 
     def add_user(self, user_id: str, status: UserStatus = UserStatus.UNKNOWN) -> None:
+        if user_id in self._user_stats:
+            msg = f"User {user_id} already exists"
+            raise ValueError(msg)
         self._user_stats[user_id] = UserData(status=status, last_seen=time.time())
 
     def update_user_status(self, user_id: str, status: UserStatus) -> None:
