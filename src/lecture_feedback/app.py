@@ -1,57 +1,57 @@
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
+from lecture_feedback.room_manager import RoomManager
 from lecture_feedback.session_manager import SessionManager
-from lecture_feedback.sessions_tracker import SessionsTracker
 
 
 @st.cache_resource
-def get_sessions_tracker() -> SessionsTracker:
-    return SessionsTracker()
+def get_room_manager() -> RoomManager:
+    return RoomManager()
 
 
-def show_session_selection_screen(
-    sessions_tracker: SessionsTracker,
+def show_room_selection_screen(
+    room_manager: RoomManager,
     session_manager: SessionManager,
 ) -> None:
     st.title("Welcome to Lecture Feedback App")
-    st.write("Host or join a session to share feedback.")
+    st.write("Host or join a room to share feedback.")
 
     col1, col2 = st.columns(2, gap="medium")
 
     with col1:
-        st.subheader("Start New Session")
-        if st.button("Create Session", use_container_width=True, key="start_session"):
-            session_id = sessions_tracker.create_session()
-            sessions_tracker.join_session(session_manager, session_id)
+        st.subheader("Start New Room")
+        if st.button("Create Room", use_container_width=True, key="start_room"):
+            room_id = room_manager.create_room()
+            room_manager.join_room(session_manager, room_id)
             st.rerun()
 
     with col2:
-        st.subheader("Join Existing Session")
-        join_id = st.text_input("Session ID", key="join_session_id")
-        if st.button("Join Session", use_container_width=True, key="join_session"):
+        st.subheader("Join Existing Room")
+        join_id = st.text_input("Room ID", key="join_room_id")
+        if st.button("Join Room", use_container_width=True, key="join_room"):
             if not join_id:
-                st.warning("Please enter a Session ID to join.")
+                st.warning("Please enter a Room ID to join.")
             else:
                 try:
-                    sessions_tracker.join_session(session_manager, join_id)
+                    room_manager.join_room(session_manager, join_id)
                     st.rerun()
                 except ValueError:
-                    st.error("Session ID not found")
+                    st.error("Room ID not found")
 
 
-def show_active_session(
-    sessions_tracker: SessionsTracker,
+def show_active_room(
+    room_manager: RoomManager,
     session_manager: SessionManager,
 ) -> None:
-    session_id = session_manager.joined_session_id
-    st.title("Active Session")
-    st.write(f"**Session ID:** `{session_id}`")
+    room_id = session_manager.joined_session_id
+    st.title("Active Room")
+    st.write(f"**Room ID:** `{room_id}`")
     st.divider()
 
-    user_stats_tracker = sessions_tracker.get_user_stats_tracker(session_id)
+    user_stats_tracker = room_manager.get_user_stats_tracker(room_id)
     user_stats = user_stats_tracker.get_user_stats_copy()
-    st.subheader(f"Joined Users ({len(user_stats)})")
+    st.subheader(f"{len(user_stats)} users joined")
     for user_id, user_data in user_stats.items():
         st.write(f"• User ID: `{user_id}` - Status: {user_data.status.value}")
 
@@ -59,10 +59,10 @@ def show_active_session(
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    sessions_tracker = get_sessions_tracker()
+    room_manager = get_room_manager()
     session_manager = SessionManager()
 
     if not session_manager.is_in_session:
-        show_session_selection_screen(sessions_tracker, session_manager)
+        show_room_selection_screen(room_manager, session_manager)
     else:
-        show_active_session(sessions_tracker, session_manager)
+        show_active_room(room_manager, session_manager)
