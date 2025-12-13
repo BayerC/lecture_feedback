@@ -27,6 +27,5 @@ class SessionManager:
     def is_in_room(self) -> bool:
         return self.joined_room_id is not None
 
-    def join_room_internal(self, room_id: str) -> None:
-        """Do not call this method directly, use RoomManager.join_room()."""
+    def join_room(self, room_id: str) -> None:
         st.session_state.joined_room_id = room_id

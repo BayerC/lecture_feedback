@@ -41,4 +41,4 @@ class RoomManager:
         user_id = user_session.user_id
         self.add_user_to_room(room_id, user_id)
 
-        user_session.join_room_internal(room_id)
+        user_session.join_room(room_id)
