@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import threading
 from collections import UserDict
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, Self
 
 if TYPE_CHECKING:
     from collections.abc import ItemsView, Iterator
-
-T = TypeVar("T")
 
 
 class ThreadSafeDict[T](UserDict[str, T]):
@@ -31,7 +29,7 @@ class ThreadSafeDict[T](UserDict[str, T]):
         with self._lock:
             return iter(list(self.data))  # safe copy, in contrast to normal dict
 
-    def copy(self) -> ThreadSafeDict:
+    def copy(self) -> ThreadSafeDict[T]:
         """Return a shallow copy as a ThreadSafeDict instance."""
         with self._lock:
             return ThreadSafeDict(self.data.copy())
