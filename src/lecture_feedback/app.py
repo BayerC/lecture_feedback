@@ -1,19 +1,10 @@
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
-from lecture_feedback.room_manager import RoomManager
-from lecture_feedback.session_manager import SessionManager
+from lecture_feedback.state_facade import StateFacade
 
 
-@st.cache_resource
-def get_room_manager() -> RoomManager:
-    return RoomManager()
-
-
-def show_room_selection_screen(
-    room_manager: RoomManager,
-    session_manager: SessionManager,
-) -> None:
+def show_room_selection_screen(state_facade: StateFacade) -> None:
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a room to share feedback.")
 
@@ -22,8 +13,7 @@ def show_room_selection_screen(
     with col1:
         st.subheader("Start New Room")
         if st.button("Create Room", use_container_width=True, key="start_room"):
-            room_id = room_manager.create_room()
-            room_manager.join_room(session_manager, room_id)
+            state_facade.create_and_join_room()
             st.rerun()
 
     with col2:
@@ -34,17 +24,14 @@ def show_room_selection_screen(
                 st.warning("Please enter a Room ID to join.")
             else:
                 try:
-                    room_manager.join_room(session_manager, join_id)
+                    state_facade.join_room(join_id)
                     st.rerun()
                 except ValueError:
                     st.error("Room ID not found")
 
 
-def show_active_room(
-    room_manager: RoomManager,
-    session_manager: SessionManager,
-) -> None:
-    room_id = session_manager.joined_room_id
+def show_active_room(state_facade: StateFacade) -> None:
+    room_id = state_facade.current_room_id
     if room_id is None:
         msg = "User is not in a room"
         raise RuntimeError(msg)
@@ -53,7 +40,7 @@ def show_active_room(
     st.write(f"**Room ID:** `{room_id}`")
     st.divider()
 
-    user_stats_tracker = room_manager.get_user_stats_tracker(room_id)
+    user_stats_tracker = state_facade.get_user_stats_tracker(room_id)
     user_stats = user_stats_tracker.get_user_stats_copy()
     st.subheader(f"{len(user_stats)} users joined")
     for user_id, user_data in user_stats.items():
@@ -63,10 +50,9 @@ def show_active_room(
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    room_manager = get_room_manager()
-    session_manager = SessionManager()
+    state_facade = StateFacade()
 
-    if not session_manager.is_in_room:
-        show_room_selection_screen(room_manager, session_manager)
+    if not state_facade.is_in_room:
+        show_room_selection_screen(state_facade)
     else:
-        show_active_room(room_manager, session_manager)
+        show_active_room(state_facade)

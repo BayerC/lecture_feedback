@@ -4,8 +4,8 @@ from typing import cast
 import streamlit as st
 
 
-class SessionManager:
-    """Handles st.session_state.
+class SessionState:
+    """Per-user session state wrapper.
 
     See https://docs.streamlit.io/develop/api-reference/caching-and-state/st.session_state
     for more details.
