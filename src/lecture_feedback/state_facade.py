@@ -31,8 +31,8 @@ class StateFacade:
             msg = f"Room {room_id} does not exist"
             raise ValueError(msg)
 
-        user_id = self.session_state.user_id
-        self.application_state.add_user_to_room(room_id, user_id)
+        session_id = self.session_state.session_id
+        self.application_state.add_user_to_room(room_id, session_id)
         self.session_state.join_room(room_id)
 
     @property

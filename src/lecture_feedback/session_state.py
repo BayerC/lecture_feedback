@@ -12,12 +12,12 @@ class SessionState:
     """
 
     def __init__(self) -> None:
-        if "user_id" not in st.session_state:
-            st.session_state.user_id = str(uuid.uuid4())
+        if "session_id" not in st.session_state:
+            st.session_state.session_id = str(uuid.uuid4())
 
     @property
-    def user_id(self) -> str:
-        return cast("str", st.session_state.user_id)
+    def session_id(self) -> str:
+        return cast("str", st.session_state.session_id)
 
     @property
     def joined_room_id(self) -> str | None:
