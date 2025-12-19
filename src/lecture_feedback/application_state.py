@@ -1,29 +1,25 @@
-import uuid
-
+from lecture_feedback.session_state import SessionState
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
-from lecture_feedback.user_stats_tracker import UserStatsTracker
 
 
 class ApplicationState:
     """Application-wide shared state."""
 
     def __init__(self) -> None:
-        self.rooms: ThreadSafeDict[UserStatsTracker] = ThreadSafeDict()
+        self.rooms: ThreadSafeDict[dict[str, SessionState]] = ThreadSafeDict()
 
-    def create_room(self) -> str:
-        room_id = str(uuid.uuid4())
-        self.rooms[room_id] = UserStatsTracker()
-        return room_id
+    def is_in_room(self, session_id: str) -> bool:
+        return any(session_id in room for room in self.rooms.values())
 
-    def room_exists(self, room_id: str) -> bool:
-        return room_id in self.rooms
-
-    def get_user_stats_tracker(self, room_id: str) -> UserStatsTracker:
+    def add_user_to_room(self, room_id: str, session: SessionState) -> None:
         if room_id not in self.rooms:
-            msg = f"Room {room_id} does not exist"
-            raise ValueError(msg)
-        return self.rooms[room_id]
+            self.rooms[room_id] = {}
+        self.rooms[room_id][session.session_id] = session
 
-    def add_user_to_room(self, room_id: str, user_id: str) -> None:
-        user_stats_tracker = self.get_user_stats_tracker(room_id)
-        user_stats_tracker.add_user(user_id)
+    def all_user_status(self, room_id: str) -> str:
+        if room_id not in self.rooms:
+            return "No users in room"
+        statuses = (
+            session.get_status().value for session in self.rooms[room_id].values()
+        )
+        return ", ".join(statuses)

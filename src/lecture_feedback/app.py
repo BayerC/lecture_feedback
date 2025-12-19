@@ -1,7 +1,10 @@
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
+from lecture_feedback.application_state import ApplicationState
+from lecture_feedback.session_state import SessionState
 from lecture_feedback.state_facade import StateFacade
+from lecture_feedback.user_stats_tracker import UserStatus
 
 
 def show_room_selection_screen(state_facade: StateFacade) -> None:
@@ -47,12 +50,37 @@ def show_active_room(state_facade: StateFacade) -> None:
         st.write(f"• User ID: `{user_id}` - Status: {user_data.status.value}")
 
 
+@st.cache_resource
+def get_application_state() -> ApplicationState:
+    return ApplicationState()
+
+
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    state_facade = StateFacade()
+    # state_facade = StateFacade()
+    application_state = get_application_state()
+    session_state = SessionState()
 
-    if not state_facade.is_in_room:
-        show_room_selection_screen(state_facade)
+    if not application_state.is_in_room(session_state.session_id):
+        st.title("Not in Room")
+        if st.button("Join Room", use_container_width=True, key="join_room"):
+            application_state.add_user_to_room("xxx", session_state)
     else:
-        show_active_room(state_facade)
+        st.title("In Room")
+        if st.button("red"):
+            session_state.set_status(UserStatus.RED)
+        if st.button("yellow"):
+            session_state.set_status(UserStatus.YELLOW)
+        if st.button("green"):
+            session_state.set_status(UserStatus.GREEN)
+        if st.button("unknown"):
+            session_state.set_status(UserStatus.UNKNOWN)
+
+        st.write(f"User mean: {application_state.all_user_status('xxx')}")
+
+    # application_state.is_in_room(session_state.session_id())
+    # if not state_facade.is_in_room:
+    #    show_room_selection_screen(state_facade)
+    # else:
+    #    show_active_room(state_facade)

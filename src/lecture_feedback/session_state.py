@@ -3,6 +3,8 @@ from typing import cast
 
 import streamlit as st
 
+from lecture_feedback.user_stats_tracker import UserStatus
+
 
 class SessionState:
     """Per-user session state wrapper.
@@ -14,18 +16,13 @@ class SessionState:
     def __init__(self) -> None:
         if "session_id" not in st.session_state:
             st.session_state.session_id = str(uuid.uuid4())
+        if "user_status" not in st.session_state:
+            st.session_state.user_status = UserStatus.UNKNOWN
 
     @property
     def session_id(self) -> str:
         return cast("str", st.session_state.session_id)
 
-    @property
-    def joined_room_id(self) -> str | None:
-        return st.session_state.get("joined_room_id")
 
-    @property
-    def is_in_room(self) -> bool:
-        return self.joined_room_id is not None
-
-    def join_room(self, room_id: str) -> None:
-        st.session_state.joined_room_id = room_id
+# Userstate should be stored in the session state
+# User doesnt care about the room id, they just want to join a room and see the feedback
