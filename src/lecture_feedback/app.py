@@ -58,29 +58,31 @@ def get_application_state() -> ApplicationState:
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    # state_facade = StateFacade()
+
     application_state = get_application_state()
     session_state = SessionState()
 
-    if (room := application_state.get_room(session_state.session_id)) is None:
+    session_id = session_state.session_id
+    room_id = "xxx"
+
+    if (room := application_state.get_session_room(session_id)) is not None:
+        status = room.get_session_status(session_id)
+        st.title("In Room")
+
+        if st.button("red"):
+            room.sessions[session_id] = UserStatus.RED
+        if st.button("yellow"):
+            room.sessions[session_id] = UserStatus.YELLOW
+        if st.button("green"):
+            room.sessions[session_id] = UserStatus.GREEN
+        if st.button("unknown"):
+            room.sessions[session_id] = UserStatus.UNKNOWN
+
+        for sid, status in room.sessions.items():
+            st.write(f"User {sid}: {status.value}")
+    else:
         st.title("Not in Room")
         if st.button("Join Room", use_container_width=True, key="join_room"):
-            application_state.add_user_to_room("xxx", session_state)
-    else:
-        st.title("In Room")
-        if st.button("red"):
-            session_state.set_status(UserStatus.RED)
-        if st.button("yellow"):
-            session_state.set_status(UserStatus.YELLOW)
-        if st.button("green"):
-            session_state.set_status(UserStatus.GREEN)
-        if st.button("unknown"):
-            session_state.set_status(UserStatus.UNKNOWN)
+            application_state.add_session_to_room(room_id, session_id)
 
-        st.write(f"User mean: {application_state.all_user_status(room)}")
 
-    # application_state.is_in_room(session_state.session_id())
-    # if not state_facade.is_in_room:
-    #    show_room_selection_screen(state_facade)
-    # else:
-    #    show_active_room(state_facade)

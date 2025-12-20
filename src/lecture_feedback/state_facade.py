@@ -32,7 +32,7 @@ class StateFacade:
             raise ValueError(msg)
 
         session_id = self.session_state.session_id
-        self.application_state.add_user_to_room(room_id, session_id)
+        self.application_state.add_session_to_room(room_id, session_id)
         self.session_state.join_room(room_id)
 
     @property

@@ -1,28 +1,27 @@
-from lecture_feedback.session_state import SessionState
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
+from lecture_feedback.user_stats_tracker import UserStatus
 
+
+class Room:
+    def __init__(self) -> None:
+        self.sessions: ThreadSafeDict[UserStatus] = ThreadSafeDict()
+
+    def get_session_status(self, session_id: str) -> UserStatus:
+        return self.sessions[session_id]
 
 class ApplicationState:
     """Application-wide shared state."""
 
     def __init__(self) -> None:
-        self.rooms: ThreadSafeDict[dict[str, SessionState]] = ThreadSafeDict()
+        self.rooms: ThreadSafeDict[Room] = ThreadSafeDict()
 
-    def get_room(self, session_id: str) -> dict[str, SessionState] | None:
+    def get_session_room(self, session_id: str) -> Room | None:
         for room in self.rooms.values():
-            if session_id in room:
+            if session_id in room.sessions:
                 return room
         return None
 
-    def add_user_to_room(self, room_id: str, session: SessionState) -> None:
+    def add_session_to_room(self, room_id: str,  session_id: str) -> None:
         if room_id not in self.rooms:
-            self.rooms[room_id] = {}
-        self.rooms[room_id][session.session_id] = session
-
-    def all_user_status(self, room_id: str) -> str:
-        if room_id not in self.rooms:
-            return "No users in room"
-        statuses = (
-            session.get_status().value for session in self.rooms[room_id].values()
-        )
-        return ", ".join(statuses)
+            self.rooms[room_id] = Room()
+        self.rooms[room_id].sessions[session_id] = UserStatus.UNKNOWN

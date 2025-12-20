@@ -22,11 +22,6 @@ class SessionState:
     def session_id(self) -> str:
         return cast("str", st.session_state.session_id)
 
-    def set_status(self, status: UserStatus) -> None:
-        self.user_status = status
-
-    def get_status(self) -> UserStatus:
-        return self.user_status
 
 
 # Userstate should be stored in the session state
