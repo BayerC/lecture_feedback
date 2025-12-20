@@ -17,7 +17,7 @@ class SessionState:
 
     @property
     def session_id(self) -> str:
-        return cast("str", st.session_state.session_id)
+        return str(st.session_state.session_id)
 
 
 # Userstate should be stored in the session state
