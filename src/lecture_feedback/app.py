@@ -62,7 +62,7 @@ def run() -> None:
     application_state = get_application_state()
     session_state = SessionState()
 
-    if not application_state.is_in_room(session_state.session_id):
+    if (room := application_state.get_room(session_state.session_id)) is None:
         st.title("Not in Room")
         if st.button("Join Room", use_container_width=True, key="join_room"):
             application_state.add_user_to_room("xxx", session_state)
@@ -77,7 +77,7 @@ def run() -> None:
         if st.button("unknown"):
             session_state.set_status(UserStatus.UNKNOWN)
 
-        st.write(f"User mean: {application_state.all_user_status('xxx')}")
+        st.write(f"User mean: {application_state.all_user_status(room)}")
 
     # application_state.is_in_room(session_state.session_id())
     # if not state_facade.is_in_room:

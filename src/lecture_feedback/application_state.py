@@ -8,8 +8,11 @@ class ApplicationState:
     def __init__(self) -> None:
         self.rooms: ThreadSafeDict[dict[str, SessionState]] = ThreadSafeDict()
 
-    def is_in_room(self, session_id: str) -> bool:
-        return any(session_id in room for room in self.rooms.values())
+    def get_room(self, session_id: str) -> dict[str, SessionState] | None:
+        for room in self.rooms.values():
+            if session_id in room:
+                return room
+        return None
 
     def add_user_to_room(self, room_id: str, session: SessionState) -> None:
         if room_id not in self.rooms:
