@@ -23,15 +23,40 @@ class UserStatsTracker:
     USER_TIMEOUT_SECONDS = 4
 
     def __init__(self) -> None:
+        """
+        Initialize the UserStatsTracker instance.
+        
+        Creates a thread-safe internal storage named `_user_stats` for mapping user IDs (str) to `UserData` records.
+        """
         self._user_stats: ThreadSafeDict = ThreadSafeDict()
 
     def add_user(self, user_id: str, status: UserStatus = UserStatus.UNKNOWN) -> None:
+        """
+        Add a new user with the given initial status and set its last-seen time to now.
+        
+        Parameters:
+        	user_id (str): Unique identifier for the user to add.
+        	status (UserStatus): Initial status assigned to the new user.
+        
+        Raises:
+        	ValueError: If a user with the given `user_id` already exists.
+        """
         if user_id in self._user_stats:
             msg = f"User {user_id} already exists"
             raise ValueError(msg)
         self._user_stats[user_id] = UserData(status=status, last_seen=time.time())
 
     def update_user_status(self, user_id: str, status: UserStatus) -> None:
+        """
+        Update the stored status for an existing user.
+        
+        Parameters:
+            user_id (str): Identifier of the user whose status will be updated.
+            status (UserStatus): New status to assign to the user.
+        
+        Raises:
+            KeyError: If no user with `user_id` exists in the tracker.
+        """
         with self._user_stats:
             self._user_stats[user_id].status = status
 

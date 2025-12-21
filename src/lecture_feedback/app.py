@@ -12,6 +12,14 @@ def show_room_selection_screen(
     application_state: ApplicationState,
     session_id: str,
 ) -> None:
+    """
+    Display the room selection UI allowing the user to create a new room or join an existing one.
+    
+    The left column provides a "Create Room" action which creates a room with a generated room ID and associates the current session with it, then refreshes the app. The right column lets the user enter a room ID and attempt to join; if the field is empty a warning is shown, and if the room ID is not found an error message is displayed. Successful creation or join triggers a rerun to update the UI.
+    
+    Parameters:
+        session_id (str): The per-user session identifier used to associate this client with a room.
+    """
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a room to share feedback.")
 
@@ -39,6 +47,16 @@ def show_room_selection_screen(
 
 
 def show_active_room(room: Room, session_id: str) -> None:
+    """
+    Render the active room interface and let the current session select its feedback status.
+    
+    Parameters:
+        room (Room): The active room object whose `sessions` mapping will be displayed and updated.
+        session_id (str): Identifier for the current session; used as the key when recording the selected `UserStatus`.
+    
+    Detailed behavior:
+        Displays the room ID, presents buttons to set the current session's status to `UserStatus.RED`, `UserStatus.YELLOW`, `UserStatus.GREEN`, or `UserStatus.UNKNOWN`, and lists all participants with their current status values.
+    """
     st.title("Active Room")
     st.write(f"**Room ID:** `{room.room_id}`")
     st.divider()
@@ -58,10 +76,21 @@ def show_active_room(room: Room, session_id: str) -> None:
 
 @st.cache_resource
 def get_application_state() -> ApplicationState:
+    """
+    Provide the application's shared ApplicationState instance.
+    
+    Returns:
+        ApplicationState: The application's central state object (cached across Streamlit invocations).
+    """
     return ApplicationState()
 
 
 def run() -> None:
+    """
+    Run the Streamlit application UI and display the appropriate screen for the current session.
+    
+    Enables periodic UI refresh, initializes the application and session state, determines whether the current session is already in a room, and renders the active room interface if so or the room selection interface otherwise.
+    """
     st_autorefresh(interval=2000, key="data_refresh")
 
     application_state = get_application_state()
