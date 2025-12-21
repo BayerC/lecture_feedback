@@ -16,12 +16,10 @@ class ApplicationState:
         return None
 
     def create_room(self, room_id: str, session_id: str) -> None:
-        """Create a new room and add the session to it."""
         self.rooms[room_id] = Room(room_id)
         self.rooms[room_id].sessions[session_id] = UserStatus.UNKNOWN
 
     def join_room(self, room_id: str, session_id: str) -> None:
-        """Join an existing room. Raises ValueError if room doesn't exist."""
         if room_id not in self.rooms:
             message = f"Room {room_id} does not exist"
             raise ValueError(message)

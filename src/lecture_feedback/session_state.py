@@ -17,7 +17,3 @@ class SessionState:
     @property
     def session_id(self) -> str:
         return str(st.session_state.session_id)
-
-
-# Userstate should be stored in the session state
-# User doesnt care about the room id, they just want to join a room and see the feedback
