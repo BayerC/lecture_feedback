@@ -1,13 +1,7 @@
+from lecture_feedback.room import Room
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
 from lecture_feedback.user_stats_tracker import UserStatus
 
-
-class Room:
-    def __init__(self) -> None:
-        self.sessions: ThreadSafeDict[UserStatus] = ThreadSafeDict()
-
-    def get_session_status(self, session_id: str) -> UserStatus:
-        return self.sessions[session_id]
 
 class ApplicationState:
     """Application-wide shared state."""
@@ -21,7 +15,14 @@ class ApplicationState:
                 return room
         return None
 
-    def add_session_to_room(self, room_id: str,  session_id: str) -> None:
+    def create_room(self, room_id: str, session_id: str) -> None:
+        """Create a new room and add the session to it."""
+        self.rooms[room_id] = Room(room_id)
+        self.rooms[room_id].sessions[session_id] = UserStatus.UNKNOWN
+
+    def join_room(self, room_id: str, session_id: str) -> None:
+        """Join an existing room. Raises ValueError if room doesn't exist."""
         if room_id not in self.rooms:
-            self.rooms[room_id] = Room()
+            message = f"Room {room_id} does not exist"
+            raise ValueError(message)
         self.rooms[room_id].sessions[session_id] = UserStatus.UNKNOWN
