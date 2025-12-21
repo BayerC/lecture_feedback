@@ -1,5 +1,5 @@
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
-from lecture_feedback.user_stats_tracker import UserStatus
+from lecture_feedback.user_status import UserStatus
 
 
 class Room:

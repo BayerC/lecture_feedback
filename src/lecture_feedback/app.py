@@ -5,7 +5,7 @@ from streamlit_autorefresh import st_autorefresh
 
 from lecture_feedback.application_state import ApplicationState, Room
 from lecture_feedback.session_state import SessionState
-from lecture_feedback.user_stats_tracker import UserStatus
+from lecture_feedback.user_status import UserStatus
 
 
 def show_room_selection_screen(
