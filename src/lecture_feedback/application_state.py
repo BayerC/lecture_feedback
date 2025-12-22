@@ -16,8 +16,9 @@ class ApplicationState:
         return None
 
     def create_room(self, room_id: str, session_id: str) -> None:
-        self.rooms[room_id] = Room(room_id)
-        self.rooms[room_id].set_session_status(session_id, UserStatus.UNKNOWN)
+        room = Room(room_id)
+        room.set_session_status(session_id, UserStatus.UNKNOWN)
+        self.rooms[room_id] = room
 
     def join_room(self, room_id: str, session_id: str) -> None:
         if room_id not in self.rooms:
