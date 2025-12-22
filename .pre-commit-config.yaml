@@ -55,6 +55,12 @@ repos:
     hooks:
       - id: check-json5
 
+  # Remove once https://github.com/astral-sh/ruff/issues/21258 is resolved and
+  #  we use a corresponding ruff version
+  - repo: https://github.com/MarcoGorelli/auto-walrus
+    rev: 0.3.4
+    hooks:
+      - id: auto-walrus
 
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.37.0
