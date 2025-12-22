@@ -43,17 +43,17 @@ def show_active_room(room: Room, session_id: str) -> None:
     st.write(f"**Room ID:** `{room.room_id}`")
     st.divider()
 
-    if st.button("red"):
-        room.sessions[session_id] = UserStatus.RED
-    if st.button("yellow"):
-        room.sessions[session_id] = UserStatus.YELLOW
-    if st.button("green"):
-        room.sessions[session_id] = UserStatus.GREEN
-    if st.button("unknown"):
-        room.sessions[session_id] = UserStatus.UNKNOWN
+    if st.button(UserStatus.RED.value):
+        room.set_session_status(session_id, UserStatus.RED)
+    if st.button(UserStatus.YELLOW.value):
+        room.set_session_status(session_id, UserStatus.YELLOW)
+    if st.button(UserStatus.GREEN.value):
+        room.set_session_status(session_id, UserStatus.GREEN)
+    if st.button(UserStatus.UNKNOWN.value):
+        room.set_session_status(session_id, UserStatus.UNKNOWN)
 
-    for sid, status in room.sessions.items():
-        st.write(f"User {sid}: {status.value}")
+    for sid, status in room:
+        st.write(f"Session {sid}: {status.value}")
 
 
 @st.cache_resource

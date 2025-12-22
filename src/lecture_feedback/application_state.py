@@ -11,16 +11,16 @@ class ApplicationState:
 
     def get_session_room(self, session_id: str) -> Room | None:
         for room in self.rooms.values():
-            if session_id in room.sessions:
+            if room.has_session(session_id):
                 return room
         return None
 
     def create_room(self, room_id: str, session_id: str) -> None:
         self.rooms[room_id] = Room(room_id)
-        self.rooms[room_id].sessions[session_id] = UserStatus.UNKNOWN
+        self.rooms[room_id].set_session_status(session_id, UserStatus.UNKNOWN)
 
     def join_room(self, room_id: str, session_id: str) -> None:
         if room_id not in self.rooms:
             message = f"Room {room_id} does not exist"
             raise ValueError(message)
-        self.rooms[room_id].sessions[session_id] = UserStatus.UNKNOWN
+        self.rooms[room_id].set_session_status(session_id, UserStatus.UNKNOWN)
