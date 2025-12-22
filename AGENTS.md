@@ -14,7 +14,11 @@
 
 ## Documentation
 - Whenever mentioning repository-local files in markdown, link to them using a local link (using `[text](path/to/file)`)
-- Avoid redundant comments that merely restate function names (e.g., `def get_data()` with docstring `"""Gets data"""`)
+- Do not add docstrings that merely restate what is obvious from the name
+  - BAD: `@property user_id` with `"""Get the unique user ID for this browser tab."""` - "user_id" already says it's a user ID
+  - BAD: `def get_data()` with `"""Gets data"""`
+  - BAD: `@property is_in_session` with `"""Check if this browser tab has joined a session."""` - name already indicates it's a check
+  - GOOD: Add docstrings only when they provide non-obvious information (parameters, side effects, exceptions, business logic)
 
 ## Code review
 - Absolute Mode

@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
@@ -5,7 +7,7 @@ from lecture_feedback.thread_safe_dict import ThreadSafeDict
 
 def test_basic_operations() -> None:
     # Create a thread-safe dict
-    thread_safe_dict = ThreadSafeDict()
+    thread_safe_dict: ThreadSafeDict[Any] = ThreadSafeDict()
 
     # Test setting and getting values
     thread_safe_dict["key1"] = "value1"
