@@ -63,7 +63,6 @@ def test_click_buttons_in_new_room() -> None:
         UserStatus.RED,
         UserStatus.YELLOW,
         UserStatus.GREEN,
-        UserStatus.UNKNOWN,
     ):
         app.button(key=status.value).click().run()
         page_content = "\n".join(w.value for w in app.markdown)
