@@ -9,9 +9,6 @@ class Room:
         self._room_id = room_id
         self._sessions: ThreadSafeDict[UserStatus] = ThreadSafeDict()
 
-    def get_session_status(self, session_id: str) -> UserStatus:
-        return self._sessions[session_id]
-
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = status
 
