@@ -43,13 +43,13 @@ def show_active_room(room: Room, session_id: str) -> None:
     st.write(f"**Room ID:** `{room.room_id}`")
     st.divider()
 
-    if st.button(UserStatus.RED.value):
+    if st.button(UserStatus.RED.value, key=UserStatus.RED.value):
         room.set_session_status(session_id, UserStatus.RED)
-    if st.button(UserStatus.YELLOW.value):
+    if st.button(UserStatus.YELLOW.value, key=UserStatus.YELLOW.value):
         room.set_session_status(session_id, UserStatus.YELLOW)
-    if st.button(UserStatus.GREEN.value):
+    if st.button(UserStatus.GREEN.value, key=UserStatus.GREEN.value):
         room.set_session_status(session_id, UserStatus.GREEN)
-    if st.button(UserStatus.UNKNOWN.value):
+    if st.button(UserStatus.UNKNOWN.value, key=UserStatus.UNKNOWN.value):
         room.set_session_status(session_id, UserStatus.UNKNOWN)
 
     for sid, status in room:
