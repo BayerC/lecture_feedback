@@ -59,18 +59,12 @@ def test_click_buttons_in_new_room() -> None:
 
     app.button(key="start_room").click().run()
 
-    app.button(key=UserStatus.RED.value).click().run()
-    page_content = "\n".join(w.value for w in app.markdown)
-    assert UserStatus.RED.value in page_content
-
-    app.button(key=UserStatus.YELLOW.value).click().run()
-    page_content = "\n".join(w.value for w in app.markdown)
-    assert UserStatus.YELLOW.value in page_content
-
-    app.button(key=UserStatus.GREEN.value).click().run()
-    page_content = "\n".join(w.value for w in app.markdown)
-    assert UserStatus.GREEN.value in page_content
-
-    app.button(key=UserStatus.UNKNOWN.value).click().run()
-    page_content = "\n".join(w.value for w in app.markdown)
-    assert UserStatus.UNKNOWN.value in page_content
+    for status in (
+        UserStatus.RED,
+        UserStatus.YELLOW,
+        UserStatus.GREEN,
+        UserStatus.UNKNOWN,
+    ):
+        app.button(key=status.value).click().run()
+        page_content = "\n".join(w.value for w in app.markdown)
+        assert status.value in page_content
