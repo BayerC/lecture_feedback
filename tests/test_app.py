@@ -2,7 +2,7 @@ from streamlit.testing.v1 import AppTest
 
 
 def run_wrapper() -> None:
-    from lecture_feedback.app import run  # noqa: PLC0415
+    from lecture_feedback.gui import run  # noqa: PLC0415
 
     run()
 
