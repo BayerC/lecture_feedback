@@ -72,41 +72,52 @@ def test_click_buttons_in_new_room() -> None:
         assert status.value in get_page_content(app)
 
 
+def get_room_id(app: AppTest) -> str:
+    room_id = None
+    for element in app.markdown:
+        if element.value.startswith("**Room ID:**"):
+            room_id = element.value.split("`")[1]
+            break
+    assert room_id is not None
+    return room_id
+
+
+def check_page_contents(
+    app: AppTest,
+    expected: tuple[str, ...],
+    forbidden: tuple[str, ...] = (),
+) -> None:
+    page_content = get_page_content(app)
+    assert all(s in page_content for s in expected)
+    assert all(s not in page_content for s in forbidden)
+
+
 def test_two_sessions_track_user_stats_in_same_room() -> None:
     app1 = AppTest.from_function(run_wrapper)
     app1.run()
     app1.button(key="start_room").click().run()
 
-    room_id = None
-    for element in app1.markdown:
-        if element.value.startswith("**Room ID:**"):
-            room_id = element.value.split("`")[1]
-            break
-    assert room_id is not None
-
     app2 = AppTest.from_function(run_wrapper)
     app2.run()
-    app2.text_input(key="join_room_id").set_value(room_id).run()
+    app2.text_input(key="join_room_id").set_value(get_room_id(app1)).run()
     app2.button(key="join_room").click().run()
 
     app1.button(key=UserStatus.RED.value).click().run()
-    page_content1 = get_page_content(app1)
-    assert UserStatus.RED.value in page_content1
-    assert UserStatus.UNKNOWN.value in page_content1
+    check_page_contents(app1, expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value))
 
     app2.run()
-    page_content2 = get_page_content(app2)
-    assert UserStatus.RED.value in page_content2
-    assert UserStatus.UNKNOWN.value in page_content2
+    check_page_contents(app2, expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value))
 
     app2.button(key=UserStatus.GREEN.value).click().run()
     app1.run()
-    page_content1 = get_page_content(app1)
-    assert UserStatus.RED.value in page_content1
-    assert UserStatus.GREEN.value in page_content1
-    assert UserStatus.UNKNOWN.value not in page_content1
 
-    page_content2 = get_page_content(app2)
-    assert UserStatus.RED.value in page_content2
-    assert UserStatus.GREEN.value in page_content2
-    assert UserStatus.UNKNOWN.value not in page_content2
+    check_page_contents(
+        app1,
+        expected=(UserStatus.RED.value, UserStatus.GREEN.value),
+        forbidden=(UserStatus.UNKNOWN.value,),
+    )
+    check_page_contents(
+        app2,
+        expected=(UserStatus.RED.value, UserStatus.GREEN.value),
+        forbidden=(UserStatus.UNKNOWN.value,),
+    )
