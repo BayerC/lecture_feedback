@@ -109,10 +109,18 @@ def test_two_sessions_track_user_stats_in_same_room() -> None:
     app2.button(key="join_room").click().run()
 
     app1.button(key=UserStatus.RED.value).click().run()
-    check_page_contents(app1, expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value))
+    check_page_contents(
+        app1,
+        expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value),
+        forbidden=(UserStatus.GREEN.value, UserStatus.YELLOW.value),
+    )
 
     app2.run()
-    check_page_contents(app2, expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value))
+    check_page_contents(
+        app2,
+        expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value),
+        forbidden=(UserStatus.GREEN.value, UserStatus.YELLOW.value),
+    )
 
     app2.button(key=UserStatus.GREEN.value).click().run()
     app1.run()
@@ -120,12 +128,12 @@ def test_two_sessions_track_user_stats_in_same_room() -> None:
     check_page_contents(
         app1,
         expected=(UserStatus.RED.value, UserStatus.GREEN.value),
-        forbidden=(UserStatus.UNKNOWN.value,),
+        forbidden=(UserStatus.UNKNOWN.value, UserStatus.YELLOW.value),
     )
     check_page_contents(
         app2,
         expected=(UserStatus.RED.value, UserStatus.GREEN.value),
-        forbidden=(UserStatus.UNKNOWN.value,),
+        forbidden=(UserStatus.UNKNOWN.value, UserStatus.YELLOW.value),
     )
 
 
