@@ -88,8 +88,10 @@ def check_page_contents(
     forbidden: tuple[str, ...] = (),
 ) -> None:
     page_content = get_page_content(app)
-    assert all(s in page_content for s in expected)
-    assert all(s not in page_content for s in forbidden)
+    for string in expected:
+        assert string in page_content
+    for string in forbidden:
+        assert string not in page_content
 
 
 def test_two_sessions_track_user_stats_in_same_room() -> None:
