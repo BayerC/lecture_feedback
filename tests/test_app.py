@@ -57,6 +57,18 @@ def get_page_content(app: AppTest) -> str:
     return "\n".join(element.value for element in app.markdown)
 
 
+def check_page_contents(
+    app: AppTest,
+    expected: tuple[str, ...],
+    forbidden: tuple[str, ...] = (),
+) -> None:
+    page_content = get_page_content(app)
+    for string in expected:
+        assert string in page_content
+    for string in forbidden:
+        assert string not in page_content
+
+
 def test_click_buttons_in_new_room() -> None:
     app = AppTest.from_function(run_wrapper)
     app.run()
@@ -69,7 +81,11 @@ def test_click_buttons_in_new_room() -> None:
         UserStatus.GREEN,
     ):
         app.button(key=status.value).click().run()
-        assert status.value in get_page_content(app)
+        check_page_contents(
+            app,
+            expected=(status.value,),
+            forbidden=tuple(s.value for s in UserStatus if s != status),
+        )
 
 
 def get_room_id(app: AppTest) -> str:
@@ -80,18 +96,6 @@ def get_room_id(app: AppTest) -> str:
             break
     assert room_id is not None
     return room_id
-
-
-def check_page_contents(
-    app: AppTest,
-    expected: tuple[str, ...],
-    forbidden: tuple[str, ...] = (),
-) -> None:
-    page_content = get_page_content(app)
-    for string in expected:
-        assert string in page_content
-    for string in forbidden:
-        assert string not in page_content
 
 
 def test_two_sessions_track_user_stats_in_same_room() -> None:
