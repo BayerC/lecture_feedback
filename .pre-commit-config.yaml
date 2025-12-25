@@ -73,10 +73,9 @@ repos:
       - id: pytest
         name: pytest
         # Unset PYTHONPATH to ensure no external packages are loaded.
-        # TODO(#28): bring code coverage and code coverage gate to 100% again
         entry: >
           env -u PYTHONPATH uv run pytest
-          --cov=lecture_feedback --cov-report=term-missing --cov-fail-under=90
+          --cov=lecture_feedback --cov-report=term-missing --cov-fail-under=100
         language: system
         types: [python]
         pass_filenames: false
