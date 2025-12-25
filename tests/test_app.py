@@ -72,7 +72,7 @@ def test_click_buttons_in_new_room() -> None:
         assert status.value in get_page_content(app)
 
 
-def test_two_sessions_track_independent_user_stats() -> None:
+def test_two_sessions_track_user_stats_in_same_room() -> None:
     app1 = AppTest.from_function(run_wrapper)
     app1.run()
     app1.button(key="start_room").click().run()
@@ -94,17 +94,19 @@ def test_two_sessions_track_independent_user_stats() -> None:
     assert UserStatus.RED.value in page_content1
     assert UserStatus.UNKNOWN.value in page_content1
 
-    # page_content2 = get_page_content(app2)
-    # assert UserStatus.RED.value in page_content2
-    # assert UserStatus.UNKNOWN.value in page_content2
+    app2.run()
+    page_content2 = get_page_content(app2)
+    assert UserStatus.RED.value in page_content2
+    assert UserStatus.UNKNOWN.value in page_content2
 
-    # app2.button(key=UserStatus.GREEN.value).click().run()
-    # page_content1 = get_page_content(app1)
-    # assert UserStatus.RED.value in page_content1
-    # assert UserStatus.GREEN.value in page_content1
-    # assert UserStatus.UNKNOWN.value not in page_content1
+    app2.button(key=UserStatus.GREEN.value).click().run()
+    app1.run()
+    page_content1 = get_page_content(app1)
+    assert UserStatus.RED.value in page_content1
+    assert UserStatus.GREEN.value in page_content1
+    assert UserStatus.UNKNOWN.value not in page_content1
 
-    # page_content2 = get_page_content(app2)
-    # assert UserStatus.RED.value in page_content2
-    # assert UserStatus.GREEN.value in page_content2
-    # assert UserStatus.UNKNOWN.value not in page_content2
+    page_content2 = get_page_content(app2)
+    assert UserStatus.RED.value in page_content2
+    assert UserStatus.GREEN.value in page_content2
+    assert UserStatus.UNKNOWN.value not in page_content2
