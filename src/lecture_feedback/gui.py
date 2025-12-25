@@ -3,15 +3,12 @@ import uuid
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
-from lecture_feedback.application_state import ApplicationState, Room
-from lecture_feedback.session_state import SessionState
+from lecture_feedback.facade import App
+from lecture_feedback.room import Room
 from lecture_feedback.user_status import UserStatus
 
 
-def show_room_selection_screen(
-    application_state: ApplicationState,
-    session_id: str,
-) -> None:
+def show_room_selection_screen(app: App) -> None:
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a room to share feedback.")
 
@@ -21,7 +18,7 @@ def show_room_selection_screen(
         st.subheader("Start New Room")
         if st.button("Create Room", use_container_width=True, key="start_room"):
             room_id = str(uuid.uuid4())
-            application_state.create_room(room_id, session_id)
+            app.create_room(room_id)
             st.rerun()
 
     with col2:
@@ -32,43 +29,36 @@ def show_room_selection_screen(
                 st.warning("Please enter a Room ID to join.")
             else:
                 try:
-                    application_state.join_room(room_id, session_id)
+                    app.join_room(room_id)
                     st.rerun()
                 except ValueError:
                     st.error("Room ID not found")
 
 
-def show_active_room(room: Room, session_id: str) -> None:
+def show_active_room(app: App, room: Room) -> None:
     st.title("Active Room")
     st.write(f"**Room ID:** `{room.room_id}`")
     st.divider()
 
     if st.button(UserStatus.RED.value):
-        room.set_session_status(session_id, UserStatus.RED)
+        app.set_session_status(UserStatus.RED)
     if st.button(UserStatus.YELLOW.value):
-        room.set_session_status(session_id, UserStatus.YELLOW)
+        app.set_session_status(UserStatus.YELLOW)
     if st.button(UserStatus.GREEN.value):
-        room.set_session_status(session_id, UserStatus.GREEN)
+        app.set_session_status(UserStatus.GREEN)
     if st.button(UserStatus.UNKNOWN.value):
-        room.set_session_status(session_id, UserStatus.UNKNOWN)
+        app.set_session_status(UserStatus.UNKNOWN)
 
     for sid, status in room:
         st.write(f"Session {sid}: {status.value}")
 
 
-@st.cache_resource
-def get_application_state() -> ApplicationState:
-    return ApplicationState()
-
-
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    application_state = get_application_state()
-    session_state = SessionState()
-    session_id = session_state.session_id
+    app = App()
 
-    if (room := application_state.get_session_room(session_id)) is not None:
-        show_active_room(room, session_id)
+    if (room := app.get_active_room()) is not None:
+        show_active_room(app, room)
     else:
-        show_room_selection_screen(application_state, session_id)
+        show_room_selection_screen(app)
