@@ -103,77 +103,77 @@ def get_room_id(app: AppTest) -> str:
 
 
 def test_two_sessions_track_user_stats_in_same_room() -> None:
-    app1 = AppTest.from_function(run_wrapper)
-    app1.run()
-    app1.button(key="start_room").click().run()
+    app_1 = AppTest.from_function(run_wrapper)
+    app_1.run()
+    app_1.button(key="start_room").click().run()
 
-    app2 = AppTest.from_function(run_wrapper)
-    app2.run()
-    app2.text_input(key="join_room_id").set_value(get_room_id(app1)).run()
-    app2.button(key="join_room").click().run()
+    app_2 = AppTest.from_function(run_wrapper)
+    app_2.run()
+    app_2.text_input(key="join_room_id").set_value(get_room_id(app_1)).run()
+    app_2.button(key="join_room").click().run()
 
-    app1.button(key=UserStatus.RED.value).click().run()
+    app_1.button(key=UserStatus.RED.value).click().run()
     check_page_contents(
-        app1,
+        app_1,
         expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value),
         forbidden=(UserStatus.GREEN.value, UserStatus.YELLOW.value),
     )
 
-    app2.run()
+    app_2.run()
     check_page_contents(
-        app2,
+        app_2,
         expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value),
         forbidden=(UserStatus.GREEN.value, UserStatus.YELLOW.value),
     )
 
-    app2.button(key=UserStatus.GREEN.value).click().run()
-    app1.run()
+    app_2.button(key=UserStatus.GREEN.value).click().run()
+    app_1.run()
 
     check_page_contents(
-        app1,
+        app_1,
         expected=(UserStatus.RED.value, UserStatus.GREEN.value),
         forbidden=(UserStatus.UNKNOWN.value, UserStatus.YELLOW.value),
     )
     check_page_contents(
-        app2,
+        app_2,
         expected=(UserStatus.RED.value, UserStatus.GREEN.value),
         forbidden=(UserStatus.UNKNOWN.value, UserStatus.YELLOW.value),
     )
 
 
 def test_three_sessions_in_two_rooms() -> None:
-    app1 = AppTest.from_function(run_wrapper)
-    app1.run()
-    app1.button(key="start_room").click().run()
+    app_1 = AppTest.from_function(run_wrapper)
+    app_1.run()
+    app_1.button(key="start_room").click().run()
 
-    app2 = AppTest.from_function(run_wrapper)
-    app2.run()
-    app2.text_input(key="join_room_id").set_value(get_room_id(app1)).run()
-    app2.button(key="join_room").click().run()
+    app_2 = AppTest.from_function(run_wrapper)
+    app_2.run()
+    app_2.text_input(key="join_room_id").set_value(get_room_id(app_1)).run()
+    app_2.button(key="join_room").click().run()
 
-    app3 = AppTest.from_function(run_wrapper)
-    app3.run()
-    app3.button(key="start_room").click().run()
+    app_3 = AppTest.from_function(run_wrapper)
+    app_3.run()
+    app_3.button(key="start_room").click().run()
 
-    app1.button(key=UserStatus.YELLOW.value).click().run()
-    app2.button(key=UserStatus.GREEN.value).click().run()
-    app1.run()
+    app_1.button(key=UserStatus.YELLOW.value).click().run()
+    app_2.button(key=UserStatus.GREEN.value).click().run()
+    app_1.run()
     check_page_contents(
-        app1,
+        app_1,
         expected=(UserStatus.YELLOW.value, UserStatus.GREEN.value),
         forbidden=(UserStatus.UNKNOWN.value, UserStatus.RED.value),
     )
 
-    app2.run()
+    app_2.run()
     check_page_contents(
-        app2,
+        app_2,
         expected=(UserStatus.YELLOW.value, UserStatus.GREEN.value),
         forbidden=(UserStatus.UNKNOWN.value, UserStatus.RED.value),
     )
 
-    app3.run()
+    app_3.run()
     check_page_contents(
-        app3,
+        app_3,
         expected=(UserStatus.UNKNOWN.value,),
         forbidden=(
             UserStatus.GREEN.value,
