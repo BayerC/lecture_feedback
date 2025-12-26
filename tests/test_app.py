@@ -84,7 +84,11 @@ def test_click_buttons_in_new_room() -> None:
         check_page_contents(
             app,
             expected=(status.value,),
-            forbidden=tuple(s.value for s in UserStatus if s != status),
+            forbidden=tuple(
+                inner_status.value
+                for inner_status in UserStatus
+                if inner_status != status
+            ),
         )
 
 
