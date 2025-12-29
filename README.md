@@ -22,6 +22,6 @@ This project uses [uv](https://docs.astral.sh/uv/https:/) for dependency managem
 
 ## Relation to existing lecture feedback projects
 
-This is a scalable, tested, and modern rewrite of https://github.com/fastai/fastcups in python using https://streamlit.io/.
+This is a scalable, tested, and modern rewrite of https://github.com/fastai/fastcups in python using https://streamlit.io/ that supports multiple lecture rooms hosted on the same server.
 
 Other teaching institutions had this idea before, see for example [these](https://www.nwesd.org/wp-content/uploads/2013/08/PROL_Colored_Cups_kdj.pdf) and [these](https://www.sstr2.org/Downloads/Cups%20as%20student%20feedback.pdf) instructions.
