@@ -4,6 +4,7 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
 from lecture_feedback.application_state import ApplicationState, Room
+from lecture_feedback.room_cleanup import remove_empty_rooms
 from lecture_feedback.session_state import SessionState
 from lecture_feedback.user_status import UserStatus
 
@@ -76,3 +77,5 @@ def run() -> None:
         show_active_room(room, session_id)
     else:
         show_room_selection_screen(application_state, session_id)
+
+    remove_empty_rooms(application_state)
