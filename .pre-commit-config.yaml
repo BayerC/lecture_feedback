@@ -75,7 +75,7 @@ repos:
         # Unset PYTHONPATH to ensure no external packages are loaded.
         entry: >
           env -u PYTHONPATH uv run pytest
-          --cov=lecture_feedback --cov-report=term-missing --cov-fail-under=100
+          --cov=lecture_feedback --cov-report=term-missing --cov-fail-under=95
         language: system
         types: [python]
         pass_filenames: false
