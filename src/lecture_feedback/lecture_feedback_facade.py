@@ -10,7 +10,7 @@ from lecture_feedback.user_status import UserStatus
 
 class LectureFeedbackFacade:
     def __init__(self) -> None:
-        self._application_state = self._get_application_state()
+        self._application_state: ApplicationState = self._get_application_state()
         self._session_state = SessionState()
 
     @staticmethod
