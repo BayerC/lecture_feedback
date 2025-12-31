@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
-from lecture_feedback.lecture_feedback_facade import LectureFeedbackFacade
+from lecture_feedback.lecture_feedback_facade import LectureFeedbackFacade, RoomFacade
 from lecture_feedback.user_status import UserStatus
 
 
@@ -31,16 +31,16 @@ def show_room_selection_screen(facade: LectureFeedbackFacade) -> None:
                     st.error("Room ID not found")
 
 
-def show_active_room(facade: LectureFeedbackFacade) -> None:
+def show_active_room(room_facade: RoomFacade) -> None:
     st.title("Active Room")
-    st.write(f"**Room ID:** `{facade.get_current_room_id()}`")
+    st.write(f"**Room ID:** `{room_facade.room_id}`")
     st.divider()
 
     for status in [UserStatus.GREEN, UserStatus.YELLOW, UserStatus.RED]:
         if st.button(status.value, key=status.value):
-            facade.set_user_status(status)
+            room_facade.set_user_status(status)
 
-    for sid, user_status in facade.get_room_participants():
+    for sid, user_status in room_facade.get_room_participants():
         st.write(f"Session {sid}: {user_status.value}")
 
 
@@ -48,8 +48,7 @@ def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
     facade = LectureFeedbackFacade()
-
-    if facade.is_in_room():
-        show_active_room(facade)
+    if room_facade := facade.is_in_room():
+        show_active_room(room_facade)
     else:
         show_room_selection_screen(facade)
