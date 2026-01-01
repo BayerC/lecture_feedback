@@ -8,29 +8,44 @@ from lecture_feedback.session_state import SessionState
 from lecture_feedback.user_status import UserStatus
 
 
+class LobbyFacade:
+    def __init__(
+        self,
+        application_state: ApplicationState,
+        session_state: SessionState,
+    ) -> None:
+        self._application_state = application_state
+        self._session_state = session_state
+
+    def create_room(self) -> None:
+        room_id = str(uuid.uuid4())
+        self._application_state.create_room(room_id, self._session_state.session_id)
+
+    def join_room(self, room_id: str) -> None:
+        self._application_state.join_room(room_id, self._session_state.session_id)
+
+
 class RoomFacade:
     def __init__(
         self,
         room: Room,
-        application_state: ApplicationState,
-        session_state: SessionState,
+        session_id: str,
     ) -> None:
         self._room = room
-        self._application_state = application_state
-        self._session_state = session_state
+        self._session_id = session_id
 
     @property
     def room_id(self) -> str:
         return self._room.room_id
 
     def set_user_status(self, status: UserStatus) -> None:
-        self._room.set_session_status(self._session_state.session_id, status)
+        self._room.set_session_status(self._session_id, status)
 
     def get_room_participants(self) -> list[tuple[str, UserStatus]]:
         return list(self._room)
 
 
-class LectureFeedbackFacade:
+class FacadeFactory:
     def __init__(self) -> None:
         self._application_state: ApplicationState = self._get_application_state()
         self._session_state = SessionState()
@@ -38,22 +53,10 @@ class LectureFeedbackFacade:
     @staticmethod
     @st.cache_resource
     def _get_application_state() -> ApplicationState:
-        """Singleton cached across all sessions."""
         return ApplicationState()
 
-    @property
-    def session_id(self) -> str:
-        return self._session_state.session_id
-
-    def is_in_room(self) -> RoomFacade | None:
-        room = self._application_state.get_session_room(self.session_id)
+    def get_facade(self) -> LobbyFacade | RoomFacade:
+        room = self._application_state.get_session_room(self._session_state.session_id)
         if room is None:
-            return None
-        return RoomFacade(room, self._application_state, self._session_state)
-
-    def create_room(self) -> None:
-        room_id = str(uuid.uuid4())
-        self._application_state.create_room(room_id, self.session_id)
-
-    def join_room(self, room_id: str) -> None:
-        self._application_state.join_room(room_id, self.session_id)
+            return LobbyFacade(self._application_state, self._session_state)
+        return RoomFacade(room, self._session_state.session_id)

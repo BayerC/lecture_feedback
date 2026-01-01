@@ -1,11 +1,15 @@
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
-from lecture_feedback.lecture_feedback_facade import LectureFeedbackFacade, RoomFacade
+from lecture_feedback.lecture_feedback_facade import (
+    FacadeFactory,
+    LobbyFacade,
+    RoomFacade,
+)
 from lecture_feedback.user_status import UserStatus
 
 
-def show_room_selection_screen(facade: LectureFeedbackFacade) -> None:
+def show_room_selection_screen(facade: LobbyFacade) -> None:
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a room to share feedback.")
 
@@ -47,8 +51,8 @@ def show_active_room(room_facade: RoomFacade) -> None:
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    facade = LectureFeedbackFacade()
-    if room_facade := facade.is_in_room():
-        show_active_room(room_facade)
-    else:
-        show_room_selection_screen(facade)
+    match FacadeFactory().get_facade():
+        case RoomFacade() as room_facade:
+            show_active_room(room_facade)
+        case LobbyFacade() as lobby_facade:
+            show_room_selection_screen(lobby_facade)
