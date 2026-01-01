@@ -45,18 +45,28 @@ class RoomFacade:
         return list(self._room)
 
 
-class FacadeFactory:
+class Context:
     def __init__(self) -> None:
-        self._application_state: ApplicationState = self._get_application_state()
-        self._session_state = SessionState()
+        self.application_state: ApplicationState = self._get_application_state()
+        self.session_state = SessionState()
 
     @staticmethod
     @st.cache_resource
     def _get_application_state() -> ApplicationState:
         return ApplicationState()
 
+
+class FacadeFactory:
+    def __init__(self) -> None:
+        self.context = Context()
+
     def get_facade(self) -> LobbyFacade | RoomFacade:
-        room = self._application_state.get_session_room(self._session_state.session_id)
+        room = self.context.application_state.get_session_room(
+            self.context.session_state.session_id,
+        )
         if room is None:
-            return LobbyFacade(self._application_state, self._session_state)
-        return RoomFacade(room, self._session_state.session_id)
+            return LobbyFacade(
+                self.context.application_state,
+                self.context.session_state,
+            )
+        return RoomFacade(room, self.context.session_state.session_id)
