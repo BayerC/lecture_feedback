@@ -5,6 +5,7 @@ from lecture_feedback.lecture_feedback_facade import (
     FacadeFactory,
     LobbyFacade,
     RoomFacade,
+    State,
 )
 from lecture_feedback.user_status import UserStatus
 
@@ -51,8 +52,16 @@ def show_active_room(room_facade: RoomFacade) -> None:
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
+    factory = FacadeFactory()
+    match factory.get_state():
+        case State.ROOM:
+            show_active_room(factory.get_facade())
+        case State.LOBBY:
+            show_room_selection_screen(factory.get_facade())
+    """
     match FacadeFactory().get_facade():
         case RoomFacade() as room_facade:
             show_active_room(room_facade)
         case LobbyFacade() as lobby_facade:
             show_room_selection_screen(lobby_facade)
+    """

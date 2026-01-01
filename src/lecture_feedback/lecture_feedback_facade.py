@@ -1,3 +1,4 @@
+import enum
 import uuid
 
 import streamlit as st
@@ -56,9 +57,18 @@ class Context:
         return ApplicationState()
 
 
+class State(enum.Enum):
+    LOBBY = "lobby"
+    ROOM = "room"
+
+
 class FacadeFactory:
     def __init__(self) -> None:
         self.context = Context()
+        self.state = State.LOBBY
+
+    def get_state(self) -> State:
+        return self.state
 
     def get_facade(self) -> LobbyFacade | RoomFacade:
         room = self.context.application_state.get_session_room(
