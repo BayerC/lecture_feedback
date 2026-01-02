@@ -1,15 +1,15 @@
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
-from lecture_feedback.api_factory import (
-    ApiFactory,
-    LobbyApi,
-    RoomApi,
+from lecture_feedback.state_provider import (
+    LobbyState,
+    RoomState,
+    StateProvider,
 )
 from lecture_feedback.user_status import UserStatus
 
 
-def show_room_selection_screen(lobby: LobbyApi) -> None:
+def show_room_selection_screen(lobby: LobbyState) -> None:
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a room to share feedback.")
 
@@ -35,7 +35,7 @@ def show_room_selection_screen(lobby: LobbyApi) -> None:
                     st.error("Room ID not found")
 
 
-def show_active_room(room: RoomApi) -> None:
+def show_active_room(room: RoomState) -> None:
     st.title("Active Room")
     st.write(f"**Room ID:** `{room.room_id}`")
     st.divider()
@@ -51,8 +51,8 @@ def show_active_room(room: RoomApi) -> None:
 def run() -> None:
     st_autorefresh(interval=2000, key="data_refresh")
 
-    match ApiFactory().get_current():
-        case RoomApi() as room:
+    match StateProvider().get_current():
+        case RoomState() as room:
             show_active_room(room)
-        case LobbyApi() as lobby:
+        case LobbyState() as lobby:
             show_room_selection_screen(lobby)

@@ -8,7 +8,7 @@ from lecture_feedback.session_state import SessionState
 from lecture_feedback.user_status import UserStatus
 
 
-class LobbyApi:
+class LobbyState:
     def __init__(
         self,
         application_state: ApplicationState,
@@ -25,7 +25,7 @@ class LobbyApi:
         self._application_state.join_room(room_id, self._session_state.session_id)
 
 
-class RoomApi:
+class RoomState:
     def __init__(
         self,
         room: Room,
@@ -56,17 +56,17 @@ class Context:
         return ApplicationState()
 
 
-class ApiFactory:
+class StateProvider:
     def __init__(self) -> None:
         self.context = Context()
 
-    def get_current(self) -> LobbyApi | RoomApi:
+    def get_current(self) -> LobbyState | RoomState:
         room = self.context.application_state.get_session_room(
             self.context.session_state.session_id,
         )
         if room is None:
-            return LobbyApi(
+            return LobbyState(
                 self.context.application_state,
                 self.context.session_state,
             )
-        return RoomApi(room, self.context.session_state.session_id)
+        return RoomState(room, self.context.session_state.session_id)
