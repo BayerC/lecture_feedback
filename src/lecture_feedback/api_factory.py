@@ -1,4 +1,3 @@
-import enum
 import uuid
 
 import streamlit as st
@@ -9,7 +8,7 @@ from lecture_feedback.session_state import SessionState
 from lecture_feedback.user_status import UserStatus
 
 
-class LobbyFacade:
+class LobbyApi:
     def __init__(
         self,
         application_state: ApplicationState,
@@ -26,7 +25,7 @@ class LobbyFacade:
         self._application_state.join_room(room_id, self._session_state.session_id)
 
 
-class RoomFacade:
+class RoomApi:
     def __init__(
         self,
         room: Room,
@@ -57,26 +56,17 @@ class Context:
         return ApplicationState()
 
 
-class State(enum.Enum):
-    LOBBY = "lobby"
-    ROOM = "room"
-
-
-class FacadeFactory:
+class ApiFactory:
     def __init__(self) -> None:
         self.context = Context()
-        self.state = State.LOBBY
 
-    def get_state(self) -> State:
-        return self.state
-
-    def get_facade(self) -> LobbyFacade | RoomFacade:
+    def get_current(self) -> LobbyApi | RoomApi:
         room = self.context.application_state.get_session_room(
             self.context.session_state.session_id,
         )
         if room is None:
-            return LobbyFacade(
+            return LobbyApi(
                 self.context.application_state,
                 self.context.session_state,
             )
-        return RoomFacade(room, self.context.session_state.session_id)
+        return RoomApi(room, self.context.session_state.session_id)
