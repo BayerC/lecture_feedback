@@ -5,7 +5,7 @@ from collections import UserDict
 from typing import TYPE_CHECKING, Any, Self
 
 if TYPE_CHECKING:
-    from collections.abc import ItemsView, Iterator
+    from collections.abc import ItemsView, Iterator, ValuesView
 
 
 class ThreadSafeDict[T](UserDict[str, T]):
@@ -37,6 +37,10 @@ class ThreadSafeDict[T](UserDict[str, T]):
     def items(self) -> ItemsView[str, T]:
         with self._lock:
             return self.data.copy().items()
+
+    def values(self) -> ValuesView[T]:
+        with self._lock:
+            return self.data.copy().values()
 
     def __enter__(self) -> Self:
         self._lock.acquire()

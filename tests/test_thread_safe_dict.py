@@ -26,6 +26,12 @@ def test_basic_operations() -> None:
     assert len(items) == 2
     assert ("key1", "value1") in items
 
+    # Test iteration
+    keys = list(thread_safe_dict)
+    assert len(keys) == 2
+    assert "key1" in keys
+    assert "key2" in keys
+
     # Test deletion
     del thread_safe_dict["key1"]
     with pytest.raises(KeyError):

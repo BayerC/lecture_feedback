@@ -1,6 +1,5 @@
 from streamlit.testing.v1 import AppTest
 
-from lecture_feedback.app import get_application_state
 from lecture_feedback.user_status import UserStatus
 
 
@@ -40,17 +39,17 @@ def test_app_initial_load() -> None:
 
 
 def test_join_existing_room() -> None:
-    app_state = get_application_state()
-    room_id = "test_room_123"
-    app_state.create_room(room_id, "host_session")
+    app_host = AppTest.from_function(run_wrapper)
+    app_host.run()
+    app_host.button(key="start_room").click().run()
+    room_id = get_room_id(app_host)
 
-    app = AppTest.from_function(run_wrapper)
-    app.run()
+    app_joiner = AppTest.from_function(run_wrapper)
+    app_joiner.run()
+    app_joiner.text_input(key="join_room_id").set_value(room_id).run()
+    app_joiner.button(key="join_room").click().run()
 
-    app.text_input(key="join_room_id").set_value(room_id).run()
-    app.button(key="join_room").click().run()
-
-    assert is_on_active_room_screen(app)
+    assert is_on_active_room_screen(app_joiner)
 
 
 def get_page_content(app: AppTest) -> str:
