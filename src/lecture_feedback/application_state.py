@@ -25,3 +25,10 @@ class ApplicationState:
             message = f"Room {room_id} does not exist"
             raise ValueError(message)
         self.rooms[room_id].set_session_status(session_id, UserStatus.UNKNOWN)
+
+    def remove_empty_rooms(self) -> None:
+        empty_room_ids = [
+            room_id for room_id, room in self.rooms.items() if room.is_empty
+        ]
+        for room_id in empty_room_ids:
+            del self.rooms[room_id]
