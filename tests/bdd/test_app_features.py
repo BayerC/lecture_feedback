@@ -1,5 +1,5 @@
 import pytest
-from pytest_bdd import given, scenario, then, when
+from pytest_bdd import given, parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
 
@@ -31,6 +31,11 @@ def test_join_nonexistent_room() -> None:
     pass
 
 
+@scenario("features/app.feature", "User changes feedback status")
+def test_user_changes_feedback_status() -> None:
+    pass
+
+
 # ============================================================================
 # Shared Steps (used across multiple scenarios)
 # ============================================================================
@@ -41,6 +46,13 @@ def test_join_nonexistent_room() -> None:
 def on_room_selection_screen(app: AppTest) -> None:
     assert len(app.title) == 1
     assert app.title[0].value == "Welcome to Lecture Feedback App"
+
+
+@given("I am in an active room")
+def in_active_room(app: AppTest) -> None:
+    app.button(key="start_room").click().run()
+    assert len(app.title) == 1
+    assert app.title[0].value == "Active Room"
 
 
 # ============================================================================
@@ -61,6 +73,11 @@ def enter_nonexistent_room_id(app: AppTest) -> None:
 @when('I click the "Join Room" button')
 def click_join_room(app: AppTest) -> None:
     app.button(key="join_room").click().run()
+
+
+@when(parsers.parse('I click the status "{status}" button'))
+def click_status_button(app: AppTest, status: str) -> None:
+    app.button(key=status).click().run()
 
 
 # ============================================================================
@@ -89,3 +106,18 @@ def valid_room_id(app: AppTest) -> None:
 def see_room_not_found_error(app: AppTest) -> None:
     assert len(app.error) == 1
     assert app.error[0].value == "Room ID not found"
+
+
+@then(parsers.parse('my status should be "{status}"'))
+def verify_my_status(app: AppTest, status: str) -> None:
+    page_content = get_page_content(app)
+    assert status in page_content
+
+
+# ============================================================================
+# Helper Functions
+# ============================================================================
+
+
+def get_page_content(app: AppTest) -> str:
+    return "\n".join(element.value for element in app.markdown)
