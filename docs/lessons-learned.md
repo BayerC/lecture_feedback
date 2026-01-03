@@ -9,3 +9,5 @@
 - GitHub requires explicit configuration of required status checks: Settings → Branches → Branch protection rules → Require status checks to pass before merging
 - When vibe coding a complex task, start by discussing the possible solution in `Ask` mode. Only move to `Agent` mode once you’re confident in the approach.
   Jumping straight into large-scale code changes can be misleading and makes it easy to lose track of the correct solution.
+- Use `Voice Input` in Cursor to describe complex tasks in a fast and easy way
+- Use [Pytest-BDD](https://pytest-bdd.readthedocs.io/en/stable/#) for integration tests to document user interface
