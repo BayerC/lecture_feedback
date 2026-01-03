@@ -50,9 +50,8 @@ def on_room_selection_screen(app: AppTest) -> None:
 
 @given("I am in an active room")
 def in_active_room(app: AppTest) -> None:
-    app.button(key="start_room").click().run()
-    assert len(app.title) == 1
-    assert app.title[0].value == "Active Room"
+    click_create_room(app)
+    see_active_room_screen(app)
 
 
 # ============================================================================
