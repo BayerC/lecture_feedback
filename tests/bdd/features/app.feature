@@ -5,3 +5,21 @@ Feature: Running lecture feedback app
     When I click the "Create Room" button
     Then I should see the active room screen
     And the room should have a valid room ID
+
+  Scenario: Try to join non existing room
+    Given I am on the room selection screen
+    When I enter a non-existing room ID
+    And I click the "Join Room" button
+    Then I should see an error message "Room ID not found"
+    And I should still be on the room selection screen
+
+  Scenario Outline: User changes feedback status
+    Given I am in an active room
+    When I click the status "<status>" button
+    Then my status should be "<status>"
+
+    Examples:
+      | status      |
+      | 🔴 Red      |
+      | 🟡 Yellow   |
+      | 🟢 Green    |
