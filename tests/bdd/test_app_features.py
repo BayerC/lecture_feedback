@@ -26,6 +26,11 @@ def test_create_room() -> None:
     pass
 
 
+@scenario("features/app.feature", "Try to join room without entering Room ID")
+def test_join_without_room_id() -> None:
+    pass
+
+
 @scenario("features/app.feature", "Try to join non existing room")
 def test_join_nonexistent_room() -> None:
     pass
@@ -101,10 +106,16 @@ def valid_room_id(app: AppTest) -> None:
     assert len(room_id) > 0
 
 
-@then('I should see an error message "Room ID not found"')
-def see_room_not_found_error(app: AppTest) -> None:
+@then(parsers.parse('I should see error message "{error_message}"'))
+def see_room_not_found_error(app: AppTest, error_message: str) -> None:
     assert len(app.error) == 1
-    assert app.error[0].value == "Room ID not found"
+    assert app.error[0].value == error_message
+
+
+@then(parsers.parse('I should see warning message "{warning_message}"'))
+def see_warning_message(app: AppTest, warning_message: str) -> None:
+    assert len(app.warning) == 1
+    assert app.warning[0].value == warning_message
 
 
 @then(parsers.parse('my status should be "{status}"'))
