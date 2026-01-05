@@ -1,3 +1,4 @@
+import pytest
 from pytest_bdd import scenario, then, when
 from streamlit.testing.v1 import AppTest
 
@@ -29,15 +30,22 @@ def both_users_should_be_visible_in_user_status_report(
 
 
 @when("the other user closes their session")
-def other_user_closes_session() -> None:
-    pass
+def other_user_closes_session(context: dict[str, AppTest]) -> None:
+    del context["app2"]  # no more reference to the object, i.e., session finishes
 
 
 @when("when a given timeout has passed")
-def when_timeout_has_passed() -> None:
+def when_timeout_has_passed(
+    context: dict[str, AppTest],
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     pass
+    # monkeypatch.setattr("lecture_feedback.room.time.time", lambda: 1_000_000_000)
+    # context["app"].run()
 
 
 @then("only I should be visible in the user status report")
-def only_i_should_be_visible_in_user_status_report() -> None:
+def only_i_should_be_visible_in_user_status_report(context: dict[str, AppTest]) -> None:
     pass
+    # content = get_page_content(context["app"])
+    # assert content.count("Session") == 1
