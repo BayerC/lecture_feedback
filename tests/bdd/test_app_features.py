@@ -1,20 +1,5 @@
-import pytest
-from pytest_bdd import given, parsers, scenario, then, when
+from pytest_bdd import parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
-
-
-def run_wrapper() -> None:
-    from lecture_feedback.app import run  # noqa: PLC0415
-
-    run()
-
-
-@pytest.fixture
-def app() -> AppTest:
-    application = AppTest.from_function(run_wrapper)
-    application.run()
-    return application
-
 
 # ============================================================================
 # Scenario Definitions
@@ -42,31 +27,8 @@ def test_user_changes_feedback_status() -> None:
 
 
 # ============================================================================
-# Shared Steps (used across multiple scenarios)
-# ============================================================================
-
-
-@given("I am on the room selection screen")
-@then("I should still be on the room selection screen")
-def on_room_selection_screen(app: AppTest) -> None:
-    assert len(app.title) == 1
-    assert app.title[0].value == "Welcome to Lecture Feedback App"
-
-
-@given("I am in an active room")
-def in_active_room(app: AppTest) -> None:
-    click_create_room(app)
-    see_active_room_screen(app)
-
-
-# ============================================================================
 # When Steps
 # ============================================================================
-
-
-@when('I click the "Create Room" button')
-def click_create_room(app: AppTest) -> None:
-    app.button(key="start_room").click().run()
 
 
 @when("I enter a non-existing room ID")
@@ -87,12 +49,6 @@ def click_status_button(app: AppTest, status: str) -> None:
 # ============================================================================
 # Then Steps
 # ============================================================================
-
-
-@then("I should see the active room screen")
-def see_active_room_screen(app: AppTest) -> None:
-    assert len(app.title) == 1
-    assert app.title[0].value == "Active Room"
 
 
 @then("the room should have a valid room ID")
