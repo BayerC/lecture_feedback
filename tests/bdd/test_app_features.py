@@ -2,12 +2,9 @@ import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
-STATUS_MAP = {
-    "red": "🔴 Red",
-    "green": "🟢 Green",
-    "yellow": "🟡 Yellow",
-    "unknown": "Unknown",
-}
+from lecture_feedback.user_status import UserStatus
+
+STATUS_MAP = {status.name.lower(): status.value for status in UserStatus}
 
 
 def run_wrapper() -> None:
