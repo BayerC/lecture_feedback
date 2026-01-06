@@ -40,12 +40,14 @@ def when_timeout_has_passed(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     pass
-    # monkeypatch.setattr("lecture_feedback.room.time.time", lambda: 1_000_000_000)
-    # context["app"].run()
+    # TODO(#39): implement this in production code and enable the test  # noqa: FIX002
+    # monkeypatch.setattr("lecture_feedback.room.time.time", lambda: 1_000_000_000)  # noqa: E501, ERA001
+    # context["app"].run()  # noqa: ERA001
 
 
 @then("only I should be visible in the user status report")
 def only_i_should_be_visible_in_user_status_report(context: dict[str, AppTest]) -> None:
     pass
-    # content = get_page_content(context["app"])
-    # assert content.count("Session") == 1
+    # TODO(#39): implement this in production code and enable the test  # noqa: FIX002
+    # content = get_page_content(context["app"])  # noqa: ERA001
+    # assert content.count("Session") == 1  # noqa: ERA001
