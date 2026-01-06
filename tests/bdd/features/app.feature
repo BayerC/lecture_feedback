@@ -29,3 +29,12 @@ Feature: Running lecture feedback app
       | 🔴 Red      |
       | 🟡 Yellow   |
       | 🟢 Green    |
+
+  Scenario: Two users in one room share statistics
+    Given user 1 and user 2
+    And user 1 creates a room
+    And user 2 joins user 1's room
+    When user 1 changes status to "🔴 Red"
+    Then all users in the room should see one red and one unknown
+    When user 2 changes status to "🟢 Green"
+    Then all users in the room should see one red and one green

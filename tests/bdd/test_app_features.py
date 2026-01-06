@@ -2,6 +2,13 @@ import pytest
 from pytest_bdd import given, parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
+STATUS_MAP = {
+    "red": "🔴 Red",
+    "green": "🟢 Green",
+    "yellow": "🟡 Yellow",
+    "unknown": "Unknown",
+}
+
 
 def run_wrapper() -> None:
     from lecture_feedback.app import run  # noqa: PLC0415
@@ -14,6 +21,11 @@ def app() -> AppTest:
     application = AppTest.from_function(run_wrapper)
     application.run()
     return application
+
+
+@pytest.fixture
+def multiple_sessions_app() -> dict[int, AppTest]:
+    return {}
 
 
 # ============================================================================
@@ -41,6 +53,11 @@ def test_user_changes_feedback_status() -> None:
     pass
 
 
+@scenario("features/app.feature", "Two users in one room share statistics")
+def test_two_users_share_statistics() -> None:
+    pass
+
+
 # ============================================================================
 # Shared Steps (used across multiple scenarios)
 # ============================================================================
@@ -57,6 +74,39 @@ def on_room_selection_screen(app: AppTest) -> None:
 def in_active_room(app: AppTest) -> None:
     click_create_room(app)
     see_active_room_screen(app)
+
+
+@given(parsers.parse("user {user_id:d} and user {other_user_id:d}"))
+def user_and_other_user(
+    multiple_sessions_app: dict[int, AppTest],
+    user_id: int,
+    other_user_id: int,
+) -> None:
+    multiple_sessions_app[user_id] = AppTest.from_function(run_wrapper)
+    multiple_sessions_app[user_id].run()
+    multiple_sessions_app[other_user_id] = AppTest.from_function(run_wrapper)
+    multiple_sessions_app[other_user_id].run()
+
+
+@given(parsers.parse("user {user_id:d} creates a room"))
+def user_creates_room(
+    multiple_sessions_app: dict[int, AppTest],
+    user_id: int,
+) -> None:
+    multiple_sessions_app[user_id].button(key="start_room").click().run()
+
+
+@given(parsers.parse("user {user_id:d} joins user {other_user_id:d}'s room"))
+def user_joins_other_user_room(
+    multiple_sessions_app: dict[int, AppTest],
+    user_id: int,
+    other_user_id: int,
+) -> None:
+    other_user_room_id = get_room_id(multiple_sessions_app[other_user_id])
+    multiple_sessions_app[user_id].text_input(key="join_room_id").set_value(
+        other_user_room_id,
+    ).run()
+    multiple_sessions_app[user_id].button(key="join_room").click().run()
 
 
 # ============================================================================
@@ -82,6 +132,18 @@ def click_join_room(app: AppTest) -> None:
 @when(parsers.parse('I click the status "{status}" button'))
 def click_status_button(app: AppTest, status: str) -> None:
     app.button(key=status).click().run()
+
+
+@when(parsers.parse('user {user_id:d} changes status to "{status}"'))
+def user_changes_status(
+    multiple_sessions_app: dict[int, AppTest],
+    user_id: int,
+    status: str,
+) -> None:
+    multiple_sessions_app[user_id].button(key=status).click().run()
+    for uid, app in multiple_sessions_app.items():
+        if uid != user_id:
+            app.run()
 
 
 # ============================================================================
@@ -124,6 +186,25 @@ def verify_my_status(app: AppTest, status: str) -> None:
     assert status in page_content
 
 
+@then(
+    parsers.parse("all users in the room should see one {status_1} and one {status_2}"),
+)
+def all_users_in_room_see_two_statuses(
+    multiple_sessions_app: dict[int, AppTest],
+    status_1: str,
+    status_2: str,
+) -> None:
+    expected = (STATUS_MAP[status_1.lower()], STATUS_MAP[status_2.lower()])
+    forbidden = tuple(set(STATUS_MAP.values()) - set(expected))
+
+    for app in multiple_sessions_app.values():
+        check_page_contents(
+            app,
+            expected=expected,
+            forbidden=forbidden,
+        )
+
+
 # ============================================================================
 # Helper Functions
 # ============================================================================
@@ -131,3 +212,25 @@ def verify_my_status(app: AppTest, status: str) -> None:
 
 def get_page_content(app: AppTest) -> str:
     return "\n".join(element.value for element in app.markdown)
+
+
+def get_room_id(app: AppTest) -> str:
+    room_id = None
+    for element in app.markdown:
+        if element.value.startswith("**Room ID:**"):
+            room_id = element.value.split("`")[1]
+            break
+    assert room_id is not None
+    return room_id
+
+
+def check_page_contents(
+    app: AppTest,
+    expected: tuple[str, ...],
+    forbidden: tuple[str, ...] = (),
+) -> None:
+    page_content = get_page_content(app)
+    for string in expected:
+        assert string in page_content
+    for string in forbidden:
+        assert string not in page_content

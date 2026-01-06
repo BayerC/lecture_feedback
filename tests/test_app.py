@@ -45,45 +45,6 @@ def get_room_id(app: AppTest) -> str:
     return room_id
 
 
-def test_two_sessions_track_user_stats_in_same_room() -> None:
-    app_1 = AppTest.from_function(run_wrapper)
-    app_1.run()
-    app_1.button(key="start_room").click().run()
-
-    app_2 = AppTest.from_function(run_wrapper)
-    app_2.run()
-    app_2.text_input(key="join_room_id").set_value(get_room_id(app_1)).run()
-    app_2.button(key="join_room").click().run()
-
-    app_1.button(key=UserStatus.RED.value).click().run()
-    check_page_contents(
-        app_1,
-        expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value),
-        forbidden=(UserStatus.GREEN.value, UserStatus.YELLOW.value),
-    )
-
-    app_2.run()
-    check_page_contents(
-        app_2,
-        expected=(UserStatus.RED.value, UserStatus.UNKNOWN.value),
-        forbidden=(UserStatus.GREEN.value, UserStatus.YELLOW.value),
-    )
-
-    app_2.button(key=UserStatus.GREEN.value).click().run()
-    app_1.run()
-
-    check_page_contents(
-        app_1,
-        expected=(UserStatus.RED.value, UserStatus.GREEN.value),
-        forbidden=(UserStatus.UNKNOWN.value, UserStatus.YELLOW.value),
-    )
-    check_page_contents(
-        app_2,
-        expected=(UserStatus.RED.value, UserStatus.GREEN.value),
-        forbidden=(UserStatus.UNKNOWN.value, UserStatus.YELLOW.value),
-    )
-
-
 def test_three_sessions_in_two_rooms() -> None:
     app_1 = AppTest.from_function(run_wrapper)
     app_1.run()
