@@ -35,17 +35,17 @@ def test_user_changes_feedback_status() -> None:
 
 @when("I enter a non-existing room ID")
 def enter_nonexistent_room_id(context: dict[str, AppTest]) -> None:
-    context["app"].text_input(key="join_room_id").set_value("9999").run()
+    context["user"].text_input(key="join_room_id").set_value("9999").run()
 
 
 @when('I click the "Join Room" button')
 def click_join_room(context: dict[str, AppTest]) -> None:
-    context["app"].button(key="join_room").click().run()
+    context["user"].button(key="join_room").click().run()
 
 
 @when(parsers.parse('I click the status "{status}" button'))
 def click_status_button(context: dict[str, AppTest], status: str) -> None:
-    context["app"].button(key=status).click().run()
+    context["user"].button(key=status).click().run()
 
 
 # ============================================================================
@@ -56,7 +56,7 @@ def click_status_button(context: dict[str, AppTest], status: str) -> None:
 @then("the room should have a valid room ID")
 def valid_room_id(context: dict[str, AppTest]) -> None:
     room_id = None
-    for element in context["app"].markdown:
+    for element in context["user"].markdown:
         if element.value.startswith("**Room ID:**"):
             room_id = element.value.split("`")[1]
             break
@@ -66,17 +66,17 @@ def valid_room_id(context: dict[str, AppTest]) -> None:
 
 @then(parsers.parse('I should see error message "{error_message}"'))
 def see_room_not_found_error(context: dict[str, AppTest], error_message: str) -> None:
-    assert len(context["app"].error) == 1
-    assert context["app"].error[0].value == error_message
+    assert len(context["user"].error) == 1
+    assert context["user"].error[0].value == error_message
 
 
 @then(parsers.parse('I should see warning message "{warning_message}"'))
 def see_warning_message(context: dict[str, AppTest], warning_message: str) -> None:
-    assert len(context["app"].warning) == 1
-    assert context["app"].warning[0].value == warning_message
+    assert len(context["user"].warning) == 1
+    assert context["user"].warning[0].value == warning_message
 
 
 @then(parsers.parse('my status should be "{status}"'))
 def verify_my_status(context: dict[str, AppTest], status: str) -> None:
-    page_content = get_page_content(context["app"])
+    page_content = get_page_content(context["user"])
     assert status in page_content

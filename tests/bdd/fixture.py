@@ -12,4 +12,4 @@ def run_wrapper() -> None:
 def context() -> dict[str, AppTest]:
     application = AppTest.from_function(run_wrapper)
     application.run()
-    return {"app": application}
+    return {"user": application}
