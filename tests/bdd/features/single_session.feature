@@ -1,4 +1,4 @@
-Feature: Running lecture feedback app
+Feature: Single session
 
   Scenario: Create a new Room
     Given I am on the room selection screen

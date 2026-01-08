@@ -7,7 +7,7 @@ from tests.bdd.test_helper import check_page_contents
 STATUS_MAP = {status.name.lower(): status.value for status in UserStatus}
 
 
-@scenario("features/multi_session.feature", "Two users in one room share statistics")
+@scenario("features/multiple_session.feature", "Two users in one room share statistics")
 def test_two_users_share_statistics() -> None:
     pass
 

@@ -1,4 +1,4 @@
-Feature: Multiple sessions interacting
+Feature: Multiple sessions
 
   Scenario: Two users in one room share statistics
     Given I am in an active room

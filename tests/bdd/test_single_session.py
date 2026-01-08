@@ -8,22 +8,25 @@ from tests.bdd.test_helper import get_page_content
 # ============================================================================
 
 
-@scenario("features/app.feature", "Create a new Room")
+@scenario("features/single_session.feature", "Create a new Room")
 def test_create_room() -> None:
     pass
 
 
-@scenario("features/app.feature", "Try to join room without entering Room ID")
+@scenario(
+    "features/single_session.feature",
+    "Try to join room without entering Room ID",
+)
 def test_join_without_room_id() -> None:
     pass
 
 
-@scenario("features/app.feature", "Try to join non existing room")
+@scenario("features/single_session.feature", "Try to join non existing room")
 def test_join_nonexistent_room() -> None:
     pass
 
 
-@scenario("features/app.feature", "User changes feedback status")
+@scenario("features/single_session.feature", "User changes feedback status")
 def test_user_changes_feedback_status() -> None:
     pass
 
