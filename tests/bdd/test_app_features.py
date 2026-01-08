@@ -43,11 +43,6 @@ def click_join_room(context: dict[str, AppTest]) -> None:
     context["user"].button(key="join_room").click().run()
 
 
-@when(parsers.parse('I click the status "{status}" button'))
-def click_status_button(context: dict[str, AppTest], status: str) -> None:
-    context["user"].button(key=status).click().run()
-
-
 # ============================================================================
 # Then Steps
 # ============================================================================
