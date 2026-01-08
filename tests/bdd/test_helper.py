@@ -20,3 +20,13 @@ def check_page_contents(
         assert string in page_content
     for string in forbidden:
         assert string not in page_content
+
+
+def get_room_id(app: AppTest) -> str:
+    room_id = None
+    for element in app.markdown:
+        if element.value.startswith("**Room ID:**"):
+            room_id = element.value.split("`")[1]
+            break
+    assert room_id is not None
+    return room_id

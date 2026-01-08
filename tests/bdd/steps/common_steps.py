@@ -2,8 +2,7 @@ from pytest_bdd import given, parsers, then, when
 from streamlit.testing.v1 import AppTest
 
 from tests.bdd.fixture import run_wrapper
-from tests.bdd.test_helper import refresh_all_apps
-from tests.test_app import get_room_id
+from tests.bdd.test_helper import get_room_id, refresh_all_apps
 
 
 @given("I am in an active room")
