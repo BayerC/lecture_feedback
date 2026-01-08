@@ -13,7 +13,3 @@ def context() -> dict[str, AppTest]:
     application = AppTest.from_function(run_wrapper)
     application.run()
     return {"app": application}
-
-
-def get_page_content(app: AppTest) -> str:
-    return "\n".join(element.value for element in app.markdown)

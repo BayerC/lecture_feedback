@@ -1,7 +1,7 @@
 from pytest_bdd import parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
-from tests.bdd.fixture import get_page_content
+from tests.bdd.test_helper import get_page_content
 
 # ============================================================================
 # Scenario Definitions

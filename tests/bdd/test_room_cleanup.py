@@ -2,7 +2,8 @@ import pytest
 from pytest_bdd import scenario, then, when
 from streamlit.testing.v1 import AppTest
 
-from tests.bdd.fixture import get_page_content, run_wrapper
+from tests.bdd.fixture import run_wrapper
+from tests.bdd.test_helper import get_page_content
 from tests.test_app import get_room_id
 
 
