@@ -35,8 +35,8 @@ def other_user_closes_session(context: dict[str, AppTest]) -> None:
     del context["app2"]  # no more reference to the object, i.e., session finishes
 
 
-@when("when a given timeout has passed")
-def when_timeout_has_passed(
+@when("a given timeout has passed")
+def timeout_has_passed(
     context: dict[str, AppTest],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
