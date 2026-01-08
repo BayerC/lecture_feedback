@@ -9,7 +9,7 @@ from tests.bdd.test_helper import get_page_content
     "features/room_cleanup.feature",
     "Disconnected user is removed from user status after timeout",
 )
-def test_user_leaves_room_and_room_is_cleaned_up() -> None:
+def test_disconnected_user_is_removed_from_user_status_after_timeout() -> None:
     pass
 
 

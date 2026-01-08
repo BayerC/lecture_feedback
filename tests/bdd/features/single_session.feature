@@ -1,6 +1,6 @@
 Feature: Single session
 
-  Scenario: Create a new Room
+  Scenario: Create a new room
     Given I am on the room selection screen
     When I click the "Create Room" button
     Then I should see the active room screen
