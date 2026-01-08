@@ -1,7 +1,7 @@
 from pytest_bdd import parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
-from tests.bdd.test_helper import get_page_content
+from tests.bdd.test_helper import get_page_content, get_room_id
 
 # ============================================================================
 # Scenario Definitions
@@ -53,12 +53,7 @@ def click_join_room(context: dict[str, AppTest]) -> None:
 
 @then("the room should have a valid room ID")
 def valid_room_id(context: dict[str, AppTest]) -> None:
-    room_id = None
-    for element in context["user"].markdown:
-        if element.value.startswith("**Room ID:**"):
-            room_id = element.value.split("`")[1]
-            break
-    assert room_id is not None
+    room_id = get_room_id(context["user"])
     assert len(room_id) > 0
 
 
