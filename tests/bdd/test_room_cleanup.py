@@ -13,9 +13,11 @@ def test_user_leaves_room_and_room_is_cleaned_up() -> None:
     pass
 
 
-@when("the other user closes their session")
-def other_user_closes_session(context: dict[str, AppTest]) -> None:
-    del context["other_user"]  # no more reference to the object, i.e., session finishes
+@when("the second user closes their session")
+def second_user_closes_session(context: dict[str, AppTest]) -> None:
+    del context[
+        "second_user"
+    ]  # no more reference to the object, i.e., session finishes
 
 
 @when("a given timeout has passed")

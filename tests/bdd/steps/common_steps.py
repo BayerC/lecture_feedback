@@ -16,14 +16,14 @@ def click_create_room(context: dict[str, AppTest]) -> None:
     context["user"].button(key="start_room").click().run()
 
 
-@when("another user joins the room")
+@when("a second user joins the room")
 def another_user_joins_room(context: dict[str, AppTest]) -> None:
-    context["other_user"] = AppTest.from_function(run_wrapper)
-    context["other_user"].run()
-    context["other_user"].text_input(key="join_room_id").set_value(
+    context["second_user"] = AppTest.from_function(run_wrapper)
+    context["second_user"].run()
+    context["second_user"].text_input(key="join_room_id").set_value(
         get_room_id(context["user"]),
     ).run()
-    context["other_user"].button(key="join_room").click().run()
+    context["second_user"].button(key="join_room").click().run()
     refresh_all_apps(context)
 
 
@@ -33,9 +33,9 @@ def user_click_status_button(context: dict[str, AppTest], status: str) -> None:
     refresh_all_apps(context)
 
 
-@when(parsers.parse('other user clicks the status "{status}" button'))
-def other_user_click_status_button(context: dict[str, AppTest], status: str) -> None:
-    context["other_user"].button(key=status).click().run()
+@when(parsers.parse('the second user clicks the status "{status}" button'))
+def second_user_click_status_button(context: dict[str, AppTest], status: str) -> None:
+    context["second_user"].button(key=status).click().run()
     refresh_all_apps(context)
 
 
