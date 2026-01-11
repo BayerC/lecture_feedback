@@ -8,6 +8,9 @@ from lecture_feedback.state_provider import (
 )
 from lecture_feedback.user_status import UserStatus
 
+AUTOREFRESH_INTERNAL_MS = 2000
+USER_REMOVAL_TIMEOUT_SECONDS = 5
+
 
 def show_room_selection_screen(lobby: LobbyState) -> None:
     st.title("Welcome to Lecture Feedback App")
@@ -49,11 +52,11 @@ def show_active_room(room: RoomState) -> None:
 
 
 def run() -> None:
-    st_autorefresh(interval=2000, key="data_refresh")
+    st_autorefresh(interval=AUTOREFRESH_INTERNAL_MS, key="data_refresh")
 
     match StateProvider().get_current():
         case RoomState() as room:
             show_active_room(room)
-            room.remove_inactive_users(timeout_seconds=5)
+            room.remove_inactive_users(timeout_seconds=USER_REMOVAL_TIMEOUT_SECONDS)
         case LobbyState() as lobby:
             show_room_selection_screen(lobby)

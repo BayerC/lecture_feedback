@@ -38,7 +38,7 @@ def timeout_has_passed(
     context: dict[str, AppTest],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    time_to_pass = 64
+    time_to_pass = 9
     for current_time in range(0, time_to_pass, 2):
         monkeypatch.setattr(
             "lecture_feedback.room.time.time",
