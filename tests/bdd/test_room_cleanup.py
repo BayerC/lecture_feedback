@@ -38,8 +38,12 @@ def timeout_has_passed(
     context: dict[str, AppTest],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    time_to_pass = 9
-    for current_time in range(0, time_to_pass, 2):
+    time_to_pass = 5
+    step_time = 2
+    # patch this in any case to be independent of the production value
+    monkeypatch.setattr("lecture_feedback.app.USER_REMOVAL_TIMEOUT_SECONDS", 3)
+
+    for current_time in range(0, time_to_pass, step_time):
         monkeypatch.setattr(
             "lecture_feedback.room.time.time",
             lambda current_time=current_time: current_time,
