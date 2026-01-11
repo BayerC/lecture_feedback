@@ -44,9 +44,46 @@ def show_active_room(room: RoomState) -> None:
         st.code(room.room_id, language=None)
     st.divider()
 
-    for status in [UserStatus.GREEN, UserStatus.YELLOW, UserStatus.RED]:
-        if st.button(status.value, key=status.value):
-            room.set_user_status(status)
+    current_user_status = room.get_user_status()
+
+    if current_user_status == UserStatus.UNKNOWN:
+        status_options = [
+            UserStatus.UNKNOWN,
+            UserStatus.GREEN,
+            UserStatus.YELLOW,
+            UserStatus.RED,
+        ]
+        status_captions = [
+            "Not decided yet",
+            "can follow easily",
+            "needs more explanation",
+            "cannot follow at all",
+        ]
+    else:
+        status_options = [
+            UserStatus.GREEN,
+            UserStatus.YELLOW,
+            UserStatus.RED,
+        ]
+        status_captions = [
+            "can follow easily",
+            "needs more explanation",
+            "cannot follow at all",
+        ]
+
+    selected_user_status = st.radio(
+        "How good can you follow the lecture?",
+        status_options,
+        format_func=lambda s: s.value,
+        captions=status_captions,
+    )
+
+    room.set_user_status(selected_user_status)
+
+    if selected_user_status != UserStatus.UNKNOWN and current_user_status == UserStatus.UNKNOWN:
+        st.rerun()
+
+
 
     for sid, user_status in room.get_room_participants():
         st.write(f"Session {sid}: {user_status.value}")
