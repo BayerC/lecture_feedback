@@ -54,6 +54,6 @@ def run() -> None:
     match StateProvider().get_current():
         case RoomState() as room:
             show_active_room(room)
-            room.remove_inactive_users(timeout_seconds=60)
+            room.remove_inactive_users(timeout_seconds=5)
         case LobbyState() as lobby:
             show_room_selection_screen(lobby)

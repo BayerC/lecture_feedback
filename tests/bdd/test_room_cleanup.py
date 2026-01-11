@@ -1,9 +1,15 @@
-import time
 import pytest
 from pytest_bdd import scenario, then, when
 from streamlit.testing.v1 import AppTest
 
 from tests.bdd.test_helper import get_page_content
+
+
+@pytest.fixture(autouse=True)
+def freeze_time_to_zero(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("lecture_feedback.room.time.time", lambda: 0)
 
 
 @scenario(
@@ -24,9 +30,7 @@ def both_users_should_be_visible_in_user_status_report(
 
 @when("the second user closes their session")
 def second_user_closes_session(context: dict[str, AppTest]) -> None:
-    del context[
-        "second_user"
-    ]  # no more reference to the object, i.e., session finishes
+    del context["second_user"]  # prevent running this user further
 
 
 @when("a given timeout has passed")
@@ -34,9 +38,13 @@ def timeout_has_passed(
     context: dict[str, AppTest],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    current_time = time.time()
-    monkeypatch.setattr("lecture_feedback.room.time.time", lambda: current_time + 61)
-    context["user"].run()
+    time_to_pass = 64
+    for current_time in range(0, time_to_pass, 2):
+        monkeypatch.setattr(
+            "lecture_feedback.room.time.time",
+            lambda current_time=current_time: current_time,
+        )
+        context["user"].run()
 
 
 @then("only I should be visible in the user status report")
