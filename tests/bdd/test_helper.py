@@ -23,10 +23,7 @@ def check_page_contents(
 
 
 def get_room_id(app: AppTest) -> str:
-    room_id = None
-    for element in app.markdown:
-        if element.value.startswith("**Room ID:**"):
-            room_id = element.value.split("`")[1]
-            break
-    assert room_id is not None
-    return room_id
+    if app.code:
+        return app.code[0].value
+    msg = "Room ID not found"
+    raise AssertionError(msg)
