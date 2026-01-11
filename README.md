@@ -3,7 +3,7 @@
 ![CI](https://github.com/BayerC/lecture_feedback/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/BayerC/lecture_feedback/branch/main/graph/badge.svg)](https://codecov.io/gh/BayerC/lecture_feedback)
 
-The app is available at <https://lecture-feedback.streamlit.app/>.
+The app (currently beta, while https://github.com/BayerC/lecture_feedback/milestone/1 is not done) is available at <https://lecture-feedback.streamlit.app/>.
 
 ## Development
 
