@@ -5,6 +5,8 @@ from lecture_feedback.user_status import UserStatus
 from tests.bdd.fixture import run_wrapper
 from tests.bdd.test_helper import get_room_id, refresh_all_apps
 
+STATUS_VALUES = {status.value: status for status in UserStatus}
+
 
 @given("I am in an active room")
 def in_active_room(context: dict[str, AppTest]) -> None:
@@ -29,7 +31,7 @@ def another_user_joins_room(context: dict[str, AppTest]) -> None:
 
 
 def _select_status(app: AppTest, context: dict[str, AppTest], status: str) -> None:
-    status_enum = next(s for s in UserStatus if s.value == status)
+    status_enum = STATUS_VALUES.get(status)
     assert status_enum is not None
     app.radio(key="user_status_selection").set_value(status_enum).run()
     refresh_all_apps(context)
