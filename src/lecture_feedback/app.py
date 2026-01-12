@@ -56,10 +56,11 @@ def show_user_status_selection(room: RoomState) -> None:
     )
     room.set_user_status(selected_user_status)
 
-    if (
-        selected_user_status != UserStatus.UNKNOWN
-        and current_user_status == UserStatus.UNKNOWN
-    ):
+    has_user_transitioned_away_from_unknown_status = (
+        current_user_status == UserStatus.UNKNOWN
+        and selected_user_status != UserStatus.UNKNOWN
+    )
+    if has_user_transitioned_away_from_unknown_status:
         st.rerun()
 
 
