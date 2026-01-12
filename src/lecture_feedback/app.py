@@ -37,7 +37,11 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 
 def show_active_room(room: RoomState) -> None:
     st.title("Active Room")
-    st.write(f"**Room ID:** `{room.room_id}`")
+    col1, col2 = st.columns([1, 4], vertical_alignment="center")
+    with col1:
+        st.write("**Room ID:**")
+    with col2:
+        st.code(room.room_id, language=None)
     st.divider()
 
     for status in [UserStatus.GREEN, UserStatus.YELLOW, UserStatus.RED]:
