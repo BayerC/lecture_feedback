@@ -28,24 +28,21 @@ def another_user_joins_room(context: dict[str, AppTest]) -> None:
     refresh_all_apps(context)
 
 
-@when(parsers.parse('I click the status "{status}" button'))
-def user_click_status_button(context: dict[str, AppTest], status: str) -> None:
+def _select_status(app: AppTest, context: dict[str, AppTest], status: str) -> None:
     status_enum = next(s for s in UserStatus if s.value == status)
     assert status_enum is not None
-    context["user"].radio(key="user_status_selection").set_value(
-        status_enum,
-    ).run()
+    app.radio(key="user_status_selection").set_value(status_enum).run()
     refresh_all_apps(context)
 
 
-@when(parsers.parse('the second user clicks the status "{status}" button'))
-def second_user_click_status_button(context: dict[str, AppTest], status: str) -> None:
-    status_enum = next(s for s in UserStatus if s.value == status)
-    assert status_enum is not None
-    context["second_user"].radio(key="user_status_selection").set_value(
-        status_enum,
-    ).run()
-    refresh_all_apps(context)
+@when(parsers.parse('I select the status "{status}"'))
+def user_select_status(context: dict[str, AppTest], status: str) -> None:
+    _select_status(context["user"], context, status)
+
+
+@when(parsers.parse('the second user selects the status "{status}"'))
+def second_user_select_status(context: dict[str, AppTest], status: str) -> None:
+    _select_status(context["second_user"], context, status)
 
 
 @then("I should see the active room screen")
