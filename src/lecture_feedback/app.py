@@ -42,14 +42,8 @@ def show_user_status_selection(room: RoomState) -> None:
         UserStatus.YELLOW,
         UserStatus.RED,
     ]
-    status_captions = [
-        "Following easily",
-        "Need more explanation",
-        "Cannot follow",
-    ]
     if current_user_status == UserStatus.UNKNOWN:
         status_options.append(UserStatus.UNKNOWN)
-        status_captions.append("Not decided yet")
 
     index = status_options.index(current_user_status)
     selected_user_status = st.radio(
@@ -57,7 +51,7 @@ def show_user_status_selection(room: RoomState) -> None:
         status_options,
         index=index,
         format_func=lambda s: s.value,
-        captions=status_captions,
+        captions=[status.caption() for status in status_options],
         key="user_status_selection",
     )
     room.set_user_status(selected_user_status)
