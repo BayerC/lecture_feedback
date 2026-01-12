@@ -1,6 +1,7 @@
 from pytest_bdd import given, parsers, then, when
 from streamlit.testing.v1 import AppTest
 
+from lecture_feedback.user_status import UserStatus
 from tests.bdd.fixture import run_wrapper
 from tests.bdd.test_helper import get_room_id, refresh_all_apps
 
@@ -29,13 +30,21 @@ def another_user_joins_room(context: dict[str, AppTest]) -> None:
 
 @when(parsers.parse('I click the status "{status}" button'))
 def user_click_status_button(context: dict[str, AppTest], status: str) -> None:
-    context["user"].button(key=status).click().run()
+    status_enum = next(s for s in UserStatus if s.value == status)
+    assert status_enum is not None
+    context["user"].radio(key="user_status_selection").set_value(
+        status_enum,
+    ).run()
     refresh_all_apps(context)
 
 
 @when(parsers.parse('the second user clicks the status "{status}" button'))
 def second_user_click_status_button(context: dict[str, AppTest], status: str) -> None:
-    context["second_user"].button(key=status).click().run()
+    status_enum = next(s for s in UserStatus if s.value == status)
+    assert status_enum is not None
+    context["second_user"].radio(key="user_status_selection").set_value(
+        status_enum,
+    ).run()
     refresh_all_apps(context)
 
 

@@ -35,17 +35,8 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
                     st.error("Room ID not found")
 
 
-def show_active_room(room: RoomState) -> None:
-    st.title("Active Room")
-    col1, col2 = st.columns([1, 4], vertical_alignment="center")
-    with col1:
-        st.write("**Room ID:**")
-    with col2:
-        st.code(room.room_id, language=None)
-    st.divider()
-
+def show_user_status_selection(room: RoomState) -> None:
     current_user_status = room.get_user_status()
-
     status_options = [
         UserStatus.GREEN,
         UserStatus.YELLOW,
@@ -56,18 +47,19 @@ def show_active_room(room: RoomState) -> None:
         "Need more explanation",
         "Cannot follow",
     ]
-
     if current_user_status == UserStatus.UNKNOWN:
-        status_options.insert(0, UserStatus.UNKNOWN)
-        status_captions.insert(0, "Not decided yet")
+        status_options.append(UserStatus.UNKNOWN)
+        status_captions.append("Not decided yet")
 
+    index = status_options.index(current_user_status)
     selected_user_status = st.radio(
         "How well can you follow the lecture?",
         status_options,
+        index=index,
         format_func=lambda s: s.value,
         captions=status_captions,
+        key="user_status_selection",
     )
-
     room.set_user_status(selected_user_status)
 
     if (
@@ -75,6 +67,20 @@ def show_active_room(room: RoomState) -> None:
         and current_user_status == UserStatus.UNKNOWN
     ):
         st.rerun()
+
+
+def show_active_room(room: RoomState) -> None:
+    st.title("Active Room")
+    col1, col2 = st.columns([1, 4], vertical_alignment="center")
+    with col1:
+        st.write("**Room ID:**")
+    with col2:
+        st.code(room.room_id, language=None)
+    st.divider()
+
+    show_user_status_selection(room)
+
+    st.divider()
 
     for sid, user_status in room.get_room_participants():
         st.write(f"Session {sid}: {user_status.value}")
