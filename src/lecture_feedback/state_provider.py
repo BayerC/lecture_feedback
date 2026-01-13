@@ -41,6 +41,9 @@ class RoomState:
     def set_user_status(self, status: UserStatus) -> None:
         self._room.set_session_status(self._session_id, status)
 
+    def get_user_status(self) -> UserStatus:
+        return self._room.get_session_status(self._session_id)
+
     def get_room_participants(self) -> list[tuple[str, UserStatus]]:
         return list(self._room)
 

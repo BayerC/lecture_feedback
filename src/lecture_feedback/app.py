@@ -35,6 +35,35 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
                     st.error("Room ID not found")
 
 
+def show_user_status_selection(room: RoomState) -> None:
+    current_user_status = room.get_user_status()
+    status_options = [
+        UserStatus.GREEN,
+        UserStatus.YELLOW,
+        UserStatus.RED,
+    ]
+    if current_user_status == UserStatus.UNKNOWN:
+        status_options.append(UserStatus.UNKNOWN)
+
+    index = status_options.index(current_user_status)
+    selected_user_status = st.radio(
+        "How well can you follow the lecture?",
+        status_options,
+        index=index,
+        format_func=lambda s: s.value,
+        captions=[status.caption() for status in status_options],
+        key="user_status_selection",
+    )
+    room.set_user_status(selected_user_status)
+
+    has_user_transitioned_away_from_unknown_status = (
+        current_user_status == UserStatus.UNKNOWN
+        and selected_user_status != UserStatus.UNKNOWN
+    )
+    if has_user_transitioned_away_from_unknown_status:
+        st.rerun()
+
+
 def show_active_room(room: RoomState) -> None:
     st.title("Active Room")
     col1, col2 = st.columns([1, 4], vertical_alignment="center")
@@ -44,9 +73,9 @@ def show_active_room(room: RoomState) -> None:
         st.code(room.room_id, language=None)
     st.divider()
 
-    for status in [UserStatus.GREEN, UserStatus.YELLOW, UserStatus.RED]:
-        if st.button(status.value, key=status.value):
-            room.set_user_status(status)
+    show_user_status_selection(room)
+
+    st.divider()
 
     for sid, user_status in room.get_room_participants():
         st.write(f"Session {sid}: {user_status.value}")

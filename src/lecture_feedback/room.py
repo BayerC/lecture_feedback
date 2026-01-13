@@ -12,6 +12,9 @@ class Room:
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = status
 
+    def get_session_status(self, session_id: str) -> UserStatus:
+        return self._sessions.get(session_id, UserStatus.UNKNOWN)
+
     def has_session(self, session_id: str) -> bool:
         return session_id in self._sessions
 

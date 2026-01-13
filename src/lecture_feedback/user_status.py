@@ -6,3 +6,12 @@ class UserStatus(Enum):
     GREEN = "🟢 Green"
     YELLOW = "🟡 Yellow"
     RED = "🔴 Red"
+
+    def caption(self) -> str:
+        captions = {
+            UserStatus.UNKNOWN: "Not decided yet",
+            UserStatus.GREEN: "Following easily",
+            UserStatus.YELLOW: "Need more explanation",
+            UserStatus.RED: "Cannot follow",
+        }
+        return captions[self]
