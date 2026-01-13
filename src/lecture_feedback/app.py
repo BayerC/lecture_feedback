@@ -1,3 +1,5 @@
+import pandas as pd
+import plotly.express as px
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
@@ -39,6 +41,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 
 
 def show_user_status_selection(room: RoomState) -> None:
+    st.subheader("Your Status")
     current_user_status = room.get_user_status()
     status_options = [
         UserStatus.GREEN,
@@ -67,6 +70,47 @@ def show_user_status_selection(room: RoomState) -> None:
         st.rerun()
 
 
+def show_room_statistics(room: RoomState) -> None:
+    participants = room.get_room_participants()
+
+    # Count each status
+    counts = {
+        "Unknown": sum(1 for _, s in participants if s == UserStatus.UNKNOWN),
+        "Red": sum(1 for _, s in participants if s == UserStatus.RED),
+        "Yellow": sum(1 for _, s in participants if s == UserStatus.YELLOW),
+        "Green": sum(1 for _, s in participants if s == UserStatus.GREEN),
+    }
+
+    df = pd.DataFrame([counts])
+
+    # Create plotly figure
+    fig = px.bar(
+        df,
+        x=df.index,
+        y=df.columns,
+        color_discrete_sequence=["#9CA3AF", "#EF4444", "#FBBF24", "#10B981"],
+    )
+
+    # Style the chart
+    fig.update_layout(
+        showlegend=False,
+        xaxis={"visible": False},
+        yaxis={"visible": False},
+        margin={"l": 0, "r": 0, "t": 0, "b": 0},
+    )
+
+    disable_interactions_config = {
+        "displayModeBar": False,
+        "staticPlot": True,
+    }
+
+    # Center the chart
+    _, col2, _ = st.columns([1, 2, 1])
+    with col2:
+        st.plotly_chart(fig, width="stretch", config=disable_interactions_config)
+        st.text(f"Total participants: {len(participants)}")
+
+
 def show_active_room(room: RoomState) -> None:
     st.title("Active Room")
     col1, col2 = st.columns([1, 4], vertical_alignment="center")
@@ -75,13 +119,11 @@ def show_active_room(room: RoomState) -> None:
     with col2:
         st.code(room.room_id, language=None)
     st.divider()
-
-    show_user_status_selection(room)
-
-    st.divider()
-
-    for sid, user_status in room.get_room_participants():
-        st.write(f"Session {sid}: {user_status.value}")
+    col_left, col_right = st.columns(2, gap="medium")
+    with col_left:
+        show_user_status_selection(room)
+    with col_right:
+        show_room_statistics(room)
 
 
 def run() -> None:
