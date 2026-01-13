@@ -21,7 +21,7 @@ Feature: Single session
 
   Scenario Outline: User changes feedback status
     Given I am in an active room
-    When I click the status "<status>" button
+    When I select the status "<status>"
     Then my status should be "<status>"
 
     Examples:

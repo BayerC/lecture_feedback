@@ -1,8 +1,11 @@
 from pytest_bdd import given, parsers, then, when
 from streamlit.testing.v1 import AppTest
 
+from lecture_feedback.user_status import UserStatus
 from tests.bdd.fixture import run_wrapper
 from tests.bdd.test_helper import get_room_id, refresh_all_apps
+
+STATUS_VALUES = {status.value: status for status in UserStatus}
 
 
 @given("I am in an active room")
@@ -27,16 +30,21 @@ def another_user_joins_room(context: dict[str, AppTest]) -> None:
     refresh_all_apps(context)
 
 
-@when(parsers.parse('I click the status "{status}" button'))
-def user_click_status_button(context: dict[str, AppTest], status: str) -> None:
-    context["user"].button(key=status).click().run()
+def _select_status(app: AppTest, context: dict[str, AppTest], status: str) -> None:
+    status_enum = STATUS_VALUES.get(status)
+    assert status_enum is not None
+    app.radio(key="user_status_selection").set_value(status_enum).run()
     refresh_all_apps(context)
 
 
-@when(parsers.parse('the second user clicks the status "{status}" button'))
-def second_user_click_status_button(context: dict[str, AppTest], status: str) -> None:
-    context["second_user"].button(key=status).click().run()
-    refresh_all_apps(context)
+@when(parsers.parse('I select the status "{status}"'))
+def user_select_status(context: dict[str, AppTest], status: str) -> None:
+    _select_status(context["user"], context, status)
+
+
+@when(parsers.parse('the second user selects the status "{status}"'))
+def second_user_select_status(context: dict[str, AppTest], status: str) -> None:
+    _select_status(context["second_user"], context, status)
 
 
 @then("I should see the active room screen")

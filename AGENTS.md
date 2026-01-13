@@ -1,7 +1,8 @@
 ## Code
-- User modern python 3.13
-- User modern python style and techniques
+- Use modern python 3.13
+- Use modern python style and techniques
 - High quality code
+- We use `uv` to manage python versions and dependencies. For example, use `uv run pytest` to run tests
 
 ## Coding Guideline
 - Don't use abbreviations that are not widely known as such. Prefer to spell out words in variable and function names

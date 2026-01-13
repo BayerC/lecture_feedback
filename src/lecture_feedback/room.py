@@ -20,6 +20,9 @@ class Room:
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = UserSession(status, time.time())
 
+    def get_session_status(self, session_id: str) -> UserStatus:
+        return self._sessions.get(session_id, UserStatus.UNKNOWN)
+
     def has_session(self, session_id: str) -> bool:
         if session_id in self._sessions:
             self._sessions[session_id].last_seen = time.time()
