@@ -74,22 +74,29 @@ def see_warning_message(context: dict[str, AppTest], warning_message: str) -> No
 
 
 
-@pytest.fixture()
-def capture_statistics(monkeypatch):
-    capture_statistics.dataframe = None
+class CaptureStatistics:
+    dataframe = None  # Class variable instead of instance variable
     
-    original_func = get_statistics_data_frame
-    
-    def capture_wrapper(room) -> pd.DataFrame:
-        df = original_func(room)
-        capture_statistics.dataframe = df
-        return df
-    
-    monkeypatch.setattr(
-        "lecture_feedback.app.get_statistics_data_frame", 
-        capture_wrapper
-    )
-capture_statistics.dataframe = None
+    @classmethod
+    def setup(cls, monkeypatch):
+        cls.dataframe = None
+        
+        original_func = get_statistics_data_frame
+        
+        def capture_wrapper(room) -> pd.DataFrame:
+            df = original_func(room)
+            cls.dataframe = df
+            return df
+        
+        monkeypatch.setattr(
+            "lecture_feedback.app.get_statistics_data_frame", 
+            capture_wrapper
+        )
+
+
+@pytest.fixture(autouse=True)
+def setup_capture_statistics(monkeypatch):
+    CaptureStatistics.setup(monkeypatch)
 
 
 @then(parsers.parse('my status should be "{status}"'))
@@ -97,6 +104,6 @@ def verify_my_status( context: dict[str, AppTest], status: str) -> None:
     plotly_charts = context["user"].get("plotly_chart")
     assert len(plotly_charts) > 0, "No plotly chart found"
 
-    assert capture_statistics.dataframe is not None, "No dataframe was captured"
-    count = capture_statistics.dataframe[status].iloc[0]
+    assert CaptureStatistics.dataframe is not None, "No dataframe was captured"
+    count = CaptureStatistics.dataframe[status].iloc[0]
     assert count >= 1, f"Expected at least 1 user with status '{status}', found {count}"
