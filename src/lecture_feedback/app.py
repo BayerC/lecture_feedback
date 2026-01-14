@@ -70,20 +70,18 @@ def show_user_status_selection(room: RoomState) -> None:
         st.rerun()
 
 
-def show_room_statistics(room: RoomState) -> None:
+def get_statistics_data_frame(room: RoomState) -> pd.DataFrame:
     participants = room.get_room_participants()
-
-    # Count each status
     counts = {
-        "Unknown": sum(1 for _, s in participants if s == UserStatus.UNKNOWN),
-        "Red": sum(1 for _, s in participants if s == UserStatus.RED),
-        "Yellow": sum(1 for _, s in participants if s == UserStatus.YELLOW),
-        "Green": sum(1 for _, s in participants if s == UserStatus.GREEN),
+        status.value: sum(1 for _, s in participants if s == status)
+        for status in UserStatus
     }
+    return pd.DataFrame([counts])
 
-    df = pd.DataFrame([counts])
 
-    # Create plotly figure
+def show_room_statistics(room: RoomState) -> None:
+    df = get_statistics_data_frame(room)
+
     fig = px.bar(
         df,
         x=df.index,
@@ -91,7 +89,6 @@ def show_room_statistics(room: RoomState) -> None:
         color_discrete_sequence=["#9CA3AF", "#EF4444", "#FBBF24", "#10B981"],
     )
 
-    # Style the chart
     fig.update_layout(
         showlegend=False,
         xaxis={"visible": False},
@@ -104,11 +101,10 @@ def show_room_statistics(room: RoomState) -> None:
         "staticPlot": True,
     }
 
-    # Center the chart
     _, col2, _ = st.columns([1, 2, 1])
     with col2:
         st.plotly_chart(fig, width="stretch", config=disable_interactions_config)
-        st.text(f"Total participants: {len(participants)}")
+        st.text(f"Total participants: {df.sum().sum()}")
 
 
 def show_active_room(room: RoomState) -> None:
