@@ -75,6 +75,8 @@ def verify_my_status(context: dict[str, AppTest], status: str) -> None:
     plotly_charts = context["user"].get("plotly_chart")
     assert len(plotly_charts) > 0, "No plotly chart found"
 
-    assert captured.df is not None, "No dataframe was captured"
-    count = captured.df[status].iloc[0]
+    room_id = get_room_id(context["user"])
+    df = captured.room_data[room_id]
+    assert captured.room_data[room_id] is not None, "No dataframe was captured"
+    count = df[status].iloc[0]
     assert count >= 1, f"Expected at least 1 user with status '{status}', found {count}"
