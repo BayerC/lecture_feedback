@@ -14,8 +14,8 @@ def test_two_users_share_statistics() -> None:
 
 
 @scenario(
-   "features/multiple_session.feature",
-   "Three users in two separate rooms maintain independent statistics",
+    "features/multiple_session.feature",
+    "Three users in two separate rooms maintain independent statistics",
 )
 def test_three_users_in_two_separate_rooms_maintain_independent_statistics() -> None:
     pass
@@ -44,4 +44,7 @@ def users_should_see_statuses(
             expected_count = sum(1 for s in status_names if s in status.value)
             actual_count = df[status.value].iloc[0]
 
-            assert actual_count == expected_count, f"{user}, {status}, expected_count: {expected_count} vs actual_count: {actual_count}"
+            assert actual_count == expected_count, (
+                f"{user}, {status}, \
+                expected_count: {expected_count} vs actual_count: {actual_count}"
+            )

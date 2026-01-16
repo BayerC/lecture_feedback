@@ -25,7 +25,7 @@ def both_users_should_be_visible_in_user_status_report(
     context: dict[str, AppTest],
 ) -> None:
     content = get_page_content(context["user"])
-    assert content.count("Session") == 2
+    assert "Total participants: 2" in content
 
 
 @when("the second user closes their session")
