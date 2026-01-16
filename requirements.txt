@@ -143,7 +143,9 @@ markupsafe==3.0.3 \
 narwhals==2.15.0 \
     --hash=sha256:a9585975b99d95084268445a1fdd881311fa26ef1caa18020d959d5b2ff9a965 \
     --hash=sha256:cbfe21ca19d260d9fd67f995ec75c44592d1f106933b03ddd375df7ac841f9d6
-    # via altair
+    # via
+    #   altair
+    #   plotly
 numpy==2.3.5 \
     --hash=sha256:00dc4e846108a382c5869e77c6ed514394bdeb3403461d25a829711041217d5b \
     --hash=sha256:0472f11f6ec23a74a906a00b48a4dcf3849209696dff7c189714511268d103ae \
@@ -199,6 +201,7 @@ packaging==25.0 \
     --hash=sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f
     # via
     #   altair
+    #   plotly
     #   streamlit
 pandas==2.3.3 \
     --hash=sha256:0242fe9a49aa8b4d78a4fa03acb397a58833ef6199e9aa40a95f027bb3a1b6e7 \
@@ -282,6 +285,10 @@ pillow==12.1.0 \
     --hash=sha256:f45bd71d1fa5e5749587613037b172e0b3b23159d1c00ef2fc920da6f470e6f0 \
     --hash=sha256:f61333d817698bdcdd0f9d7793e365ac3d2a21c1f1eb02b32ad6aefb8d8ea831
     # via streamlit
+plotly==6.5.2 \
+    --hash=sha256:7478555be0198562d1435dee4c308268187553cc15516a2f4dd034453699e393 \
+    --hash=sha256:91757653bd9c550eeea2fa2404dba6b85d1e366d54804c340b2c874e5a7eb4a4
+    # via lecture-feedback
 protobuf==6.33.4 \
     --hash=sha256:1fe3730068fcf2e595816a6c34fe66eeedd37d51d0400b72fabc848811fdc1bc \
     --hash=sha256:2fe67f6c014c84f655ee06f6f66213f9254b3a8b6bda6cda0ccd4232c73c06f0 \
