@@ -86,7 +86,8 @@ def show_room_statistics(room: RoomState) -> None:
         df,
         x=df.index,
         y=df.columns,
-        color_discrete_sequence=["#9CA3AF", "#EF4444", "#FBBF24", "#10B981"],
+        # UNKNOWN, GREEN, YELLOW, RED -> gray, green, yellow, red
+        color_discrete_sequence=["#9CA3AF", "#10B981", "#FBBF24", "#EF4444"],
     )
 
     fig.update_layout(
@@ -103,7 +104,7 @@ def show_room_statistics(room: RoomState) -> None:
 
     _, col2, _ = st.columns([1, 2, 1])
     with col2:
-        st.plotly_chart(fig, width="stretch", config=disable_interactions_config)
+        st.plotly_chart(fig, config=disable_interactions_config)
         st.text(f"Total participants: {df.sum().sum()}")
 
 
