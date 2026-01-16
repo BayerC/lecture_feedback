@@ -47,6 +47,9 @@ class RoomState:
     def get_room_participants(self) -> list[tuple[str, UserStatus]]:
         return list(self._room)
 
+    def remove_inactive_users(self, timeout_seconds: int) -> None:
+        self._room.remove_inactive_sessions(timeout_seconds)
+
 
 class Context:
     def __init__(self) -> None:
