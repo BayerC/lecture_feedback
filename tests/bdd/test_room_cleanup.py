@@ -54,4 +54,4 @@ def timeout_has_passed(
 @then("only I should be visible in the user status report")
 def only_i_should_be_visible_in_user_status_report(context: dict[str, AppTest]) -> None:
     content = get_page_content(context["user"])
-    assert content.count("Session") == 1
+    assert "Total participants: 1" in content
