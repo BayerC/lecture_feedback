@@ -13,12 +13,12 @@ def test_two_users_share_statistics() -> None:
     pass
 
 
-# @scenario(
-#    "features/multiple_session.feature",
-#    "Three users in two separate rooms maintain independent statistics",
-# )
-# def test_three_users_in_two_separate_rooms_maintain_independent_statistics() -> None:
-#    pass
+@scenario(
+   "features/multiple_session.feature",
+   "Three users in two separate rooms maintain independent statistics",
+)
+def test_three_users_in_two_separate_rooms_maintain_independent_statistics() -> None:
+    pass
 
 
 @when("a third user creates another room")
@@ -41,8 +41,7 @@ def users_should_see_statuses(
         room_id = get_room_id(context[user])
         df = captured.room_data[room_id]
         for status in UserStatus:
-            status_value = status.value
-            expected_count = sum(1 for s in status_names if s == status.value)
+            expected_count = sum(1 for s in status_names if s in status.value)
+            actual_count = df[status.value].iloc[0]
 
-            actual_count = df[status_value].iloc[0]
-            assert actual_count == expected_count
+            assert actual_count == expected_count, f"{user}, {status}, expected_count: {expected_count} vs actual_count: {actual_count}"
