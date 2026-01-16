@@ -76,7 +76,15 @@ def get_statistics_data_frame(room: RoomState) -> pd.DataFrame:
         status.value: sum(1 for _, s in participants if s == status)
         for status in UserStatus
     }
-    return pd.DataFrame([counts])
+    df = pd.DataFrame([counts])
+    # Reorder columns: UNKNOWN (bottom), RED, YELLOW, GREEN (top)
+    column_order = [
+        UserStatus.UNKNOWN.value,
+        UserStatus.RED.value,
+        UserStatus.YELLOW.value,
+        UserStatus.GREEN.value,
+    ]
+    return df[[col for col in column_order if col in df.columns]]
 
 
 def show_room_statistics(room: RoomState) -> None:
@@ -86,8 +94,8 @@ def show_room_statistics(room: RoomState) -> None:
         df,
         x=df.index,
         y=df.columns,
-        # UNKNOWN, GREEN, YELLOW, RED -> gray, green, yellow, red
-        color_discrete_sequence=["#9CA3AF", "#10B981", "#FBBF24", "#EF4444"],
+        # UNKNOWN, RED, YELLOW, GREEN -> grey, red, yellow, green (bottom to top)
+        color_discrete_sequence=["#9CA3AF", "#EF4444", "#FBBF24", "#10B981"],
     )
 
     fig.update_layout(
