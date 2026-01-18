@@ -11,7 +11,9 @@ from lecture_feedback.state_provider import (
 from lecture_feedback.user_status import UserStatus
 
 AUTOREFRESH_INTERNAL_MS = 2000
-USER_REMOVAL_TIMEOUT_SECONDS = 5
+USER_REMOVAL_TIMEOUT_SECONDS = (
+    60  # if we go lower, chrome's background tab throttling causes faulty user removal
+)
 
 GREY_COLOR = "#9CA3AF"
 RED_COLOR = "#EF4444"
