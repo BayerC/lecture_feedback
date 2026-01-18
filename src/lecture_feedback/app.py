@@ -9,7 +9,7 @@ from lecture_feedback.state_provider import (
 from lecture_feedback.user_status import UserStatus
 
 AUTOREFRESH_INTERNAL_MS = 2000
-USER_REMOVAL_TIMEOUT_SECONDS = 5
+USER_REMOVAL_TIMEOUT_SECONDS = 10
 
 
 def show_room_selection_screen(lobby: LobbyState) -> None:
