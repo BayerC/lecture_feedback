@@ -7,7 +7,9 @@ def refresh_all_apps(context: dict[str, AppTest]) -> None:
 
 
 def get_page_content(app: AppTest) -> str:
-    return "\n".join(element.value for element in app.markdown)
+    markdown_content = "\n".join(element.value for element in app.markdown)
+    text_content = "\n".join(element.value for element in app.text)
+    return f"{markdown_content}\n{text_content}"
 
 
 def check_page_contents(
