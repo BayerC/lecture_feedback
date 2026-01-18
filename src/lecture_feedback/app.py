@@ -13,7 +13,7 @@ from lecture_feedback.user_status import UserStatus
 AUTOREFRESH_INTERNAL_MS = 2000
 USER_REMOVAL_TIMEOUT_SECONDS = 5
 
-UNKNOWN_GREY_COLOR = "#9CA3AF"
+GREY_COLOR = "#9CA3AF"
 RED_COLOR = "#EF4444"
 YELLOW_COLOR = "#FBBF24"
 GREEN_COLOR = "#10B981"
@@ -100,7 +100,7 @@ def show_room_statistics(room: RoomState) -> None:
         x=df.index,
         y=df.columns,
         color_discrete_sequence=[
-            UNKNOWN_GREY_COLOR,
+            GREY_COLOR,
             RED_COLOR,
             YELLOW_COLOR,
             GREEN_COLOR,
