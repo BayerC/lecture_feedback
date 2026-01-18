@@ -1,3 +1,5 @@
+import pandas as pd
+import plotly.express as px
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
@@ -10,6 +12,11 @@ from lecture_feedback.user_status import UserStatus
 
 AUTOREFRESH_INTERNAL_MS = 2000
 USER_REMOVAL_TIMEOUT_SECONDS = 5
+
+GREY_COLOR = "#9CA3AF"
+RED_COLOR = "#EF4444"
+YELLOW_COLOR = "#FBBF24"
+GREEN_COLOR = "#10B981"
 
 
 def show_room_selection_screen(lobby: LobbyState) -> None:
@@ -39,6 +46,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 
 
 def show_user_status_selection(room: RoomState) -> None:
+    st.subheader("Your Status")
     current_user_status = room.get_user_status()
     status_options = [
         UserStatus.GREEN,
@@ -67,6 +75,56 @@ def show_user_status_selection(room: RoomState) -> None:
         st.rerun()
 
 
+def get_statistics_data_frame(room: RoomState) -> pd.DataFrame:
+    participants = room.get_room_participants()
+    counts = {
+        status.value: sum(1 for _, s in participants if s == status)
+        for status in UserStatus
+    }
+    df = pd.DataFrame([counts])
+    # Reorder columns: UNKNOWN (bottom), RED, YELLOW, GREEN (top)
+    column_order = [
+        UserStatus.UNKNOWN.value,
+        UserStatus.RED.value,
+        UserStatus.YELLOW.value,
+        UserStatus.GREEN.value,
+    ]
+    return df[[col for col in column_order if col in df.columns]]
+
+
+def show_room_statistics(room: RoomState) -> None:
+    df = get_statistics_data_frame(room)
+
+    fig = px.bar(
+        df,
+        x=df.index,
+        y=df.columns,
+        color_discrete_sequence=[
+            GREY_COLOR,
+            RED_COLOR,
+            YELLOW_COLOR,
+            GREEN_COLOR,
+        ],
+    )
+
+    fig.update_layout(
+        showlegend=False,
+        xaxis={"visible": False},
+        yaxis={"visible": False},
+        margin={"l": 0, "r": 0, "t": 0, "b": 0},
+    )
+
+    disable_interactions_config = {
+        "displayModeBar": False,
+        "staticPlot": True,
+    }
+
+    _, col2, _ = st.columns([1, 2, 1])
+    with col2:
+        st.plotly_chart(fig, config=disable_interactions_config)
+        st.text(f"Number of participants: {df.sum().sum()}")
+
+
 def show_active_room(room: RoomState) -> None:
     st.title("Active Room")
     col1, col2 = st.columns([1, 4], vertical_alignment="center")
@@ -75,13 +133,11 @@ def show_active_room(room: RoomState) -> None:
     with col2:
         st.code(room.room_id, language=None)
     st.divider()
-
-    show_user_status_selection(room)
-
-    st.divider()
-
-    for sid, user_status in room.get_room_participants():
-        st.write(f"Session {sid}: {user_status.value}")
+    col_left, col_right = st.columns(2, gap="medium")
+    with col_left:
+        show_user_status_selection(room)
+    with col_right:
+        show_room_statistics(room)
 
 
 def run() -> None:

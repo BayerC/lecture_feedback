@@ -1,7 +1,8 @@
 from pytest_bdd import parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
-from tests.bdd.test_helper import get_page_content, get_room_id
+from tests.bdd.fixture import captured
+from tests.bdd.test_helper import get_room_id
 
 # ============================================================================
 # Scenario Definitions
@@ -71,5 +72,11 @@ def see_warning_message(context: dict[str, AppTest], warning_message: str) -> No
 
 @then(parsers.parse('my status should be "{status}"'))
 def verify_my_status(context: dict[str, AppTest], status: str) -> None:
-    page_content = get_page_content(context["user"])
-    assert status in page_content
+    plotly_charts = context["user"].get("plotly_chart")
+    assert len(plotly_charts) > 0, "No plotly chart found"
+
+    room_id = get_room_id(context["user"])
+    df = captured.room_data[room_id]
+    assert captured.room_data[room_id] is not None, "No dataframe was captured"
+    count = df[status].iloc[0]
+    assert count >= 1, f"Expected at least 1 user with status '{status}', found {count}"

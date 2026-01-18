@@ -2,8 +2,8 @@ from pytest_bdd import parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
 from lecture_feedback.user_status import UserStatus
-from tests.bdd.fixture import run_wrapper
-from tests.bdd.test_helper import check_page_contents
+from tests.bdd.fixture import captured, run_wrapper
+from tests.bdd.test_helper import get_room_id
 
 STATUS_MAP = {status.name.lower(): status.value for status in UserStatus}
 
@@ -34,15 +34,17 @@ def users_should_see_statuses(
     users: str,
     statuses: str,
 ) -> None:
-    user_keys = [u.strip() for u in users.split(",")]
     status_names = [s.strip() for s in statuses.split(",")]
+    user_keys = [u.strip() for u in users.split(",")]
 
-    expected = tuple(STATUS_MAP[status.lower()] for status in status_names)
-    forbidden = tuple(set(STATUS_MAP.values()) - set(expected))
+    for user in user_keys:
+        room_id = get_room_id(context[user])
+        df = captured.room_data[room_id]
+        for status in UserStatus:
+            expected_count = sum(1 for s in status_names if s in status.value)
+            actual_count = df[status.value].iloc[0]
 
-    for user_key in user_keys:
-        check_page_contents(
-            context[user_key],
-            expected=expected,
-            forbidden=forbidden,
-        )
+            assert actual_count == expected_count, (
+                f"{user}, {status}, \
+                expected_count: {expected_count} vs actual_count: {actual_count}"
+            )
