@@ -13,6 +13,11 @@ from lecture_feedback.user_status import UserStatus
 AUTOREFRESH_INTERNAL_MS = 2000
 USER_REMOVAL_TIMEOUT_SECONDS = 5
 
+UNKNOWN_GREY_COLOR = "#9CA3AF"
+RED_COLOR = "#EF4444"
+YELLOW_COLOR = "#FBBF24"
+GREEN_COLOR = "#10B981"
+
 
 def show_room_selection_screen(lobby: LobbyState) -> None:
     st.title("Welcome to Lecture Feedback App")
@@ -94,8 +99,12 @@ def show_room_statistics(room: RoomState) -> None:
         df,
         x=df.index,
         y=df.columns,
-        # UNKNOWN, RED, YELLOW, GREEN -> grey, red, yellow, green (bottom to top)
-        color_discrete_sequence=["#9CA3AF", "#EF4444", "#FBBF24", "#10B981"],
+        color_discrete_sequence=[
+            UNKNOWN_GREY_COLOR,
+            RED_COLOR,
+            YELLOW_COLOR,
+            GREEN_COLOR,
+        ],
     )
 
     fig.update_layout(
@@ -113,7 +122,7 @@ def show_room_statistics(room: RoomState) -> None:
     _, col2, _ = st.columns([1, 2, 1])
     with col2:
         st.plotly_chart(fig, config=disable_interactions_config)
-        st.text(f"Total participants: {df.sum().sum()}")
+        st.text(f"Number of participants: {df.sum().sum()}")
 
 
 def show_active_room(room: RoomState) -> None:
