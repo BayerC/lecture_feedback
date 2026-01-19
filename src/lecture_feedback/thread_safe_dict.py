@@ -12,7 +12,7 @@ class ThreadSafeDict[T]:
         self._lock = threading.RLock()
         self._data: dict[str, T] = dict(*args, **kwargs)
 
-    def __getitem__(self, key: Any) -> T:  # noqa: ANN401
+    def __getitem__(self, key: str) -> T:
         with self._lock:
             return self._data[key]
 
