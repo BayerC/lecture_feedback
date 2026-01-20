@@ -22,6 +22,13 @@ GREEN_COLOR = "#10B981"
 
 
 def show_room_selection_screen(lobby: LobbyState) -> None:
+    if "room_id" in st.query_params:
+        try:
+            lobby.join_room(st.query_params["room_id"])
+            st.rerun()
+        except ValueError:
+            st.error("Room ID from url not found")
+
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a room to share feedback.")
 
@@ -128,6 +135,7 @@ def show_room_statistics(room: RoomState) -> None:
 
 
 def show_active_room(room: RoomState) -> None:
+    st.query_params["room_id"] = room.room_id
     st.title("Active Room")
     col1, col2 = st.columns([1, 4], vertical_alignment="center")
     with col1:

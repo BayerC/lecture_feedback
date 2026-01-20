@@ -58,6 +58,13 @@ def valid_room_id(context: dict[str, AppTest]) -> None:
     assert len(room_id) > 0
 
 
+@then("the url should contain the room id")
+def url_has_room_id(context: dict[str, AppTest]) -> None:
+    room_id = get_room_id(context["user"])
+    assert len(context["user"].query_params["room_id"]) == 1
+    assert context["user"].query_params["room_id"][0] == room_id
+
+
 @then(parsers.parse('I should see error message "{error_message}"'))
 def see_room_not_found_error(context: dict[str, AppTest], error_message: str) -> None:
     assert len(context["user"].error) == 1
