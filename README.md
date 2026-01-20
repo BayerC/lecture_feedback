@@ -14,7 +14,7 @@ The app (currently beta, while https://github.com/BayerC/lecture_feedback/milest
 
 ### Dependency Management
 
-This project uses [uv](https://docs.astral.sh/uv/https:/) for dependency management:
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management:
 
 - [pyproject.toml](pyproject.toml): Defines dependencies with version constraints.
 - [uv.lock](uv.lock): Lockfile with exact versions for all platforms. Committed to version control.
