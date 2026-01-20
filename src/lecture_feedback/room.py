@@ -21,7 +21,7 @@ class Room:
         self._sessions[session_id] = UserSession(status, time.time())
 
     def get_session_status(self, session_id: str) -> UserStatus:
-        return self._sessions.get(session_id, UserSession(UserStatus.UNKNOWN, 0)).status
+        return self._sessions[session_id].status
 
     def has_session(self, session_id: str) -> bool:
         if session_id in self._sessions:

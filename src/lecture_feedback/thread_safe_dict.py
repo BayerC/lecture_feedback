@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import threading
-from typing import TYPE_CHECKING, Any, Self, overload
+from typing import TYPE_CHECKING, Any, Self
 
 if TYPE_CHECKING:
     from collections.abc import ItemsView, Iterator, ValuesView
@@ -15,16 +15,6 @@ class ThreadSafeDict[T]:
     def __getitem__(self, key: str) -> T:
         with self._lock:
             return self._data[key]
-
-    @overload
-    def get(self, key: str) -> T | None: ...
-
-    @overload
-    def get(self, key: str, default: T) -> T: ...
-
-    def get(self, key: str, default: T | None = None) -> T | None:
-        with self._lock:
-            return self._data.get(key, default)
 
     def __setitem__(self, key: str, value: T) -> None:
         with self._lock:
