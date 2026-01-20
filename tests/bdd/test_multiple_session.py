@@ -8,6 +8,11 @@ from tests.bdd.test_helper import get_room_id
 STATUS_MAP = {status.name.lower(): status.value for status in UserStatus}
 
 
+@scenario("features/multiple_session.feature", "Second user joins with room url")
+def test_second_user_joins_with_room_url() -> None:
+    pass
+
+
 @scenario("features/multiple_session.feature", "Two users in one room share statistics")
 def test_two_users_share_statistics() -> None:
     pass
@@ -19,6 +24,32 @@ def test_two_users_share_statistics() -> None:
 )
 def test_three_users_in_two_separate_rooms_maintain_independent_statistics() -> None:
     pass
+
+
+@when("a second user wants to join with invalid url")
+def second_user_joins_with_room_url(context: dict[str, AppTest]) -> None:
+    context["second_user"] = AppTest.from_function(run_wrapper)
+    context["second_user"].query_params["room_id"] = "INVALID"
+    context["second_user"].run()
+
+
+@then(parsers.parse('the second user should see warning message "{error_message}"'))
+def see_url_not_found_warning_message(
+    context: dict[str, AppTest],
+    error_message: str,
+) -> None:
+    assert len(context["second_user"].error) == 1
+    assert context["second_user"].error[0].value == error_message
+
+
+@when("a third user wants to join with my room url")
+def third_user_joins_with_room_url(context: dict[str, AppTest]) -> None:
+    context["third_user"] = AppTest.from_function(run_wrapper)
+    assert "room_id" in context["user"].query_params
+    context["third_user"].query_params["room_id"] = context["user"].query_params[
+        "room_id"
+    ]
+    context["third_user"].run()
 
 
 @when("a third user creates another room")

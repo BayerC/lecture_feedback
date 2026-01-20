@@ -5,6 +5,7 @@ Feature: Single session
     When I click the "Create Room" button
     Then I should see the active room screen
     And the room should have a valid room ID
+    And the url should contain the room id
 
   Scenario: Try to join room without entering Room ID
     Given I am on the room selection screen
