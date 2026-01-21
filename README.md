@@ -20,7 +20,7 @@ Participants use a simple traffic light system to signal their understanding:
 - 🟡 **Yellow** → Need more explanation
 - 🔴 **Red** → Cannot follow
 
-The presenter sees a bar histogram of the current distribution and can then adapt on the fly, to slow down when audiences struggle, or speed up when everyone is on track.
+The presenter sees a bar histogram of the current distribution and can then adapt on the fly to slow down when audiences struggle or speed up when everyone is on track.
 
 ### How to use:
 Open https://lecture-feedback.streamlit.app/ or [run locally](#run-locally)
@@ -34,12 +34,12 @@ Open https://lecture-feedback.streamlit.app/ or [run locally](#run-locally)
 
 1. `git clone https://github.com/BayerC/lecture_feedback.git`
 2. `cd lecture_feedback/`
-2. `Install uv: https://docs.astral.sh/uv/getting-started/installation/
-2. To run app locally: `uv run streamlit run main.py`
+3. `Install uv: https://docs.astral.sh/uv/getting-started/installation/`
+4. To run app locally: `uv run streamlit run main.py`
 
 ## Contributing
 
-1. [run locally steps](#run-locally)
+1. [Run locally steps](#run-locally)
 2. Install pre-commit: `uv run pre-commit install`
 3. To run pre-commit manually run: `uv run pre-commit run --all-files`
 
