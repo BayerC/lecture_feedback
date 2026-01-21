@@ -2,10 +2,12 @@
 
 ![CI](https://github.com/BayerC/lecture_feedback/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/BayerC/lecture_feedback/branch/main/graph/badge.svg)](https://codecov.io/gh/BayerC/lecture_feedback)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://lecture-feedback.streamlit.app/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+
 
 The app (currently beta, while https://github.com/BayerC/lecture_feedback/milestone/1 is not done) is available at <https://lecture-feedback.streamlit.app/>.
 
