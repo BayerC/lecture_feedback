@@ -24,9 +24,9 @@ The presenter sees a bar histogram of the current distribution and can then adap
 
 ### How to use:
 1. Create a room
-2. Share the link or room ID to the participants
+2. Share the link or room ID with the participants
 3. They will join your room and share their status anonymously
-4. The results will be shown as a bar diagram over all participants
+4. The results will be shown as a bar diagram across all participants
 
 ## Development
 
