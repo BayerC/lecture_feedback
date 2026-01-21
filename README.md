@@ -23,17 +23,25 @@ Participants use a simple traffic light system to signal their understanding:
 The presenter sees a bar histogram of the current distribution and can then adapt on the fly, to slow down when audiences struggle, or speed up when everyone is on track.
 
 ### How to use:
+Open https://lecture-feedback.streamlit.app/ or [run locally](#run-locally)
+
 1. Create a room
 2. Share the link or room ID with the participants
 3. They will join your room and share their status anonymously
 4. The results will be shown as a bar diagram across all participants
 
-## Development
+## Run locally
 
-1. Install uv: https://docs.astral.sh/uv/getting-started/installation/
+1. `git clone https://github.com/BayerC/lecture_feedback.git`
+2. `cd lecture_feedback/`
+2. `Install uv: https://docs.astral.sh/uv/getting-started/installation/
+2. To run app locally: `uv run streamlit run main.py`
+
+## Contributing
+
+1. [run locally steps](#run-locally)
 2. Install pre-commit: `uv run pre-commit install`
 3. To run pre-commit manually run: `uv run pre-commit run --all-files`
-4. To run app locally: `uv run streamlit run main.py`
 
 ### Dependency Management
 
