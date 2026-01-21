@@ -11,5 +11,5 @@
   Jumping straight into large-scale code changes can be misleading and makes it easy to lose track of the correct solution.
 - Use `Voice Input` in Cursor to describe complex tasks in a fast and easy way
 - Use [Pytest-BDD](https://pytest-bdd.readthedocs.io/en/stable/#) for integration tests to document the user interface
-- One can connect [ClaudeAi](https://claude.ai) to GitHub so it can browse your repository and collaborate with you.
-- A retro is very important in a async remote team collaboration
+- One can connect [Claude AI](https://claude.ai) to GitHub so it can browse your repository and collaborate with you.
+- A retro is very important in an async remote team collaboration

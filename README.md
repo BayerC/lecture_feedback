@@ -3,7 +3,7 @@
 ![CI](https://github.com/BayerC/lecture_feedback/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/BayerC/lecture_feedback/branch/main/graph/badge.svg)](https://codecov.io/gh/BayerC/lecture_feedback)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org/downloads/)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://lecture-feedback.streamlit.app/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
@@ -22,9 +22,9 @@ The presenter sees a bar histogram of the current distribution and can then adap
 
 ### How to use:
 1. Create a room
-2. Share the link or room id to the participants
+2. Share the link or room ID to the participants
 3. They will join your room and share their status anonymously
-4. Result will be shown as a bar diagram over all participants
+4. The results will be shown as a bar diagram over all participants
 
 ## Development
 
