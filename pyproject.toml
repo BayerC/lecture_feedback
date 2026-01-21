@@ -5,6 +5,7 @@ description = "Streamlit application for tracking lecture audience feedback"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "plotly>=6.5.2",
     "streamlit>=1.49.1",
     "streamlit-autorefresh>=1.0.1",
 ]
@@ -17,6 +18,8 @@ dev = [
     "ruff>=0.13.3",
     "mypy>=1.13.0",
     "coverage>=7.12.0",
+    "pytest-bdd>=8.1.0",
+    "pandas-stubs>=2.3.3.251219",
 ]
 
 [build-system]
@@ -69,5 +72,6 @@ mypy_path = "src"
 module = [
     "streamlit.*",
     "streamlit_autorefresh.*",
+    "plotly.*",
 ]
 ignore_missing_imports = true
