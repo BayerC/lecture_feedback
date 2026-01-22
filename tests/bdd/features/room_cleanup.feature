@@ -7,3 +7,10 @@ Scenario: Disconnected user is removed from user status after timeout
     When the second user closes their session
     And a given timeout has passed
     Then only I should be visible in the user status report
+
+Scenario: Empty rooms are removed after cleanup
+    Given I create a room with a session
+    When a second session joins that room
+    And both sessions close
+    And the room cleanup process runs
+    Then the room should no longer exist in the application state

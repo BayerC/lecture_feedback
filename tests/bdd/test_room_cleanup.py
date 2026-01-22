@@ -1,7 +1,10 @@
+import time
+
 import pytest
-from pytest_bdd import scenario, then, when
+from pytest_bdd import given, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
+from lecture_feedback.application_state import ApplicationState
 from tests.bdd.test_helper import get_page_content
 
 
@@ -17,6 +20,14 @@ def freeze_time_to_zero(
     "Disconnected user is removed from user status after timeout",
 )
 def test_disconnected_user_is_removed_from_user_status_after_timeout() -> None:
+    pass
+
+
+@scenario(
+    "features/room_cleanup.feature",
+    "Empty rooms are removed after cleanup",
+)
+def test_empty_rooms_are_removed_after_cleanup() -> None:
     pass
 
 
@@ -55,3 +66,51 @@ def timeout_has_passed(
 def only_i_should_be_visible_in_user_status_report(context: dict[str, AppTest]) -> None:
     content = get_page_content(context["user"])
     assert "Number of participants: 1" in content
+
+
+@given("I create a room with a session")
+def i_create_room_with_session(context: dict) -> None:
+    context["app_state"] = ApplicationState()
+    context["room_id"] = "test_room_1"
+    context["session_id_1"] = "session_1"
+    context["app_state"].create_room(context["room_id"], context["session_id_1"])
+    # Record the creation time
+    context["creation_time"] = time.time()
+
+
+@when("a second session joins that room")
+def second_session_joins_room(context: dict) -> None:
+    context["session_id_2"] = "session_2"
+    context["app_state"].join_room(context["room_id"], context["session_id_2"])
+
+
+@when("both sessions close")
+def both_sessions_close(context: dict, monkeypatch: pytest.MonkeyPatch) -> None:
+    # Time travel to simulate sessions becoming inactive
+    # Set time to be well past any timeout window
+    current_time_value = 100.0
+
+    def mock_time() -> float:
+        return current_time_value
+
+    monkeypatch.setattr("lecture_feedback.room.time.time", mock_time)
+
+    room = context["app_state"].rooms[context["room_id"]]
+
+    room.remove_inactive_sessions(50)
+
+    sessions_after = list(room)
+    assert len(sessions_after) == 0, (
+        f"Expected 0 sessions after cleanup, got {len(sessions_after)}"
+    )
+
+
+@when("the room cleanup process runs")
+def room_cleanup_runs(context: dict) -> None:
+    app_state = context["app_state"]
+    app_state.remove_empty_rooms()
+
+
+@then("the room should no longer exist in the application state")
+def room_should_no_longer_exist(context: dict) -> None:
+    assert context["room_id"] not in context["app_state"].rooms
