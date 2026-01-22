@@ -78,14 +78,8 @@ def i_create_room_with_session(context: dict) -> None:
     context["creation_time"] = time.time()
 
 
-@when("a second session joins that room")
-def second_session_joins_room(context: dict) -> None:
-    context["session_id_2"] = "session_2"
-    context["app_state"].join_room(context["room_id"], context["session_id_2"])
-
-
-@when("both sessions close")
-def both_sessions_close(context: dict, monkeypatch: pytest.MonkeyPatch) -> None:
+@when("the session closes")
+def session_closes(context: dict, monkeypatch: pytest.MonkeyPatch) -> None:
     # Time travel to simulate sessions becoming inactive
     # Set time to be well past any timeout window
     current_time_value = 100.0
