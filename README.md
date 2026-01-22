@@ -13,7 +13,7 @@ The app (currently beta, while https://github.com/BayerC/lecture_feedback/milest
 
 ##  Overview
 
-Lecture Feedback App is a simple, intuitive tool that enables real-time communication between presenters and their audience.
+Lecture Feedback App is a simple, intuitive tool that enables real-time feedback from the audience to presenters.
 Participants use a simple traffic light system to signal their understanding:
 
 - 🟢 **Green** → Following easily
@@ -40,7 +40,7 @@ Open https://lecture-feedback.streamlit.app/ or [run locally](#run-locally)
 ## Contributing
 
 1. [Run locally steps](#run-locally)
-2. Install pre-commit: `uv run pre-commit install`
+2. Hook pre-commit into git: `uv run pre-commit install`
 3. To run pre-commit manually run: `uv run pre-commit run --all-files`
 
 ### Dependency Management
