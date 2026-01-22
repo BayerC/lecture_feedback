@@ -19,7 +19,7 @@ jobs:
       - uses: astral-sh/setup-uv@v7
       - run: uv python install
       - run: uv sync --group dev
-      - run: uv run pre-commit run --all-files
+      - run: SKIP=no-commit-to-branch uv run pre-commit run --all-files
 
       # Create the XML report for Codecov
       - name: Generate coverage.xml
