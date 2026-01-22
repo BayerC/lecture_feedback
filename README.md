@@ -20,7 +20,7 @@ Participants use a simple traffic light system to signal their understanding:
 - 🟡 **Yellow** → Need more explanation
 - 🔴 **Red** → Cannot follow
 
-The presenter sees a bar histogram of the current distribution and can then adapt on the fly to slow down when audiences struggle or speed up when everyone is on track.
+The presenter sees a bar histogram of the current distribution and can then adapt to slow down when audiences struggle or speed up when everyone is on track.
 
 ### How to use:
 Open https://lecture-feedback.streamlit.app/ or [run locally](#run-locally)
