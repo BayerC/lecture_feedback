@@ -45,7 +45,7 @@ Open https://lecture-feedback.streamlit.app/ or [run locally](#run-locally)
 
 ### Dependency Management
 
-This project uses [uv](https://docs.astral.sh/uv/https:/) for dependency management:
+This project uses [uv](https://docs.astral.sh/uv) for dependency management:
 
 - [pyproject.toml](pyproject.toml): Defines dependencies with version constraints.
 - [uv.lock](uv.lock): Lockfile with exact versions for all platforms. Committed to version control.
