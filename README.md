@@ -2,15 +2,46 @@
 
 ![CI](https://github.com/BayerC/lecture_feedback/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/BayerC/lecture_feedback/branch/main/graph/badge.svg)](https://codecov.io/gh/BayerC/lecture_feedback)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org/downloads/)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://lecture-feedback.streamlit.app/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+
 
 The app (currently beta, while https://github.com/BayerC/lecture_feedback/milestone/1 is not done) is available at <https://lecture-feedback.streamlit.app/>.
 
-## Development
+##  Overview
 
-1. Install uv: https://docs.astral.sh/uv/getting-started/installation/
-2. Install pre-commit: `uv run pre-commit install`
-3. To run pre-commit manually run: `uv run pre-commit run --all-files`
+Lecture Feedback App is a simple, intuitive tool that enables real-time feedback from the audience to presenters.
+Participants use a simple traffic light system to signal their understanding:
+
+- 🟢 **Green** → Following easily
+- 🟡 **Yellow** → Need more explanation
+- 🔴 **Red** → Cannot follow
+
+The presenter sees a bar histogram of the current distribution and can then adapt to slow down when audiences struggle or speed up when everyone is on track.
+
+### How to use:
+Open https://lecture-feedback.streamlit.app/ or [run locally](#run-locally)
+
+1. Create a room
+2. Share the link or room ID with the participants
+3. They will join your room and share their status anonymously
+4. The results will be shown as a bar diagram across all participants
+
+## Run locally
+
+1. `git clone https://github.com/BayerC/lecture_feedback.git`
+2. `cd lecture_feedback/`
+3. `Install uv: https://docs.astral.sh/uv/getting-started/installation/`
 4. To run app locally: `uv run streamlit run main.py`
+
+## Contributing
+
+1. [Run locally steps](#run-locally)
+2. Hook pre-commit into git: `uv run pre-commit install`
+3. To run pre-commit manually run: `uv run pre-commit run --all-files`
 
 ### Dependency Management
 
