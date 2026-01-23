@@ -35,7 +35,6 @@ captured = CapturedData()
 @pytest.fixture(autouse=True)
 def capture_stats(monkeypatch: pytest.MonkeyPatch) -> None:
     captured.room_data.clear()
-    captured.application_state = None
     original_func = get_statistics_data_frame
 
     def capture_wrapper(room: RoomState) -> pd.DataFrame:
