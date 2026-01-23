@@ -39,8 +39,8 @@ def both_users_should_be_visible_in_user_status_report(
     assert "Number of participants: 2" in content
 
 
-@when("the second user closes their session")
-def second_user_closes_session(context: dict[str, AppTest]) -> None:
+@when("the second user leaves")
+def second_user_leaves(context: dict[str, AppTest]) -> None:
     del context["second_user"]  # prevent running this user further
 
 
@@ -68,8 +68,8 @@ def only_i_should_be_visible_in_user_status_report(context: dict[str, AppTest]) 
     assert "Number of participants: 1" in content
 
 
-@given("I create a room with a session")
-def i_create_room_with_session(context: dict) -> None:
+@given("I create a room with one user")
+def i_create_room_with_one_user(context: dict) -> None:
     context["app_state"] = ApplicationState()
     context["room_id"] = "test_room_1"
     context["session_id_1"] = "session_1"
@@ -78,8 +78,8 @@ def i_create_room_with_session(context: dict) -> None:
     context["creation_time"] = time.time()
 
 
-@when("the session closes")
-def session_closes(context: dict, monkeypatch: pytest.MonkeyPatch) -> None:
+@when("the user leaves")
+def user_leaves(context: dict, monkeypatch: pytest.MonkeyPatch) -> None:
     # Time travel to simulate sessions becoming inactive
     # Set time to be well past any timeout window
     current_time_value = 100.0
