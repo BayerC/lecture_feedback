@@ -1,5 +1,3 @@
-import time
-
 import pytest
 from pytest_bdd import given, scenario, then, when
 from streamlit.testing.v1 import AppTest
@@ -74,8 +72,6 @@ def i_create_room_with_one_user(context: dict) -> None:
     context["room_id"] = "test_room_1"
     context["session_id_1"] = "session_1"
     context["app_state"].create_room(context["room_id"], context["session_id_1"])
-    # Record the creation time
-    context["creation_time"] = time.time()
 
 
 @when("the user leaves")
