@@ -55,8 +55,8 @@ def capture_application_state(monkeypatch: pytest.MonkeyPatch) -> None:
 
     original_init = Context.__init__
 
-    def wrapped_init(self: Context) -> None:
-        original_init(self)
-        captured.application_state = self.application_state
+    def wrapped_init(context: Context) -> None:
+        original_init(context)
+        captured.application_state = context.application_state
 
     monkeypatch.setattr(Context, "__init__", wrapped_init)
