@@ -5,6 +5,7 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from lecture_feedback.app import RoomState, get_statistics_data_frame
+from lecture_feedback.state_provider import Context
 
 if TYPE_CHECKING:
     from lecture_feedback.application_state import ApplicationState
@@ -50,8 +51,6 @@ def capture_stats(monkeypatch: pytest.MonkeyPatch) -> None:
 
 @pytest.fixture(autouse=True)
 def capture_application_state(monkeypatch: pytest.MonkeyPatch) -> None:
-    from lecture_feedback.state_provider import Context  # noqa: PLC0415
-
     original_init = Context.__init__
 
     def wrapped_init(context: Context) -> None:
