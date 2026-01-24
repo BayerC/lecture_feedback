@@ -153,9 +153,12 @@ def show_active_room(room: RoomState) -> None:
 def run() -> None:
     st_autorefresh(interval=AUTOREFRESH_INTERNAL_MS, key="data_refresh")
 
-    match StateProvider().get_current():
+    state_provider = StateProvider()
+    match state_provider.get_current():
         case RoomState() as room:
             room.remove_inactive_users(timeout_seconds=USER_REMOVAL_TIMEOUT_SECONDS)
             show_active_room(room)
         case LobbyState() as lobby:
             show_room_selection_screen(lobby)
+
+    state_provider.get_cleanup().clean_up()

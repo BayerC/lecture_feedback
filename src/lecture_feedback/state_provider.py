@@ -52,10 +52,18 @@ class RoomState:
         self._room.remove_inactive_sessions(timeout_seconds)
 
 
+class CleanUpState:
+    def __init__(self, application_state: ApplicationState) -> None:
+        self._application_state = application_state
+
+    def clean_up(self) -> None:
+        remove_empty_rooms(self._application_state)
+
+
 class Context:
     def __init__(self) -> None:
         self.application_state: ApplicationState = self._get_application_state()
-        remove_empty_rooms(self.application_state)
+
         self.session_state = SessionState()
 
     @staticmethod
@@ -78,3 +86,6 @@ class StateProvider:
                 self.context.session_state,
             )
         return RoomState(room, self.context.session_state.session_id)
+
+    def get_cleanup(self) -> CleanUpState:
+        return CleanUpState(self.context.application_state)
