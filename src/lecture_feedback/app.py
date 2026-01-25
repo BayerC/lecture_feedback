@@ -7,7 +7,6 @@ from lecture_feedback.state_provider import (
     ClientState,
     HostState,
     LobbyState,
-    RoomState,
     StateProvider,
 )
 from lecture_feedback.user_status import UserStatus
@@ -56,7 +55,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
                     st.error("Room ID not found")
 
 
-def show_user_status_selection(room: RoomState) -> None:
+def show_user_status_selection(room: ClientState) -> None:
     st.subheader("Your Status")
     current_user_status = room.get_user_status()
     status_options = [
@@ -86,7 +85,7 @@ def show_user_status_selection(room: RoomState) -> None:
         st.rerun()
 
 
-def get_statistics_data_frame(room: RoomState) -> pd.DataFrame:
+def get_statistics_data_frame(room: HostState | ClientState) -> pd.DataFrame:
     participants = room.get_room_participants()
     counts = {
         status.value: sum(1 for _, s in participants if s == status)
@@ -103,7 +102,7 @@ def get_statistics_data_frame(room: RoomState) -> pd.DataFrame:
     return df[[col for col in column_order if col in df.columns]]
 
 
-def show_room_statistics(room: RoomState) -> None:
+def show_room_statistics(room: HostState | ClientState) -> None:
     df = get_statistics_data_frame(room)
 
     if df.sum().sum() == 0:

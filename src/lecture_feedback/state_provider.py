@@ -26,7 +26,7 @@ class LobbyState:
         self._application_state.join_room(room_id, self._session_state.session_id)
 
 
-class RoomState:
+class HostState:
     def __init__(
         self,
         room: Room,
@@ -39,12 +39,6 @@ class RoomState:
     def room_id(self) -> str:
         return self._room.room_id
 
-    def set_user_status(self, status: UserStatus) -> None:
-        self._room.set_session_status(self._session_id, status)
-
-    def get_user_status(self) -> UserStatus:
-        return self._room.get_session_status(self._session_id)
-
     def get_room_participants(self) -> list[tuple[str, UserStatus]]:
         return list(self._room)
 
@@ -52,12 +46,27 @@ class RoomState:
         self._room.remove_inactive_sessions(timeout_seconds)
 
 
-class HostState(RoomState):
-    pass
+class ClientState:
+    def __init__(
+        self,
+        room: Room,
+        session_id: str,
+    ) -> None:
+        self._room = room
+        self._session_id = session_id
 
+    @property
+    def room_id(self) -> str:
+        return self._room.room_id
 
-class ClientState(RoomState):
-    pass
+    def get_user_status(self) -> UserStatus:
+        return self._room.get_session_status(self._session_id)
+
+    def set_user_status(self, status: UserStatus) -> None:
+        self._room.set_session_status(self._session_id, status)
+
+    def get_room_participants(self) -> list[tuple[str, UserStatus]]:
+        return list(self._room)
 
 
 class Context:
