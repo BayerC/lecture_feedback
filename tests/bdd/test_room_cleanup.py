@@ -29,12 +29,12 @@ def test_empty_rooms_are_removed_after_cleanup() -> None:
     pass
 
 
-@then("both users should be visible in the user status report")
-def both_users_should_be_visible_in_user_status_report(
+@then("the second user should be visible in the user status report")
+def second_user_should_be_visible_in_user_status_report(
     context: dict[str, AppTest],
 ) -> None:
     content = get_page_content(context["user"])
-    assert "Number of participants: 2" in content
+    assert "Number of participants: 1" in content
 
 
 @when("the second user leaves")
@@ -60,10 +60,12 @@ def timeout_has_passed(
         context["user"].run()
 
 
-@then("only I should be visible in the user status report")
-def only_i_should_be_visible_in_user_status_report(context: dict[str, AppTest]) -> None:
+@then("no users should be visible in the user status report")
+def no_users_should_be_visible_in_user_status_report(
+    context: dict[str, AppTest],
+) -> None:
     content = get_page_content(context["user"])
-    assert "Number of participants: 1" in content
+    assert "No participants yet" in content
 
 
 @given("I create a room with one user")

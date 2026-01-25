@@ -19,4 +19,3 @@ Feature: Single session
     And I click the "Join Room" button
     Then I should see error message "Room ID not found"
     And I should still be on the room selection screen
-
