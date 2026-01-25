@@ -52,6 +52,14 @@ class RoomState:
         self._room.remove_inactive_sessions(timeout_seconds)
 
 
+class HostState(RoomState):
+    pass
+
+
+class ClientState(RoomState):
+    pass
+
+
 class Context:
     def __init__(self) -> None:
         self.application_state: ApplicationState = self._get_application_state()
@@ -68,7 +76,7 @@ class StateProvider:
     def __init__(self) -> None:
         self.context = Context()
 
-    def get_current(self) -> LobbyState | RoomState:
+    def get_current(self) -> LobbyState | RoomState | HostState | ClientState:
         room = self.context.application_state.get_session_room(
             self.context.session_state.session_id,
         )
@@ -77,4 +85,6 @@ class StateProvider:
                 self.context.application_state,
                 self.context.session_state,
             )
-        return RoomState(room, self.context.session_state.session_id)
+        if room.is_host(self.context.session_state.session_id):
+            return HostState(room, self.context.session_state.session_id)
+        return ClientState(room, self.context.session_state.session_id)

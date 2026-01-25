@@ -4,6 +4,8 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
 from lecture_feedback.state_provider import (
+    ClientState,
+    HostState,
     LobbyState,
     RoomState,
     StateProvider,
@@ -104,6 +106,10 @@ def get_statistics_data_frame(room: RoomState) -> pd.DataFrame:
 def show_room_statistics(room: RoomState) -> None:
     df = get_statistics_data_frame(room)
 
+    if df.sum().sum() == 0:
+        st.info("No participants yet. Share the Room ID to get started!")
+        return
+
     fig = px.bar(
         df,
         x=df.index,
@@ -134,7 +140,7 @@ def show_room_statistics(room: RoomState) -> None:
         st.text(f"Number of participants: {df.sum().sum()}")
 
 
-def show_active_room(room: RoomState) -> None:
+def show_active_room(room: RoomState, is_host: bool) -> None:
     st.query_params["room_id"] = room.room_id
     st.title("Active Room")
     col1, col2 = st.columns([1, 4], vertical_alignment="center")
@@ -145,7 +151,8 @@ def show_active_room(room: RoomState) -> None:
     st.divider()
     col_left, col_right = st.columns(2, gap="medium")
     with col_left:
-        show_user_status_selection(room)
+        if not is_host:
+            show_user_status_selection(room)
     with col_right:
         show_room_statistics(room)
 
@@ -154,8 +161,10 @@ def run() -> None:
     st_autorefresh(interval=AUTOREFRESH_INTERNAL_MS, key="data_refresh")
 
     match StateProvider().get_current():
-        case RoomState() as room:
-            room.remove_inactive_users(timeout_seconds=USER_REMOVAL_TIMEOUT_SECONDS)
-            show_active_room(room)
+        case HostState() as host:
+            host.remove_inactive_users(timeout_seconds=USER_REMOVAL_TIMEOUT_SECONDS)
+            show_active_room(host, True)
+        case ClientState() as client:
+            show_active_room(client, False)
         case LobbyState() as lobby:
             show_room_selection_screen(lobby)

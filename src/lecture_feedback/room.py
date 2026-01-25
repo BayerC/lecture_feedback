@@ -13,9 +13,13 @@ class UserSession:
 
 
 class Room:
-    def __init__(self, room_id: str) -> None:
+    def __init__(self, room_id: str, host_id: str) -> None:
         self._room_id = room_id
         self._sessions: ThreadSafeDict[UserSession] = ThreadSafeDict()
+        self._host_id = host_id
+
+    def is_host(self, session_id: str) -> bool:
+        return self._host_id == session_id
 
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = UserSession(status, time.time())
