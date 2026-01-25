@@ -140,7 +140,7 @@ def show_room_statistics(room: RoomState) -> None:
         st.text(f"Number of participants: {df.sum().sum()}")
 
 
-def show_active_room(room: RoomState, is_host: bool) -> None:
+def show_active_room(room: RoomState, *, is_host: bool) -> None:
     st.query_params["room_id"] = room.room_id
     st.title("Active Room")
     col1, col2 = st.columns([1, 4], vertical_alignment="center")
@@ -163,8 +163,8 @@ def run() -> None:
     match StateProvider().get_current():
         case HostState() as host:
             host.remove_inactive_users(timeout_seconds=USER_REMOVAL_TIMEOUT_SECONDS)
-            show_active_room(host, True)
+            show_active_room(host, is_host=True)
         case ClientState() as client:
-            show_active_room(client, False)
+            show_active_room(client, is_host=False)
         case LobbyState() as lobby:
             show_room_selection_screen(lobby)

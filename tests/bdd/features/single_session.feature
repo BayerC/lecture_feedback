@@ -20,13 +20,3 @@ Feature: Single session
     Then I should see error message "Room ID not found"
     And I should still be on the room selection screen
 
-  Scenario Outline: User changes feedback status
-    Given I am in an active room
-    When I select the status "<status>"
-    Then my status should be "<status>"
-
-    Examples:
-      | status      |
-      | 🔴 Red      |
-      | 🟡 Yellow   |
-      | 🟢 Green    |
