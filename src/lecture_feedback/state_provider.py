@@ -76,7 +76,7 @@ class StateProvider:
     def __init__(self) -> None:
         self.context = Context()
 
-    def get_current(self) -> LobbyState | RoomState | HostState | ClientState:
+    def get_current(self) -> LobbyState | HostState | ClientState:
         room = self.context.application_state.get_session_room(
             self.context.session_state.session_id,
         )
