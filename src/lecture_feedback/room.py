@@ -36,6 +36,10 @@ class Room:
     def room_id(self) -> str:
         return self._room_id
 
+    @property
+    def is_empty(self) -> bool:
+        return len(self._sessions) == 0
+
     def remove_inactive_sessions(self, timeout_seconds: int) -> None:
         current_time = time.time()
         users_to_remove = [

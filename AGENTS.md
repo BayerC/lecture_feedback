@@ -2,6 +2,8 @@
 - Use modern python 3.13
 - Use modern python style and techniques
 - High quality code
+- Write comments only when code isn't self-explaining. Prefer to write self-explaining code.
+- Import python modules at the top of the file
 - We use `uv` to manage python versions and dependencies. For example, use `uv run pytest` to run tests
 
 ## Coding Guideline

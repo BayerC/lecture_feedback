@@ -4,6 +4,7 @@ import streamlit as st
 
 from lecture_feedback.application_state import ApplicationState
 from lecture_feedback.room import Room
+from lecture_feedback.room_cleanup import remove_empty_rooms
 from lecture_feedback.session_state import SessionState
 from lecture_feedback.user_status import UserStatus
 
@@ -54,6 +55,7 @@ class RoomState:
 class Context:
     def __init__(self) -> None:
         self.application_state: ApplicationState = self._get_application_state()
+        remove_empty_rooms(self.application_state)
         self.session_state = SessionState()
 
     @staticmethod

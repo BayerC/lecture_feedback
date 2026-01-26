@@ -1,8 +1,14 @@
+from typing import TYPE_CHECKING
+
 import pandas as pd
 import pytest
 from streamlit.testing.v1 import AppTest
 
 from lecture_feedback.app import RoomState, get_statistics_data_frame
+from lecture_feedback.state_provider import Context
+
+if TYPE_CHECKING:
+    from lecture_feedback.application_state import ApplicationState
 
 
 def run_wrapper() -> None:
@@ -21,6 +27,7 @@ def context() -> dict[str, AppTest]:
 class CapturedData:
     def __init__(self) -> None:
         self.room_data: dict[str, pd.DataFrame] = {}
+        self.application_state: None | ApplicationState = None
 
 
 captured = CapturedData()
@@ -40,3 +47,14 @@ def capture_stats(monkeypatch: pytest.MonkeyPatch) -> None:
         "lecture_feedback.app.get_statistics_data_frame",
         capture_wrapper,
     )
+
+
+@pytest.fixture(autouse=True)
+def capture_application_state(monkeypatch: pytest.MonkeyPatch) -> None:
+    original_init = Context.__init__
+
+    def wrapped_init(context: Context) -> None:
+        original_init(context)
+        captured.application_state = context.application_state
+
+    monkeypatch.setattr(Context, "__init__", wrapped_init)

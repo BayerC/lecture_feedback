@@ -28,6 +28,10 @@ class ThreadSafeDict[T]:
         with self._lock:
             return iter(list(self._data))  # safe copy, in contrast to normal dict
 
+    def __len__(self) -> int:
+        with self._lock:
+            return len(self._data)
+
     def copy(self) -> ThreadSafeDict[T]:
         """Return a shallow copy as a ThreadSafeDict instance."""
         with self._lock:
