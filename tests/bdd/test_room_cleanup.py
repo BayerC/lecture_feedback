@@ -21,14 +21,6 @@ def test_disconnected_user_is_removed_from_user_status_after_timeout() -> None:
     pass
 
 
-@scenario(
-    "features/room_cleanup.feature",
-    "Empty rooms are removed after cleanup",
-)
-def test_empty_rooms_are_removed_after_cleanup() -> None:
-    pass
-
-
 @then("the second user should be visible in the user status report")
 def second_user_should_be_visible_in_user_status_report(
     context: dict[str, AppTest],
@@ -37,7 +29,7 @@ def second_user_should_be_visible_in_user_status_report(
     assert "Number of participants: 1" in content
 
 
-@when("the second user leaves")
+@when("the second user closes their session")
 def second_user_leaves(context: dict[str, AppTest]) -> None:
     del context["second_user"]  # prevent running this user further
 

@@ -47,6 +47,9 @@ class HostState(RoomState):
     def remove_inactive_users(self, timeout_seconds: int) -> None:
         self._room.remove_inactive_sessions(timeout_seconds)
 
+    def update_host_last_seen(self) -> None:
+        self._room.update_host_last_seen()
+
 
 class ClientState(RoomState):
     def get_user_status(self) -> UserStatus:

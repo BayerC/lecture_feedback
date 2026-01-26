@@ -173,6 +173,7 @@ def run() -> None:
 
     match StateProvider().get_current():
         case HostState() as host:
+            host.update_host_last_seen()
             host.remove_inactive_users(timeout_seconds=USER_REMOVAL_TIMEOUT_SECONDS)
             show_active_room_host(host)
         case ClientState() as client:

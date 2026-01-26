@@ -17,9 +17,13 @@ class Room:
         self._room_id = room_id
         self._sessions: ThreadSafeDict[UserSession] = ThreadSafeDict()
         self._host_id = host_id
+        self._host_last_seen = time.time()
 
     def is_host(self, session_id: str) -> bool:
         return self._host_id == session_id
+
+    def update_host_last_seen(self) -> None:
+        self._host_last_seen = time.time()
 
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = UserSession(status, time.time())
