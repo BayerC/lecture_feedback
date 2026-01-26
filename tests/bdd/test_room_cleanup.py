@@ -21,6 +21,14 @@ def test_disconnected_user_is_removed_from_user_status_after_timeout() -> None:
     pass
 
 
+@scenario(
+    "features/room_cleanup.feature",
+    "Room host disconnects",
+)
+def test_room_host_disconnects() -> None:
+    pass
+
+
 @then("there should be 1 participant in my room")
 def there_should_be_1_participant_in_my_room(
     context: dict[str, AppTest],
@@ -31,7 +39,18 @@ def there_should_be_1_participant_in_my_room(
 
 @when("the second user closes their session")
 def second_user_leaves(context: dict[str, AppTest]) -> None:
-    del context["second_user"]  # prevent running this user further
+    del context["second_user"]
+
+
+@when("I close my session")
+def i_close_my_session(context: dict[str, AppTest]) -> None:
+    del context["user"]
+
+
+@then("second user should be on the room selection screen")
+def second_user_on_room_selection_screen(context: dict[str, AppTest]) -> None:
+    assert len(context["second_user"].title) == 1
+    assert context["second_user"].title[0].value == "Welcome to Lecture Feedback App"
 
 
 @when("a given timeout has passed")
@@ -45,11 +64,12 @@ def timeout_has_passed(
     monkeypatch.setattr("lecture_feedback.app.USER_REMOVAL_TIMEOUT_SECONDS", 3)
 
     for current_time in range(0, time_to_pass, step_time):
-        monkeypatch.setattr(
-            "lecture_feedback.room.time.time",
-            lambda current_time=current_time: current_time,
-        )
-        context["user"].run()
+        for user in context.values():
+            monkeypatch.setattr(
+                "lecture_feedback.room.time.time",
+                lambda current_time=current_time: current_time,
+            )
+            user.run()
 
 
 @then(parsers.parse('I should see info message "{info_message}"'))
