@@ -43,9 +43,6 @@ class RoomState:
 
 
 class HostState(RoomState):
-    def remove_inactive_users(self, timeout_seconds: int) -> None:
-        self._room.remove_inactive_sessions(timeout_seconds)
-
     def update_host_last_seen(self) -> None:
         self._room.update_host_last_seen()
 
@@ -56,6 +53,24 @@ class ClientState(RoomState):
 
     def set_user_status(self, status: UserStatus) -> None:
         self._room.set_session_status(self._session_id, status)
+
+
+class CleanupState:
+    def __init__(
+        self,
+        application_state: ApplicationState,
+        timeout_seconds: int,
+    ) -> None:
+        self._application_state = application_state
+        self._timeout_seconds = timeout_seconds
+
+    def cleanup_all(self) -> None:
+        for room in self._application_state.rooms.values():
+            room.remove_inactive_sessions(self._timeout_seconds)
+
+        self._application_state.remove_rooms_with_inactive_hosts(
+            self._timeout_seconds,
+        )
 
 
 class Context:
@@ -72,6 +87,9 @@ class Context:
 class StateProvider:
     def __init__(self) -> None:
         self.context = Context()
+
+    def get_cleanup(self, timeout_seconds: int) -> CleanupState:
+        return CleanupState(self.context.application_state, timeout_seconds)
 
     def get_current(self) -> LobbyState | HostState | ClientState:
         room = self.context.application_state.get_session_room(
