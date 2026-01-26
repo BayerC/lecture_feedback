@@ -44,9 +44,9 @@ class Room:
     def room_id(self) -> str:
         return self._room_id
 
-    @property
-    def is_empty(self) -> bool:
-        return len(self._sessions) == 0
+    def is_host_inactive(self, timeout_seconds: int) -> bool:
+        current_time = time.time()
+        return current_time - self._host_last_seen > timeout_seconds
 
     def remove_inactive_sessions(self, timeout_seconds: int) -> None:
         current_time = time.time()

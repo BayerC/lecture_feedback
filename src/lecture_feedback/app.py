@@ -171,7 +171,12 @@ def show_active_room_client(client_state: ClientState) -> None:
 def run() -> None:
     st_autorefresh(interval=AUTOREFRESH_INTERNAL_MS, key="data_refresh")
 
-    match StateProvider().get_current():
+    state_provider = StateProvider()
+    state_provider.context.application_state.remove_rooms_with_inactive_hosts(
+        timeout_seconds=USER_REMOVAL_TIMEOUT_SECONDS,
+    )
+
+    match state_provider.get_current():
         case HostState() as host:
             host.update_host_last_seen()
             host.remove_inactive_users(timeout_seconds=USER_REMOVAL_TIMEOUT_SECONDS)

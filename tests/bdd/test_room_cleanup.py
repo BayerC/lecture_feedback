@@ -1,8 +1,7 @@
 import pytest
-from pytest_bdd import given, parsers, scenario, then, when
+from pytest_bdd import parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
-from lecture_feedback.application_state import ApplicationState
 from tests.bdd.test_helper import get_info_content, get_page_content
 
 
@@ -79,43 +78,3 @@ def i_should_see_info_message(
 ) -> None:
     content = get_info_content(context["user"])
     assert info_message in content
-
-
-@given("I create a room with one user")
-def i_create_room_with_one_user(context: dict) -> None:
-    context["app_state"] = ApplicationState()
-    context["room_id"] = "test_room_1"
-    context["session_id_1"] = "session_1"
-    context["app_state"].create_room(context["room_id"], context["session_id_1"])
-
-
-@when("the user leaves")
-def user_leaves(context: dict, monkeypatch: pytest.MonkeyPatch) -> None:
-    # Time travel to simulate sessions becoming inactive
-    # Set time to be well past any timeout window
-    current_time_value = 100.0
-
-    def mock_time() -> float:
-        return current_time_value
-
-    monkeypatch.setattr("lecture_feedback.room.time.time", mock_time)
-
-    room = context["app_state"].rooms[context["room_id"]]
-
-    room.remove_inactive_sessions(50)
-
-    sessions_after = list(room)
-    assert len(sessions_after) == 0, (
-        f"Expected 0 sessions after cleanup, got {len(sessions_after)}"
-    )
-
-
-@when("the room cleanup process runs")
-def room_cleanup_runs(context: dict) -> None:
-    app_state = context["app_state"]
-    app_state.remove_empty_rooms()
-
-
-@then("the room should no longer exist in the application state")
-def room_should_no_longer_exist(context: dict) -> None:
-    assert context["room_id"] not in context["app_state"].rooms
