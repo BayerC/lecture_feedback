@@ -1,9 +1,9 @@
 import pytest
-from pytest_bdd import given, scenario, then, when
+from pytest_bdd import given, parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
 from lecture_feedback.application_state import ApplicationState
-from tests.bdd.test_helper import get_page_content
+from tests.bdd.test_helper import get_info_content, get_page_content
 
 
 @pytest.fixture(autouse=True)
@@ -21,8 +21,8 @@ def test_disconnected_user_is_removed_from_user_status_after_timeout() -> None:
     pass
 
 
-@then("the second user should be visible in the user status report")
-def second_user_should_be_visible_in_user_status_report(
+@then("there should be 1 participant in my room")
+def there_should_be_1_participant_in_my_room(
     context: dict[str, AppTest],
 ) -> None:
     content = get_page_content(context["user"])
@@ -52,12 +52,13 @@ def timeout_has_passed(
         context["user"].run()
 
 
-@then("no users should be visible in the user status report")
-def no_users_should_be_visible_in_user_status_report(
+@then(parsers.parse('I should see info message "{info_message}"'))
+def i_should_see_info_message(
     context: dict[str, AppTest],
+    info_message: str,
 ) -> None:
-    content = get_page_content(context["user"])
-    assert "No participants yet" in content
+    content = get_info_content(context["user"])
+    assert info_message in content
 
 
 @given("I create a room with one user")
