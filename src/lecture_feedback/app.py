@@ -177,7 +177,6 @@ def run() -> None:
 
     match state_provider.get_current():
         case HostState() as host:
-            host.update_host_last_seen()
             show_active_room_host(host)
         case ClientState() as client:
             show_active_room_client(client)

@@ -43,7 +43,8 @@ class RoomState:
 
 
 class HostState(RoomState):
-    def update_host_last_seen(self) -> None:
+    def __init__(self, room: Room, session_id: str) -> None:
+        super().__init__(room, session_id)
         self._room.update_host_last_seen()
 
 
