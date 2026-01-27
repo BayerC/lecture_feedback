@@ -38,12 +38,12 @@ def there_should_be_1_participant_in_my_room(
 
 @when("the second user closes their session")
 def second_user_leaves(context: dict[str, AppTest]) -> None:
-    del context["second_user"]
+    del context["second_user"]  # prevent running second user further
 
 
 @when("I close my session")
 def i_close_my_session(context: dict[str, AppTest]) -> None:
-    del context["user"]
+    del context["user"]  # prevent running user further
 
 
 @then("second user should be on the room selection screen")
