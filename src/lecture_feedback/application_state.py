@@ -11,7 +11,7 @@ class ApplicationState:
 
     def get_session_room(self, session_id: str) -> Room | None:
         for room in self.rooms.values():
-            if room.has_session(session_id) or room.is_host(session_id):
+            if room.has_session(session_id):
                 return room
         return None
 

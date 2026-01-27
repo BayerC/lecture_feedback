@@ -35,7 +35,7 @@ class Room:
         if session_id in self._sessions:
             self._sessions[session_id].last_seen = time.time()
             return True
-        return False
+        return bool(self.is_host(session_id))
 
     def __iter__(self) -> Iterator[tuple[str, UserStatus]]:
         return ((k, v.status) for k, v in self._sessions.items())
