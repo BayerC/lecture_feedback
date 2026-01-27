@@ -59,23 +59,16 @@ def third_user_creates_another_room(context: dict[str, AppTest]) -> None:
     context["third_user"].button(key="start_room").click().run()
 
 
-@then(parsers.parse('"{users}" should see statuses "{statuses}"'))
+@then(parsers.parse('"{users}" should see status "{status}"'))
 def users_should_see_statuses(
     context: dict[str, AppTest],
     users: str,
-    statuses: str,
+    status: str,
 ) -> None:
-    status_names = [s.strip() for s in statuses.split(",")]
     user_keys = [u.strip() for u in users.split(",")]
 
     for user in user_keys:
         room_id = get_room_id(context[user])
         df = captured.room_data[room_id]
-        for status in UserStatus:
-            expected_count = sum(1 for s in status_names if s in status.value)
-            actual_count = df[status.value].iloc[0]
-
-            assert actual_count == expected_count, (
-                f"{user}, {status}, \
-                expected_count: {expected_count} vs actual_count: {actual_count}"
-            )
+        actual_count = df[status].iloc[0]
+        assert actual_count == 1, f"{user}, {status}, actual_count: {actual_count}"
