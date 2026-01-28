@@ -164,14 +164,15 @@ def show_active_room_header(room_id: str) -> None:
     left, right = st.columns([4, 1], vertical_alignment="center")
     with left:
         st.title("Active Room")
-        col_1, col_2 = st.columns([1, 4], vertical_alignment="center")
-        with col_1:
-            st.write("**Room ID:**")
-        with col_2:
-            st.code(room_id, language=None)
     with right:
-        pass
-        # st.image(generate_qr_code_image(room_id), width="content")
+        st.image(generate_qr_code_image(room_id), width="content")
+
+    col_1, col_2 = st.columns([1, 4], vertical_alignment="center")
+    with col_1:
+        st.write("**Room ID:**")
+    with col_2:
+        st.code(room_id, language=None)
+
     st.divider()
 
 
