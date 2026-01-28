@@ -21,7 +21,7 @@ def run_wrapper() -> None:
 def context() -> dict[str, AppTest]:
     application = AppTest.from_function(run_wrapper)
     application.run()
-    return {"user": application}
+    return {"me": application}
 
 
 class CapturedData:

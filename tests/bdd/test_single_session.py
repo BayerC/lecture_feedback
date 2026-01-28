@@ -16,13 +16,13 @@ def test_create_room() -> None:
 
 @scenario(
     "features/single_session.feature",
-    "Try to join room without entering Room ID",
+    "Try to join a room without entering Room ID",
 )
 def test_join_without_room_id() -> None:
     pass
 
 
-@scenario("features/single_session.feature", "Try to join non existing room")
+@scenario("features/single_session.feature", "Try to join a non-existing room")
 def test_join_non_existent_room() -> None:
     pass
 
@@ -33,13 +33,13 @@ def test_join_non_existent_room() -> None:
 
 
 @when("I enter a non-existing room ID")
-def enter_nonexistent_room_id(context: dict[str, AppTest]) -> None:
-    context["user"].text_input(key="join_room_id").set_value("9999").run()
+def i_enter_nonexistent_room_id(context: dict[str, AppTest]) -> None:
+    context["me"].text_input(key="join_room_id").set_value("9999").run()
 
 
 @when('I click the "Join Room" button')
-def click_join_room(context: dict[str, AppTest]) -> None:
-    context["user"].button(key="join_room").click().run()
+def i_click_join_room(context: dict[str, AppTest]) -> None:
+    context["me"].button(key="join_room").click().run()
 
 
 # ============================================================================
@@ -48,36 +48,39 @@ def click_join_room(context: dict[str, AppTest]) -> None:
 
 
 @then("the room should have a valid room ID")
-def valid_room_id(context: dict[str, AppTest]) -> None:
-    room_id = get_room_id(context["user"])
+def room_should_have_valid_room_id(context: dict[str, AppTest]) -> None:
+    room_id = get_room_id(context["me"])
     assert len(room_id) > 0
 
 
-@then("the url should contain the room id")
-def url_has_room_id(context: dict[str, AppTest]) -> None:
-    room_id = get_room_id(context["user"])
-    assert len(context["user"].query_params["room_id"]) == 1
-    assert context["user"].query_params["room_id"][0] == room_id
+@then("the URL should contain the room ID")
+def url_should_contain_room_id(context: dict[str, AppTest]) -> None:
+    room_id = get_room_id(context["me"])
+    assert len(context["me"].query_params["room_id"]) == 1
+    assert context["me"].query_params["room_id"][0] == room_id
 
 
 @then(parsers.parse('I should see error message "{error_message}"'))
-def see_room_not_found_error(context: dict[str, AppTest], error_message: str) -> None:
-    assert len(context["user"].error) == 1
-    assert context["user"].error[0].value == error_message
+def i_should_see_error_message(context: dict[str, AppTest], error_message: str) -> None:
+    assert len(context["me"].error) == 1
+    assert context["me"].error[0].value == error_message
 
 
 @then(parsers.parse('I should see warning message "{warning_message}"'))
-def see_warning_message(context: dict[str, AppTest], warning_message: str) -> None:
-    assert len(context["user"].warning) == 1
-    assert context["user"].warning[0].value == warning_message
+def i_should_see_warning_message(
+    context: dict[str, AppTest],
+    warning_message: str,
+) -> None:
+    assert len(context["me"].warning) == 1
+    assert context["me"].warning[0].value == warning_message
 
 
 @then(parsers.parse('my status should be "{status}"'))
-def verify_my_status(context: dict[str, AppTest], status: str) -> None:
-    plotly_charts = context["user"].get("plotly_chart")
+def my_status_should_be(context: dict[str, AppTest], status: str) -> None:
+    plotly_charts = context["me"].get("plotly_chart")
     assert len(plotly_charts) > 0, "No plotly chart found"
 
-    room_id = get_room_id(context["user"])
+    room_id = get_room_id(context["me"])
     df = captured.room_data[room_id]
     assert captured.room_data[room_id] is not None, "No dataframe was captured"
     count = df[status].iloc[0]
