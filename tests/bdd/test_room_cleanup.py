@@ -37,7 +37,7 @@ def there_should_be_1_participant_in_my_room(
 
 
 @when("the second user closes their session")
-def second_user_leaves(context: dict[str, AppTest]) -> None:
+def second_user_closes_their_session(context: dict[str, AppTest]) -> None:
     del context["second_user"]  # prevent running second user further
 
 
@@ -47,13 +47,13 @@ def i_close_my_session(context: dict[str, AppTest]) -> None:
 
 
 @then("second user should be on the room selection screen")
-def second_user_on_room_selection_screen(context: dict[str, AppTest]) -> None:
+def second_user_should_be_on_room_selection_screen(context: dict[str, AppTest]) -> None:
     assert len(context["second_user"].title) == 1
     assert context["second_user"].title[0].value == "Welcome to Lecture Feedback App"
 
 
 @when("a given timeout has passed")
-def timeout_has_passed(
+def given_timeout_has_passed(
     context: dict[str, AppTest],
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

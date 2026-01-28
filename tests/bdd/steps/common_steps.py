@@ -20,7 +20,7 @@ def click_create_room(context: dict[str, AppTest]) -> None:
 
 
 @when("a second user joins the room")
-def another_user_joins_room(context: dict[str, AppTest]) -> None:
+def second_user_joins_room(context: dict[str, AppTest]) -> None:
     context["second_user"] = AppTest.from_function(run_wrapper)
     context["second_user"].run()
     context["second_user"].text_input(key="join_room_id").set_value(
@@ -38,7 +38,7 @@ def _select_status(app: AppTest, context: dict[str, AppTest], status: str) -> No
 
 
 @when(parsers.parse('I select the status "{status}"'))
-def user_select_status(context: dict[str, AppTest], status: str) -> None:
+def i_select_status(context: dict[str, AppTest], status: str) -> None:
     _select_status(context["me"], context, status)
 
 

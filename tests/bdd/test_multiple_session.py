@@ -27,14 +27,14 @@ def test_three_users_in_two_separate_rooms_maintain_independent_statistics() -> 
 
 
 @when("a second user wants to join with invalid url")
-def second_user_joins_with_room_url(context: dict[str, AppTest]) -> None:
+def second_user_wants_to_join_with_invalid_url(context: dict[str, AppTest]) -> None:
     context["second_user"] = AppTest.from_function(run_wrapper)
     context["second_user"].query_params["room_id"] = "INVALID"
     context["second_user"].run()
 
 
 @then(parsers.parse('the second user should see warning message "{error_message}"'))
-def see_url_not_found_warning_message(
+def second_user_should_see_warning_message(
     context: dict[str, AppTest],
     error_message: str,
 ) -> None:
@@ -43,7 +43,7 @@ def see_url_not_found_warning_message(
 
 
 @when("a third user wants to join with my room url")
-def third_user_joins_with_room_url(context: dict[str, AppTest]) -> None:
+def third_user_wants_to_join_with_my_room_url(context: dict[str, AppTest]) -> None:
     context["third_user"] = AppTest.from_function(run_wrapper)
     assert "room_id" in context["me"].query_params
     context["third_user"].query_params["room_id"] = context["me"].query_params[
@@ -60,7 +60,7 @@ def third_user_creates_another_room(context: dict[str, AppTest]) -> None:
 
 
 @then(parsers.parse('"{users}" should see status "{status}"'))
-def users_should_see_statuses(
+def users_should_see_status(
     context: dict[str, AppTest],
     users: str,
     status: str,
