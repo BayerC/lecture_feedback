@@ -27,11 +27,6 @@ def test_join_non_existent_room() -> None:
     pass
 
 
-@scenario("features/single_session.feature", "User changes feedback status")
-def test_user_changes_feedback_status() -> None:
-    pass
-
-
 # ============================================================================
 # When Steps
 # ============================================================================

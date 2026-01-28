@@ -8,8 +8,8 @@ from tests.bdd.test_helper import get_room_id, refresh_all_apps
 STATUS_VALUES = {status.value: status for status in UserStatus}
 
 
-@given("I am in an active room")
-def in_active_room(context: dict[str, AppTest]) -> None:
+@given("I host a room")
+def host_room(context: dict[str, AppTest]) -> None:
     click_create_room(context)
     see_active_room_screen(context)
 

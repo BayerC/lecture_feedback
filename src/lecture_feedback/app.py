@@ -4,6 +4,8 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
 from lecture_feedback.state_provider import (
+    ClientState,
+    HostState,
     LobbyState,
     RoomState,
     StateProvider,
@@ -54,7 +56,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
                     st.error("Room ID not found")
 
 
-def show_user_status_selection(room: RoomState) -> None:
+def show_user_status_selection(room: ClientState) -> None:
     st.subheader("Your Status")
     current_user_status = room.get_user_status()
     status_options = [
@@ -101,8 +103,12 @@ def get_statistics_data_frame(room: RoomState) -> pd.DataFrame:
     return df[[col for col in column_order if col in df.columns]]
 
 
-def show_room_statistics(room: RoomState) -> None:
+def show_room_statistics(room: HostState | ClientState) -> None:
     df = get_statistics_data_frame(room)
+
+    if df.sum().sum() == 0:
+        st.info("No participants yet. Share the Room ID to get started!")
+        return
 
     fig = px.bar(
         df,
@@ -134,28 +140,45 @@ def show_room_statistics(room: RoomState) -> None:
         st.text(f"Number of participants: {df.sum().sum()}")
 
 
-def show_active_room(room: RoomState) -> None:
-    st.query_params["room_id"] = room.room_id
+def show_active_room_host(host_state: HostState) -> None:
+    st.query_params["room_id"] = host_state.room_id
     st.title("Active Room")
     col1, col2 = st.columns([1, 4], vertical_alignment="center")
     with col1:
         st.write("**Room ID:**")
     with col2:
-        st.code(room.room_id, language=None)
+        st.code(host_state.room_id, language=None)
+    st.divider()
+    show_room_statistics(host_state)
+
+
+def show_active_room_client(client_state: ClientState) -> None:
+    st.query_params["room_id"] = client_state.room_id
+    st.title("Active Room")
+    col1, col2 = st.columns([1, 4], vertical_alignment="center")
+    with col1:
+        st.write("**Room ID:**")
+    with col2:
+        st.code(client_state.room_id, language=None)
     st.divider()
     col_left, col_right = st.columns(2, gap="medium")
     with col_left:
-        show_user_status_selection(room)
+        show_user_status_selection(client_state)
     with col_right:
-        show_room_statistics(room)
+        show_room_statistics(client_state)
 
 
 def run() -> None:
     st_autorefresh(interval=AUTOREFRESH_INTERNAL_MS, key="data_refresh")
 
-    match StateProvider().get_current():
-        case RoomState() as room:
-            room.remove_inactive_users(timeout_seconds=USER_REMOVAL_TIMEOUT_SECONDS)
-            show_active_room(room)
+    state_provider = StateProvider()
+    cleanup = state_provider.get_cleanup(USER_REMOVAL_TIMEOUT_SECONDS)
+    cleanup.cleanup_all()
+
+    match state_provider.get_current():
+        case HostState() as host:
+            show_active_room_host(host)
+        case ClientState() as client:
+            show_active_room_client(client)
         case LobbyState() as lobby:
             show_room_selection_screen(lobby)

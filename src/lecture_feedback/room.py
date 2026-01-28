@@ -13,9 +13,17 @@ class UserSession:
 
 
 class Room:
-    def __init__(self, room_id: str) -> None:
+    def __init__(self, room_id: str, host_id: str) -> None:
         self._room_id = room_id
         self._sessions: ThreadSafeDict[UserSession] = ThreadSafeDict()
+        self._host_id = host_id
+        self._host_last_seen = time.time()
+
+    def is_host(self, session_id: str) -> bool:
+        return self._host_id == session_id
+
+    def update_host_last_seen(self) -> None:
+        self._host_last_seen = time.time()
 
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = UserSession(status, time.time())
@@ -27,7 +35,7 @@ class Room:
         if session_id in self._sessions:
             self._sessions[session_id].last_seen = time.time()
             return True
-        return False
+        return bool(self.is_host(session_id))
 
     def __iter__(self) -> Iterator[tuple[str, UserStatus]]:
         return ((k, v.status) for k, v in self._sessions.items())
@@ -36,9 +44,9 @@ class Room:
     def room_id(self) -> str:
         return self._room_id
 
-    @property
-    def is_empty(self) -> bool:
-        return len(self._sessions) == 0
+    def is_host_inactive(self, timeout_seconds: int) -> bool:
+        current_time = time.time()
+        return current_time - self._host_last_seen > timeout_seconds
 
     def remove_inactive_sessions(self, timeout_seconds: int) -> None:
         current_time = time.time()

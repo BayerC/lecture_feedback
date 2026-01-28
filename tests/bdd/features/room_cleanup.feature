@@ -1,15 +1,17 @@
 Feature: Room cleanup
 
 Scenario: Disconnected user is removed from user status after timeout
-    Given I am in an active room
+    Given I host a room
     When a second user joins the room
-    Then both users should be visible in the user status report
-    When the second user leaves
+    Then there should be 1 participant in my room
+    When the second user closes their session
     And a given timeout has passed
-    Then only I should be visible in the user status report
+    Then I should see info message "No participants yet. Share the Room ID to get started!"
 
-Scenario: Empty rooms are removed after cleanup
-    Given I create a room with one user
-    When the user leaves
-    And the room cleanup process runs
-    Then the room should no longer exist in the application state
+
+Scenario: Room host disconnects
+    Given I host a room
+    When a second user joins the room
+    When I close my session
+    And a given timeout has passed
+    Then second user should be on the room selection screen

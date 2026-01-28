@@ -4,7 +4,6 @@ import streamlit as st
 
 from lecture_feedback.application_state import ApplicationState
 from lecture_feedback.room import Room
-from lecture_feedback.room_cleanup import remove_empty_rooms
 from lecture_feedback.session_state import SessionState
 from lecture_feedback.user_status import UserStatus
 
@@ -39,23 +38,45 @@ class RoomState:
     def room_id(self) -> str:
         return self._room.room_id
 
-    def set_user_status(self, status: UserStatus) -> None:
-        self._room.set_session_status(self._session_id, status)
-
-    def get_user_status(self) -> UserStatus:
-        return self._room.get_session_status(self._session_id)
-
     def get_room_participants(self) -> list[tuple[str, UserStatus]]:
         return list(self._room)
 
-    def remove_inactive_users(self, timeout_seconds: int) -> None:
-        self._room.remove_inactive_sessions(timeout_seconds)
+
+class HostState(RoomState):
+    def __init__(self, room: Room, session_id: str) -> None:
+        super().__init__(room, session_id)
+        self._room.update_host_last_seen()
+
+
+class ClientState(RoomState):
+    def get_user_status(self) -> UserStatus:
+        return self._room.get_session_status(self._session_id)
+
+    def set_user_status(self, status: UserStatus) -> None:
+        self._room.set_session_status(self._session_id, status)
+
+
+class CleanupState:
+    def __init__(
+        self,
+        application_state: ApplicationState,
+        timeout_seconds: int,
+    ) -> None:
+        self._application_state = application_state
+        self._timeout_seconds = timeout_seconds
+
+    def cleanup_all(self) -> None:
+        for room in self._application_state.rooms.values():
+            room.remove_inactive_sessions(self._timeout_seconds)
+
+        self._application_state.remove_rooms_with_inactive_hosts(
+            self._timeout_seconds,
+        )
 
 
 class Context:
     def __init__(self) -> None:
         self.application_state: ApplicationState = self._get_application_state()
-        remove_empty_rooms(self.application_state)
         self.session_state = SessionState()
 
     @staticmethod
@@ -68,7 +89,10 @@ class StateProvider:
     def __init__(self) -> None:
         self.context = Context()
 
-    def get_current(self) -> LobbyState | RoomState:
+    def get_cleanup(self, timeout_seconds: int) -> CleanupState:
+        return CleanupState(self.context.application_state, timeout_seconds)
+
+    def get_current(self) -> LobbyState | HostState | ClientState:
         room = self.context.application_state.get_session_room(
             self.context.session_state.session_id,
         )
@@ -77,4 +101,6 @@ class StateProvider:
                 self.context.application_state,
                 self.context.session_state,
             )
-        return RoomState(room, self.context.session_state.session_id)
+        if room.is_host(self.context.session_state.session_id):
+            return HostState(room, self.context.session_state.session_id)
+        return ClientState(room, self.context.session_state.session_id)

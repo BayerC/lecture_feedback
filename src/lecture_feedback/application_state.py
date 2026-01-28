@@ -16,8 +16,7 @@ class ApplicationState:
         return None
 
     def create_room(self, room_id: str, session_id: str) -> None:
-        room = Room(room_id)
-        room.set_session_status(session_id, UserStatus.UNKNOWN)
+        room = Room(room_id, session_id)
         self.rooms[room_id] = room
 
     def join_room(self, room_id: str, session_id: str) -> None:
@@ -26,9 +25,11 @@ class ApplicationState:
             raise ValueError(message)
         self.rooms[room_id].set_session_status(session_id, UserStatus.UNKNOWN)
 
-    def remove_empty_rooms(self) -> None:
-        empty_room_ids = [
-            room_id for room_id, room in self.rooms.items() if room.is_empty
+    def remove_rooms_with_inactive_hosts(self, timeout_seconds: int) -> None:
+        inactive_room_ids = [
+            room_id
+            for room_id, room in self.rooms.items()
+            if room.is_host_inactive(timeout_seconds)
         ]
-        for room_id in empty_room_ids:
+        for room_id in inactive_room_ids:
             del self.rooms[room_id]

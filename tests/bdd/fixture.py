@@ -4,8 +4,8 @@ import pandas as pd
 import pytest
 from streamlit.testing.v1 import AppTest
 
-from lecture_feedback.app import RoomState, get_statistics_data_frame
-from lecture_feedback.state_provider import Context
+from lecture_feedback.app import get_statistics_data_frame
+from lecture_feedback.state_provider import Context, RoomState
 
 if TYPE_CHECKING:
     from lecture_feedback.application_state import ApplicationState
