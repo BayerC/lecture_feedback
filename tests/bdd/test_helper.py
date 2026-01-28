@@ -10,7 +10,10 @@ def get_page_content(app: AppTest) -> str:
     markdown_content = "\n".join(element.value for element in app.markdown)
     text_content = "\n".join(element.value for element in app.text)
     info_content = "\n".join(element.value for element in app.info)
-    return f"{markdown_content}\n{text_content}\n{info_content}"
+    button_content = "\n".join(
+        element.label for element in app.button if hasattr(element, "label")
+    )
+    return f"{markdown_content}\n{text_content}\n{info_content}\n{button_content}"
 
 
 def get_info_content(app: AppTest) -> str:

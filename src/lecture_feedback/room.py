@@ -1,6 +1,7 @@
 import time
+import uuid
 from collections.abc import Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
 from lecture_feedback.user_status import UserStatus
@@ -12,12 +13,26 @@ class UserSession:
     last_seen: float
 
 
+@dataclass
+class Question:
+    id: str
+    text: str
+    voters: set[str] = field(default_factory=set)
+    timestamp: float = field(default_factory=time.time)
+    is_open: bool = True
+
+    @property
+    def vote_count(self) -> int:
+        return len(self.voters)
+
+
 class Room:
     def __init__(self, room_id: str, host_id: str) -> None:
         self._room_id = room_id
         self._sessions: ThreadSafeDict[UserSession] = ThreadSafeDict()
         self._host_id = host_id
         self._host_last_seen = time.time()
+        self._questions: ThreadSafeDict[Question] = ThreadSafeDict()
 
     def is_host(self, session_id: str) -> bool:
         return self._host_id == session_id
@@ -58,3 +73,27 @@ class Room:
 
         for session_id in users_to_remove:
             del self._sessions[session_id]
+
+    def add_question(self, session_id: str, text: str) -> None:
+        question_id = uuid.uuid4().hex
+        question = Question(id=question_id, text=text)
+        self._questions[question_id] = question
+
+    def upvote_question(self, question_id: str, session_id: str) -> None:
+        if question_id in self._questions:
+            self._questions[question_id].voters.add(session_id)
+
+    def has_voted(self, question_id: str, session_id: str) -> bool:
+        if question_id in self._questions:
+            return session_id in self._questions[question_id].voters
+        return False
+
+    def close_question(self, question_id: str) -> None:
+        if question_id in self._questions:
+            self._questions[question_id].is_open = False
+
+    def get_open_questions(self) -> list[Question]:
+        open_questions = [
+            question for question in self._questions.values() if question.is_open
+        ]
+        return sorted(open_questions, key=lambda q: q.vote_count, reverse=True)

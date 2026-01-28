@@ -3,7 +3,7 @@ import uuid
 import streamlit as st
 
 from lecture_feedback.application_state import ApplicationState
-from lecture_feedback.room import Room
+from lecture_feedback.room import Question, Room
 from lecture_feedback.session_state import SessionState
 from lecture_feedback.user_status import UserStatus
 
@@ -41,11 +41,17 @@ class RoomState:
     def get_room_participants(self) -> list[tuple[str, UserStatus]]:
         return list(self._room)
 
+    def get_open_questions(self) -> list[Question]:
+        return self._room.get_open_questions()
+
 
 class HostState(RoomState):
     def __init__(self, room: Room, session_id: str) -> None:
         super().__init__(room, session_id)
         self._room.update_host_last_seen()
+
+    def close_question(self, question_id: str) -> None:
+        self._room.close_question(question_id)
 
 
 class ClientState(RoomState):
@@ -54,6 +60,15 @@ class ClientState(RoomState):
 
     def set_user_status(self, status: UserStatus) -> None:
         self._room.set_session_status(self._session_id, status)
+
+    def submit_question(self, text: str) -> None:
+        self._room.add_question(self._session_id, text)
+
+    def upvote_question(self, question_id: str) -> None:
+        self._room.upvote_question(question_id, self._session_id)
+
+    def has_voted(self, question_id: str) -> bool:
+        return self._room.has_voted(question_id, self._session_id)
 
 
 class CleanupState:
