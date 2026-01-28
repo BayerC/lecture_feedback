@@ -32,7 +32,7 @@ def test_room_host_disconnects() -> None:
 def there_should_be_1_participant_in_my_room(
     context: dict[str, AppTest],
 ) -> None:
-    content = get_page_content(context["user"])
+    content = get_page_content(context["me"])
     assert "Number of participants: 1" in content
 
 
@@ -43,7 +43,7 @@ def second_user_leaves(context: dict[str, AppTest]) -> None:
 
 @when("I close my session")
 def i_close_my_session(context: dict[str, AppTest]) -> None:
-    del context["user"]  # prevent running user further
+    del context["me"]  # prevent running me further
 
 
 @then("second user should be on the room selection screen")
@@ -76,5 +76,5 @@ def i_should_see_info_message(
     context: dict[str, AppTest],
     info_message: str,
 ) -> None:
-    content = get_info_content(context["user"])
+    content = get_info_content(context["me"])
     assert info_message in content

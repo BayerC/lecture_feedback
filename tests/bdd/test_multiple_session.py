@@ -45,8 +45,8 @@ def see_url_not_found_warning_message(
 @when("a third user wants to join with my room url")
 def third_user_joins_with_room_url(context: dict[str, AppTest]) -> None:
     context["third_user"] = AppTest.from_function(run_wrapper)
-    assert "room_id" in context["user"].query_params
-    context["third_user"].query_params["room_id"] = context["user"].query_params[
+    assert "room_id" in context["me"].query_params
+    context["third_user"].query_params["room_id"] = context["me"].query_params[
         "room_id"
     ]
     context["third_user"].run()
