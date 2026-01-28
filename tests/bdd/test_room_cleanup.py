@@ -46,7 +46,7 @@ def i_close_my_session(context: dict[str, AppTest]) -> None:
     del context["me"]  # prevent running me further
 
 
-@then("second user should be on the room selection screen")
+@then("the second user should be on the room selection screen")
 def second_user_should_be_on_room_selection_screen(context: dict[str, AppTest]) -> None:
     assert len(context["second_user"].title) == 1
     assert context["second_user"].title[0].value == "Welcome to Lecture Feedback App"

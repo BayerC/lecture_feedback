@@ -29,7 +29,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
             lobby.join_room(st.query_params["room_id"])
             st.rerun()
         except ValueError:
-            st.error("Room ID from url not found")
+            st.error("Room ID from URL not found")
 
     st.title("Welcome to Lecture Feedback App")
     st.write("Host or join a room to share feedback.")

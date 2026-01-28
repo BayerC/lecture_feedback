@@ -16,13 +16,13 @@ def test_create_room() -> None:
 
 @scenario(
     "features/single_session.feature",
-    "Try to join room without entering Room ID",
+    "Try to join a room without entering Room ID",
 )
 def test_join_without_room_id() -> None:
     pass
 
 
-@scenario("features/single_session.feature", "Try to join non existing room")
+@scenario("features/single_session.feature", "Try to join a non-existing room")
 def test_join_non_existent_room() -> None:
     pass
 
@@ -53,7 +53,7 @@ def room_should_have_valid_room_id(context: dict[str, AppTest]) -> None:
     assert len(room_id) > 0
 
 
-@then("the url should contain the room id")
+@then("the URL should contain the room ID")
 def url_should_contain_room_id(context: dict[str, AppTest]) -> None:
     room_id = get_room_id(context["me"])
     assert len(context["me"].query_params["room_id"]) == 1

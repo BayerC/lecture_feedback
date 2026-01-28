@@ -8,7 +8,7 @@ from tests.bdd.test_helper import get_room_id
 STATUS_MAP = {status.name.lower(): status.value for status in UserStatus}
 
 
-@scenario("features/multiple_session.feature", "Second user joins with room url")
+@scenario("features/multiple_session.feature", "Second user joins with room URL")
 def test_second_user_joins_with_room_url() -> None:
     pass
 
@@ -26,7 +26,7 @@ def test_three_users_in_two_separate_rooms_maintain_independent_statistics() -> 
     pass
 
 
-@when("a second user wants to join with invalid url")
+@when("a second user wants to join with invalid URL")
 def second_user_wants_to_join_with_invalid_url(context: dict[str, AppTest]) -> None:
     context["second_user"] = AppTest.from_function(run_wrapper)
     context["second_user"].query_params["room_id"] = "INVALID"
@@ -42,7 +42,7 @@ def second_user_should_see_warning_message(
     assert context["second_user"].error[0].value == error_message
 
 
-@when("a third user wants to join with my room url")
+@when("a third user wants to join with my room URL")
 def third_user_wants_to_join_with_my_room_url(context: dict[str, AppTest]) -> None:
     context["third_user"] = AppTest.from_function(run_wrapper)
     assert "room_id" in context["me"].query_params
