@@ -1,5 +1,8 @@
+import io
+
 import pandas as pd
 import plotly.express as px
+import qrcode
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
@@ -140,27 +143,47 @@ def show_room_statistics(room: HostState | ClientState) -> None:
         st.text(f"Number of participants: {df.sum().sum()}")
 
 
-def show_active_room_host(host_state: HostState) -> None:
-    st.query_params["room_id"] = host_state.room_id
-    st.title("Active Room")
-    col1, col2 = st.columns([1, 4], vertical_alignment="center")
-    with col1:
+def generate_qr_code_image(room_id: str) -> bytes:
+    base_url = st.context.url
+    join_url = f"{base_url}?room_id={room_id}"
+
+    url_qr_code = qrcode.QRCode(
+        border=0,
+    )
+    url_qr_code.add_data(join_url)
+    url_qr_code.make(fit=True)
+
+    img = url_qr_code.make_image(fill_color="black", back_color="white")
+    img_bytes = io.BytesIO()
+    img.save(img_bytes)
+    return img_bytes.getvalue()
+
+
+def show_active_room_header(room_id: str) -> None:
+    st.query_params["room_id"] = room_id
+    left, right = st.columns([4, 1], vertical_alignment="center")
+    with left:
+        st.title("Active Room")
+    with right:
+        st.image(generate_qr_code_image(room_id), width="content")
+
+    col_1, col_2 = st.columns([1, 4], vertical_alignment="center")
+    with col_1:
         st.write("**Room ID:**")
-    with col2:
-        st.code(host_state.room_id, language=None)
+    with col_2:
+        st.code(room_id, language=None)
+
     st.divider()
+
+
+def show_active_room_host(host_state: HostState) -> None:
+    show_active_room_header(host_state.room_id)
     show_room_statistics(host_state)
 
 
 def show_active_room_client(client_state: ClientState) -> None:
-    st.query_params["room_id"] = client_state.room_id
-    st.title("Active Room")
-    col1, col2 = st.columns([1, 4], vertical_alignment="center")
-    with col1:
-        st.write("**Room ID:**")
-    with col2:
-        st.code(client_state.room_id, language=None)
-    st.divider()
+    show_active_room_header(client_state.room_id)
+
     col_left, col_right = st.columns(2, gap="medium")
     with col_left:
         show_user_status_selection(client_state)
