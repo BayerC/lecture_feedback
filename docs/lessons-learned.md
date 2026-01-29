@@ -13,3 +13,5 @@
 - Use [Pytest-BDD](https://pytest-bdd.readthedocs.io/en/stable/#) for integration tests to document the user interface
 - One can connect [Claude AI](https://claude.ai) to GitHub so it can browse your repository and collaborate with you.
 - A retro is very important in an async remote team collaboration
+- [Python overloading](https://stackoverflow.com/a/54423390/7260972) is just a type hint, doesn't really allow defining two separate overloads.
+  That requires usage of hack such as `isinstance()`, which makes overloads not attractive
