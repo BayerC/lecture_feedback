@@ -1,8 +1,8 @@
 from pytest_bdd import parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
-from tests.bdd.test_helper import get_room_id, refresh_all_apps, check_page_contents
 from tests.bdd.fixture import run_wrapper
+from tests.bdd.test_helper import check_page_contents, get_room_id, refresh_all_apps
 
 
 @scenario("features/question_voting.feature", "Client submits a question")
@@ -28,15 +28,20 @@ def third_user_joins_room(context: dict[str, AppTest]) -> None:
 
 
 @then(
-    parsers.parse('"{users}" should see question "{question}" with {vote_count:d} vote')
+    parsers.parse(
+        '"{users}" should see question "{question}" with {vote_count:d} vote',
+    ),
 )
 @then(
     parsers.parse(
-        '"{users}" should see question "{question}" with {vote_count:d} votes'
-    )
+        '"{users}" should see question "{question}" with {vote_count:d} votes',
+    ),
 )
 def users_should_see_question(
-    context: dict[str, AppTest], users: str, question: str, vote_count: int
+    context: dict[str, AppTest],
+    users: str,
+    question: str,
+    vote_count: int,
 ) -> None:
     user_keys = [u.strip() for u in users.split(",")]
 
@@ -68,26 +73,36 @@ def third_user_upvotes_question(context: dict[str, AppTest]) -> None:
     upvote_buttons[0].click().run()
     refresh_all_apps(context)
 
+
 @when("I close the question")
 def i_close_the_question(context: dict[str, AppTest]) -> None:
     app = context["me"]
-    close_buttons = [btn for btn in app.button if btn.key and btn.key.startswith("close_")]
-    assert len(close_buttons) == 1, "Expected exactly one close button available for host"
-    
+    close_buttons = [
+        btn for btn in app.button if btn.key and btn.key.startswith("close_")
+    ]
+    assert len(close_buttons) == 1, (
+        "Expected exactly one close button available for host"
+    )
+
     close_buttons[0].click().run()
     refresh_all_apps(context)
+
 
 @then(parsers.parse('"{users}" should see no questions'))
 def users_should_see_no_questions(context: dict[str, AppTest], users: str) -> None:
     user_keys = [u.strip() for u in users.split(",")]
-    
+
     for user in user_keys:
         app = context[user]
-        
-        upvote_buttons = [btn for btn in app.button if btn.key and btn.key.startswith("upvote_")]
-        close_buttons = [btn for btn in app.button if btn.key and btn.key.startswith("close_")]
-        
+
+        upvote_buttons = [
+            btn for btn in app.button if btn.key and btn.key.startswith("upvote_")
+        ]
+        close_buttons = [
+            btn for btn in app.button if btn.key and btn.key.startswith("close_")
+        ]
+
         assert len(upvote_buttons) == 0, f"{user} still sees upvote buttons"
         assert len(close_buttons) == 0, f"{user} still sees close buttons"
-        
+
         check_page_contents(app, expected=("No questions yet.",))
