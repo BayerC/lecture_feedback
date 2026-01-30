@@ -197,6 +197,43 @@ def show_active_room_client(client_state: ClientState) -> None:
     with col_right:
         show_room_statistics(client_state)
 
+    st.divider()
+
+    def handle_question_submit() -> None:
+        question = st.session_state.question_input
+        if question and question.strip():
+            client_state.submit_question(question.strip())
+            st.session_state.question_input = ""
+
+    st.text_input(
+        "Ask a Question",
+        key="question_input",
+        placeholder="Type your question here... (Press Enter to submit)",
+        on_change=handle_question_submit,
+    )
+
+    st.divider()
+
+    st.subheader("Open Questions")
+    open_questions = client_state.get_open_questions()
+    if not open_questions:
+        st.info("No questions yet. Be the first to ask!")
+    else:
+        for question in open_questions:
+            col1, col2 = st.columns([5, 1])
+            with col1:
+                st.write(question.text)
+            with col2:
+                has_voted = client_state.has_voted(question)
+                upvote_label = f"🆙 {question.vote_count}"
+                if st.button(
+                    upvote_label,
+                    key=f"upvote_{question.id}",
+                    disabled=has_voted,
+                ):
+                    client_state.upvote_question(question.id)
+                    st.rerun()
+
 
 def run() -> None:
     st_autorefresh(interval=AUTOREFRESH_INTERNAL_MS, key="data_refresh")

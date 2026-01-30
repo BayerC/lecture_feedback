@@ -1,4 +1,5 @@
 import time
+import uuid
 from collections.abc import Iterator
 from dataclasses import dataclass
 
@@ -12,12 +13,24 @@ class UserSession:
     last_seen: float
 
 
+@dataclass
+class Question:
+    id: str
+    text: str
+    voter_ids: set[str]
+
+    @property
+    def vote_count(self) -> int:
+        return len(self.voter_ids)
+
+
 class Room:
     def __init__(self, room_id: str, host_id: str) -> None:
         self._room_id = room_id
         self._sessions: ThreadSafeDict[UserSession] = ThreadSafeDict()
         self._host_id = host_id
         self._host_last_seen = time.time()
+        self._questions: ThreadSafeDict[Question] = ThreadSafeDict()
 
     def is_host(self, session_id: str) -> bool:
         return self._host_id == session_id
@@ -58,3 +71,24 @@ class Room:
 
         for session_id in users_to_remove:
             del self._sessions[session_id]
+
+    def get_open_questions(self) -> list[Question]:
+        open_questions = list(self._questions.values())
+        return sorted(open_questions, key=lambda q: q.vote_count, reverse=True)
+
+    def add_question(self, session_id: str, text: str) -> None:
+        question_id = str(uuid.uuid4())
+        question = Question(id=question_id, text=text, voter_ids={session_id})
+        self._questions[question_id] = question
+
+    def upvote_question(self, session_id: str, question_id: str) -> None:
+        with self._questions:
+            if question_id not in self._questions._data:  # noqa: SLF001
+                return  
+
+            question = self._questions._data[question_id]  # noqa: SLF001
+
+            if session_id in question.voter_ids:
+                return  
+
+            question.voter_ids.add(session_id)
