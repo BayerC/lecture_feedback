@@ -130,6 +130,7 @@ def show_room_statistics(room: HostState | ClientState) -> None:
         xaxis={"visible": False},
         yaxis={"visible": False},
         margin={"l": 0, "r": 0, "t": 0, "b": 0},
+        height=250,
     )
 
     disable_interactions_config = {
@@ -137,10 +138,16 @@ def show_room_statistics(room: HostState | ClientState) -> None:
         "staticPlot": True,
     }
 
-    _, col2, _ = st.columns([1, 2, 1])
+    _, col2, _ = st.columns([1, 3, 1])
     with col2:
         st.plotly_chart(fig, config=disable_interactions_config)
-        st.text(f"Number of participants: {df.sum().sum()}")
+        participant_count = df.sum().sum()
+        st.markdown(
+            f"<p style='text-align: center;'>"
+            f"Number of participants: {participant_count}"
+            f"</p>",
+            unsafe_allow_html=True,
+        )
 
 
 def generate_qr_code_image(room_id: str) -> bytes:
