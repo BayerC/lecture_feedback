@@ -84,11 +84,11 @@ class Room:
     def upvote_question(self, session_id: str, question_id: str) -> None:
         with self._questions:
             if question_id not in self._questions._data:  # noqa: SLF001
-                return  
+                return
 
             question = self._questions._data[question_id]  # noqa: SLF001
 
             if session_id in question.voter_ids:
-                return  
+                return
 
             question.voter_ids.add(session_id)
