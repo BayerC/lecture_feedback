@@ -183,9 +183,43 @@ def show_active_room_header(room_id: str) -> None:
     st.divider()
 
 
+def show_open_questions(state: HostState | ClientState) -> None:
+    st.subheader("Open Questions")
+    open_questions = state.get_open_questions()
+    if not open_questions:
+        st.info("No questions yet.")
+    else:
+        for question in open_questions:
+            col1, col3 = st.columns([5, 1], vertical_alignment="center")
+            with col1:
+                st.write(question.text)
+            with col3:
+                if isinstance(state, HostState):
+                    if st.button(
+                        f"{question.vote_count} ✅",
+                        key=f"close_{question.id}",
+                        help="Close question",
+                    ):
+                        state.close_question(question.id)
+                        st.rerun()
+                elif isinstance(state, ClientState):
+                    has_voted = state.has_voted(question)
+                    if st.button(
+                        f"{question.vote_count} 🆙",
+                        key=f"upvote_{question.id}",
+                        disabled=has_voted,
+                    ):
+                        state.upvote_question(question.id)
+                        st.rerun()
+
+
 def show_active_room_host(host_state: HostState) -> None:
     show_active_room_header(host_state.room_id)
     show_room_statistics(host_state)
+
+    st.divider()
+
+    show_open_questions(host_state)
 
 
 def show_active_room_client(client_state: ClientState) -> None:
@@ -214,25 +248,7 @@ def show_active_room_client(client_state: ClientState) -> None:
 
     st.divider()
 
-    st.subheader("Open Questions")
-    open_questions = client_state.get_open_questions()
-    if not open_questions:
-        st.info("No questions yet. Be the first to ask!")
-    else:
-        for question in open_questions:
-            col1, col2 = st.columns([5, 1])
-            with col1:
-                st.write(question.text)
-            with col2:
-                has_voted = client_state.has_voted(question)
-                upvote_label = f"🆙 {question.vote_count}"
-                if st.button(
-                    upvote_label,
-                    key=f"upvote_{question.id}",
-                    disabled=has_voted,
-                ):
-                    client_state.upvote_question(question.id)
-                    st.rerun()
+    show_open_questions(client_state)
 
 
 def run() -> None:

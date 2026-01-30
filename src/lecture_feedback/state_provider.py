@@ -50,6 +50,9 @@ class HostState(RoomState):
         super().__init__(room, session_id)
         self._room.update_host_last_seen()
 
+    def close_question(self, question_id: str) -> None:
+        self._room.close_question(question_id)
+
 
 class ClientState(RoomState):
     def get_user_status(self) -> UserStatus:
