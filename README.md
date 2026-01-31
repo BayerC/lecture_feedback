@@ -13,6 +13,8 @@ The app (currently beta, while https://github.com/BayerC/lecture_feedback/milest
 
 ##  Overview
 
+![Lecture Feedback App Overview](docs/infographic.png)
+
 Lecture Feedback App is a simple, intuitive tool that enables real-time feedback from the audience to presenters.
 Participants use a simple traffic light system to signal their understanding:
 
