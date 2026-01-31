@@ -68,3 +68,26 @@ def test_multiple_users_can_upvote_same_question() -> None:
         "user-2",
         "user-3",
     }
+
+
+def test_questions_sorted_by_vote_count() -> None:
+    room = Room("room-id", "host-id")
+
+    room.add_question("user-1", "Question with 1 vote")
+    room.add_question("user-2", "Question with 3 votes")
+    room.add_question("user-3", "Question with 2 votes")
+
+    questions = room.get_open_questions()
+    question_with_3_votes = questions[1]
+    question_with_2_votes = questions[2]
+
+    room.upvote_question("user-4", question_with_3_votes.id)
+    room.upvote_question("user-5", question_with_3_votes.id)
+
+    room.upvote_question("user-6", question_with_2_votes.id)
+
+    sorted_questions = room.get_open_questions()
+    assert len(sorted_questions) == 3
+    assert sorted_questions[0].vote_count == 3
+    assert sorted_questions[1].vote_count == 2
+    assert sorted_questions[2].vote_count == 1
