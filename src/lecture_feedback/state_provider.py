@@ -55,6 +55,10 @@ class HostState(RoomState):
 
 
 class ClientState(RoomState):
+    def __init__(self, room: Room, session_id: str) -> None:
+        super().__init__(room, session_id)
+        self._room.update_session(session_id)
+
     def get_user_status(self) -> UserStatus:
         return self._room.get_session_status(self._session_id)
 
