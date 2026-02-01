@@ -51,3 +51,7 @@ class ThreadSafeDict[T]:
 
     def __exit__(self, *args: object) -> None:
         self._lock.release()
+
+    def __contains__(self, key: str) -> bool:
+        with self._lock:
+            return key in self._data
