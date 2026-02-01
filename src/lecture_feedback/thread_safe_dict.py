@@ -32,6 +32,10 @@ class ThreadSafeDict[T]:
         with self._lock:
             return len(self._data)
 
+    def __contains__(self, key: str) -> bool:
+        with self._lock:
+            return key in self._data
+
     def copy(self) -> ThreadSafeDict[T]:
         """Return a shallow copy as a ThreadSafeDict instance."""
         with self._lock:
