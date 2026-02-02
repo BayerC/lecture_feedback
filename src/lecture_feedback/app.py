@@ -42,14 +42,14 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 
     with col_left:
         st.subheader("Start New Room")
-        if st.button("Create Room", use_container_width=True, key="start_room"):
+        if st.button("Create Room", width="stretch", key="start_room"):
             lobby.create_room()
             st.rerun()
 
     with col_right:
         st.subheader("Join Existing Room")
         room_id = st.text_input("Room ID", key="join_room_id")
-        if st.button("Join Room", use_container_width=True, key="join_room"):
+        if st.button("Join Room", width="stretch", key="join_room"):
             if not room_id:
                 st.warning("Please enter a Room ID to join.")
             else:
