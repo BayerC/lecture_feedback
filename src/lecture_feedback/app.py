@@ -15,7 +15,7 @@ from lecture_feedback.state_provider import (
 )
 from lecture_feedback.user_status import UserStatus
 
-AUTOREFRESH_INTERNAL_MS = 2000
+AUTOREFRESH_INTERVAL_MS = 2000
 USER_REMOVAL_TIMEOUT_SECONDS = (
     60  # if we go lower, chrome's background tab throttling causes faulty user removal
 )
@@ -252,7 +252,7 @@ def show_active_room_client(client_state: ClientState) -> None:
 
 
 def run() -> None:
-    st_autorefresh(interval=AUTOREFRESH_INTERNAL_MS, key="data_refresh")
+    st_autorefresh(interval=AUTOREFRESH_INTERVAL_MS, key="data_refresh")
 
     state_provider = StateProvider()
     cleanup = state_provider.get_cleanup(USER_REMOVAL_TIMEOUT_SECONDS)
