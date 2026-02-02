@@ -2,6 +2,7 @@ import io
 
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import qrcode
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
@@ -150,6 +151,93 @@ def show_room_statistics(room: HostState | ClientState) -> None:
         )
 
 
+def show_status_history_chart(host_state: HostState) -> None:
+    status_history = host_state.get_status_history()
+
+    if not status_history:
+        st.info("No status history yet. Waiting for participants to join...")
+        return
+
+    session_start = host_state.session_start_time
+
+    data = {
+        "Time (seconds)": [
+            snapshot.timestamp - session_start for snapshot in status_history
+        ],
+        UserStatus.GREEN.value: [snapshot.green_count for snapshot in status_history],
+        UserStatus.YELLOW.value: [snapshot.yellow_count for snapshot in status_history],
+        UserStatus.RED.value: [snapshot.red_count for snapshot in status_history],
+        UserStatus.UNKNOWN.value: [
+            snapshot.unknown_count for snapshot in status_history
+        ],
+    }
+
+    df = pd.DataFrame(data)
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scatter(
+            x=df["Time (seconds)"],
+            y=df[UserStatus.GREEN.value],
+            name=UserStatus.GREEN.value,
+            mode="lines",
+            line={"color": GREEN_COLOR, "width": 2},
+            stackgroup="one",
+        ),
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=df["Time (seconds)"],
+            y=df[UserStatus.YELLOW.value],
+            name=UserStatus.YELLOW.value,
+            mode="lines",
+            line={"color": YELLOW_COLOR, "width": 2},
+            stackgroup="one",
+        ),
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=df["Time (seconds)"],
+            y=df[UserStatus.RED.value],
+            name=UserStatus.RED.value,
+            mode="lines",
+            line={"color": RED_COLOR, "width": 2},
+            stackgroup="one",
+        ),
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=df["Time (seconds)"],
+            y=df[UserStatus.UNKNOWN.value],
+            name=UserStatus.UNKNOWN.value,
+            mode="lines",
+            line={"color": GREY_COLOR, "width": 2},
+            stackgroup="one",
+        ),
+    )
+
+    fig.update_layout(
+        xaxis={"title": "Time (seconds)"},
+        yaxis={"title": "Number of participants"},
+        hovermode="x unified",
+        legend={
+            "orientation": "h",
+            "yanchor": "bottom",
+            "y": 1.02,
+            "xanchor": "right",
+            "x": 1,
+        },
+        margin={"l": 0, "r": 0, "t": 40, "b": 0},
+        height=400,
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+
 def generate_qr_code_image(room_id: str) -> bytes:
     base_url = st.context.url
     join_url = f"{base_url}?room_id={room_id}"
@@ -216,6 +304,11 @@ def show_open_questions(state: HostState | ClientState) -> None:
 def show_active_room_host(host_state: HostState) -> None:
     show_active_room_header(host_state.room_id)
     show_room_statistics(host_state)
+
+    st.divider()
+
+    st.subheader("Status Evolution Over Time")
+    show_status_history_chart(host_state)
 
     st.divider()
 

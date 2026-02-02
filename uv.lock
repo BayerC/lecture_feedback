@@ -308,6 +308,7 @@ name = "lecture-feedback"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "pandas" },
     { name = "plotly" },
     { name = "qrcode" },
     { name = "streamlit" },
@@ -329,6 +330,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "pandas", specifier = ">=2.3.3" },
     { name = "plotly", specifier = ">=6.5.2" },
     { name = "qrcode", specifier = ">=8.1" },
     { name = "streamlit", specifier = ">=1.49.1" },

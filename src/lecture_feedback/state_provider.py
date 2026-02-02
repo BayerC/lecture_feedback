@@ -3,7 +3,7 @@ import uuid
 import streamlit as st
 
 from lecture_feedback.application_state import ApplicationState
-from lecture_feedback.room import Question, Room
+from lecture_feedback.room import Question, Room, StatusSnapshot
 from lecture_feedback.session_state import SessionState
 from lecture_feedback.user_status import UserStatus
 
@@ -52,6 +52,13 @@ class HostState(RoomState):
 
     def close_question(self, question_id: str) -> None:
         self._room.close_question(question_id)
+
+    def get_status_history(self) -> list[StatusSnapshot]:
+        return self._room.get_status_history()
+
+    @property
+    def session_start_time(self) -> float:
+        return self._room.session_start_time
 
 
 class ClientState(RoomState):
