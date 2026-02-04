@@ -224,13 +224,7 @@ def show_status_history_chart(host_state: HostState) -> None:
         xaxis={"title": "Time (seconds)"},
         yaxis={"title": "Number of participants"},
         hovermode="x unified",
-        legend={
-            "orientation": "h",
-            "yanchor": "bottom",
-            "y": 1.02,
-            "xanchor": "right",
-            "x": 1,
-        },
+        showlegend=False,
         margin={"l": 0, "r": 0, "t": 40, "b": 0},
         height=400,
     )
