@@ -35,7 +35,6 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
             st.error("Room ID from URL not found")
 
     st.title("Welcome to Lecture Feedback App")
-    st.write("Host or join a room to share feedback.")
 
     col_left, col_right = st.columns(2, gap="medium")
 
@@ -57,6 +56,29 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
                     st.rerun()
                 except ValueError:
                     st.error("Room ID not found")
+
+    st.subheader("How It Works in 3 Simple Steps:")
+    col_left, col_middle, col_right = st.columns(3)
+
+    with col_left:
+        st.info(
+            "**1. Create a Room**\n\n"
+            "The presenter starts a new session, which generates a unique room.",
+        )
+
+    with col_middle:
+        st.info(
+            "**2. Share the Access Link**\n\n"
+            "The presenter shares the room ID, a direct link, "
+            "or a QR code with the audience.",
+        )
+
+    with col_right:
+        st.info(
+            "**3. Gather Live Feedback**\n\n"
+            "Participants join to share their status "
+            "and ask/vote on questions.",
+        )
 
 
 def show_user_status_selection(room: ClientState) -> None:
