@@ -208,7 +208,7 @@ def show_active_room_header(room_id: str) -> None:
     with col_1:
         st.write("**Room ID:**")
     with col_2:
-        st.code(room_id, language=None)
+        st.markdown(f"**`{room_id}`**")
 
     st.divider()
 
@@ -261,22 +261,24 @@ def show_active_room_client(client_state: ClientState) -> None:
     with col_right:
         show_room_statistics(client_state)
 
-    st.divider()
-
     def handle_question_submit() -> None:
         question = st.session_state.question_input
         if question and question.strip():
             client_state.submit_question(question.strip())
             st.session_state.question_input = ""
 
-    st.text_input(
-        "Ask a Question",
-        key="question_input",
-        placeholder="Type your question here... (Press Enter to submit)",
-        on_change=handle_question_submit,
-    )
+    with st.form("question_form"):
+        st.text_area(
+            "Ask a Question",
+            key="question_input",
+            placeholder="Type your question here...",
+        )
 
-    st.divider()
+        st.form_submit_button(
+            "Submit Question",
+            key="submit_question",
+            on_click=handle_question_submit,
+        )
 
     show_open_questions(client_state)
 
