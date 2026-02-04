@@ -235,7 +235,7 @@ def show_status_history_chart(host_state: HostState) -> None:
         height=400,
     )
 
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 
 def generate_qr_code_image(room_id: str) -> bytes:
