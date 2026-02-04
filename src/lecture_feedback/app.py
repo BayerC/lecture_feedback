@@ -158,11 +158,12 @@ def show_status_history_chart(host_state: HostState) -> None:
         st.info("No status history yet. Waiting for participants to join...")
         return
 
-    session_start = host_state.session_start_time
+    latest_snapshot_time = status_history[-1].timestamp
 
     data = {
-        "Time (seconds)": [
-            snapshot.timestamp - session_start for snapshot in status_history
+        "Time (minutes)": [
+            (snapshot.timestamp - latest_snapshot_time) / 60
+            for snapshot in status_history
         ],
         UserStatus.GREEN.value: [snapshot.green_count for snapshot in status_history],
         UserStatus.YELLOW.value: [snapshot.yellow_count for snapshot in status_history],
@@ -178,7 +179,7 @@ def show_status_history_chart(host_state: HostState) -> None:
 
     fig.add_trace(
         go.Scatter(
-            x=df["Time (seconds)"],
+            x=df["Time (minutes)"],
             y=df[UserStatus.UNKNOWN.value],
             name=UserStatus.UNKNOWN.value,
             mode="lines",
@@ -189,7 +190,7 @@ def show_status_history_chart(host_state: HostState) -> None:
 
     fig.add_trace(
         go.Scatter(
-            x=df["Time (seconds)"],
+            x=df["Time (minutes)"],
             y=df[UserStatus.RED.value],
             name=UserStatus.RED.value,
             mode="lines",
@@ -200,7 +201,7 @@ def show_status_history_chart(host_state: HostState) -> None:
 
     fig.add_trace(
         go.Scatter(
-            x=df["Time (seconds)"],
+            x=df["Time (minutes)"],
             y=df[UserStatus.YELLOW.value],
             name=UserStatus.YELLOW.value,
             mode="lines",
@@ -211,7 +212,7 @@ def show_status_history_chart(host_state: HostState) -> None:
 
     fig.add_trace(
         go.Scatter(
-            x=df["Time (seconds)"],
+            x=df["Time (minutes)"],
             y=df[UserStatus.GREEN.value],
             name=UserStatus.GREEN.value,
             mode="lines",
@@ -221,7 +222,7 @@ def show_status_history_chart(host_state: HostState) -> None:
     )
 
     fig.update_layout(
-        xaxis={"title": "Time (seconds)"},
+        xaxis={"title": "Time (minutes)", "dtick": 1, "tickformat": "d"},
         yaxis={"title": "Number of participants", "dtick": 1},
         hovermode="x unified",
         showlegend=False,
