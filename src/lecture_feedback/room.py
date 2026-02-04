@@ -42,6 +42,8 @@ class Room:
         self._questions: ThreadSafeDict[Question] = ThreadSafeDict()
         self._status_history: list[StatusSnapshot] = []
         self._session_start_time = time.time()
+        self._snapshot_interval_seconds = 60
+        self._max_snapshot_count = 1000
 
     def is_host(self, session_id: str) -> bool:
         return self._host_id == session_id
@@ -50,6 +52,11 @@ class Room:
         self._host_last_seen = time.time()
 
     def _record_status_snapshot(self) -> None:
+        if self._status_history:
+            last_snapshot_time = self._status_history[-1].timestamp
+            if time.time() - last_snapshot_time < self._snapshot_interval_seconds:
+                return
+
         counts = {
             UserStatus.GREEN: 0,
             UserStatus.YELLOW: 0,
@@ -67,6 +74,9 @@ class Room:
             unknown_count=counts[UserStatus.UNKNOWN],
         )
         self._status_history.append(snapshot)
+        if len(self._status_history) > self._max_snapshot_count:
+            excess_count = len(self._status_history) - self._max_snapshot_count
+            del self._status_history[:excess_count]
 
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = UserSession(status, time.time())
