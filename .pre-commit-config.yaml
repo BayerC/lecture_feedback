@@ -8,7 +8,6 @@ repos:
       - id: check-yaml
       - id: check-toml
       - id: check-added-large-files
-        exclude: '^docs/infographic\.png$'
       - id: check-merge-conflict
       - id: check-ast
       - id: check-builtin-literals
