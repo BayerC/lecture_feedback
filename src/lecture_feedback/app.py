@@ -47,7 +47,12 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 
     with col_right:
         st.subheader("Join Existing Room")
-        room_id = st.text_input("Room ID", key="join_room_id")
+        room_id = st.text_input(
+            "Room ID",
+            key="join_room_id",
+            placeholder="Insert room ID",
+            label_visibility="collapsed",
+        )
         if st.button("Join Room", width="stretch", key="join_room"):
             if not room_id:
                 st.warning("Please enter a Room ID to join.")
@@ -57,6 +62,31 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
                     st.rerun()
                 except ValueError:
                     st.error("Room ID not found")
+
+    st.divider()
+
+    st.subheader("How to Use This App")
+    step_col_1, step_col_2, step_col_3 = st.columns(3)
+
+    with step_col_1:
+        st.info(
+            "**1. Create a Room**\n\n"
+            "The presenter starts a new session, which generates a unique room.",
+        )
+
+    with step_col_2:
+        st.info(
+            "**2. Share the Access Link**\n\n"
+            "The presenter shares the room ID, a direct link, "
+            "or a QR code with the audience.",
+        )
+
+    with step_col_3:
+        st.info(
+            "**3. Gather Live Feedback**\n\n"
+            "Participants join to share their status "
+            "and ask/vote on questions.",
+        )
 
 
 def show_user_status_selection(room: ClientState) -> None:
