@@ -246,6 +246,7 @@ def show_active_room_client(client_state: ClientState) -> None:
 
         st.form_submit_button(
             "Submit Question",
+            key="submit_question",
             on_click=handle_question_submit,
         )
 
