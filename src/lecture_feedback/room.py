@@ -42,8 +42,8 @@ class Room:
         self._questions: ThreadSafeDict[Question] = ThreadSafeDict()
         self._status_history: list[StatusSnapshot] = []
         self._session_start_time = time.time()
-        self._snapshot_interval_seconds = 60
-        self._max_snapshot_count = 1000
+        self._snapshot_interval_seconds = 1  # update after testing
+        self._max_snapshot_count = 10  # update after testing
 
     def is_host(self, session_id: str) -> bool:
         return self._host_id == session_id

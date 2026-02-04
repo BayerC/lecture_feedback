@@ -179,21 +179,10 @@ def show_status_history_chart(host_state: HostState) -> None:
     fig.add_trace(
         go.Scatter(
             x=df["Time (seconds)"],
-            y=df[UserStatus.GREEN.value],
-            name=UserStatus.GREEN.value,
+            y=df[UserStatus.UNKNOWN.value],
+            name=UserStatus.UNKNOWN.value,
             mode="lines",
-            line={"color": GREEN_COLOR, "width": 2},
-            stackgroup="one",
-        ),
-    )
-
-    fig.add_trace(
-        go.Scatter(
-            x=df["Time (seconds)"],
-            y=df[UserStatus.YELLOW.value],
-            name=UserStatus.YELLOW.value,
-            mode="lines",
-            line={"color": YELLOW_COLOR, "width": 2},
+            line={"color": GREY_COLOR, "width": 2},
             stackgroup="one",
         ),
     )
@@ -212,10 +201,21 @@ def show_status_history_chart(host_state: HostState) -> None:
     fig.add_trace(
         go.Scatter(
             x=df["Time (seconds)"],
-            y=df[UserStatus.UNKNOWN.value],
-            name=UserStatus.UNKNOWN.value,
+            y=df[UserStatus.YELLOW.value],
+            name=UserStatus.YELLOW.value,
             mode="lines",
-            line={"color": GREY_COLOR, "width": 2},
+            line={"color": YELLOW_COLOR, "width": 2},
+            stackgroup="one",
+        ),
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=df["Time (seconds)"],
+            y=df[UserStatus.GREEN.value],
+            name=UserStatus.GREEN.value,
+            mode="lines",
+            line={"color": GREEN_COLOR, "width": 2},
             stackgroup="one",
         ),
     )
