@@ -222,7 +222,7 @@ def show_status_history_chart(host_state: HostState) -> None:
 
     fig.update_layout(
         xaxis={"title": "Time (seconds)"},
-        yaxis={"title": "Number of participants"},
+        yaxis={"title": "Number of participants", "dtick": 1},
         hovermode="x unified",
         showlegend=False,
         margin={"l": 0, "r": 0, "t": 40, "b": 0},
