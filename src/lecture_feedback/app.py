@@ -163,6 +163,10 @@ def show_room_statistics(room: HostState | ClientState) -> None:
         height=250,
     )
 
+    fig.update_traces(
+        marker_cornerradius=8,
+    )
+
     disable_interactions_config = {
         "displayModeBar": False,
         "staticPlot": True,
@@ -225,7 +229,7 @@ def show_open_questions(state: HostState | ClientState) -> None:
             with right_col:
                 if isinstance(state, HostState):
                     if st.button(
-                        f"{question.vote_count} ⬆️",
+                        f"{question.vote_count} ✅",
                         key=f"close_{question.id}",
                         help="Close question",
                         width="stretch",
