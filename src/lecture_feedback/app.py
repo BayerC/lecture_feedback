@@ -221,6 +221,15 @@ def show_status_history_chart(host_state: HostState) -> None:
         ),
     )
 
+    fig.add_vline(
+        x=0,
+        line_width=1,
+        line_dash="dot",
+        line_color=GREY_COLOR,
+        annotation_text="Present",
+        annotation_position="top right",
+    )
+
     fig.update_layout(
         xaxis={"title": "Time (minutes)", "dtick": 1, "tickformat": "d"},
         yaxis={"title": "Number of participants", "dtick": 1},
