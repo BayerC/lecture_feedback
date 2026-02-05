@@ -239,7 +239,19 @@ def show_status_history_chart(host_state: HostState) -> None:
         height=400,
     )
 
-    st.plotly_chart(fig, width="stretch")
+    disable_interactions_config = {
+        "displayModeBar": False,
+        "staticPlot": True,
+    }
+
+    # This flickers in many refreshes, even though we do basically the same as for
+    # the bar chart. Is this acceptable?
+    st.plotly_chart(
+        fig,
+        width="stretch",
+        config=disable_interactions_config,
+        key="status_history_chart",
+    )
 
 
 def generate_qr_code_image(room_id: str) -> bytes:
