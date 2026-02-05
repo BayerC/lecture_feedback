@@ -91,9 +91,12 @@ class Room:
     def get_session_status(self, session_id: str) -> UserStatus:
         return self._sessions[session_id].status
 
-    def has_session(self, session_id: str) -> bool:
+    def update_session(self, session_id: str) -> None:
         if session_id in self._sessions:
             self._sessions[session_id].last_seen = time.time()
+
+    def has_session(self, session_id: str) -> bool:
+        if session_id in self._sessions:
             return True
         return bool(self.is_host(session_id))
 

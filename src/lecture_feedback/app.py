@@ -15,7 +15,7 @@ from lecture_feedback.state_provider import (
 )
 from lecture_feedback.user_status import UserStatus
 
-AUTOREFRESH_INTERNAL_MS = 2000
+AUTOREFRESH_INTERVAL_MS = 2000
 USER_REMOVAL_TIMEOUT_SECONDS = (
     60  # if we go lower, chrome's background tab throttling causes faulty user removal
 )
@@ -47,7 +47,12 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 
     with col_right:
         st.subheader("Join Existing Room")
-        room_id = st.text_input("Room ID", key="join_room_id")
+        room_id = st.text_input(
+            "Room ID",
+            key="join_room_id",
+            placeholder="Insert room ID",
+            label_visibility="collapsed",
+        )
         if st.button("Join Room", width="stretch", key="join_room"):
             if not room_id:
                 st.warning("Please enter a Room ID to join.")
@@ -57,6 +62,31 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
                     st.rerun()
                 except ValueError:
                     st.error("Room ID not found")
+
+    st.divider()
+
+    st.subheader("How to Use This App")
+    step_col_1, step_col_2, step_col_3 = st.columns(3)
+
+    with step_col_1:
+        st.info(
+            "**1. Create a Room**\n\n"
+            "The presenter starts a new session, which generates a unique room.",
+        )
+
+    with step_col_2:
+        st.info(
+            "**2. Share the Access Link**\n\n"
+            "The presenter shares the room ID, a direct link, "
+            "or a QR code with the audience.",
+        )
+
+    with step_col_3:
+        st.info(
+            "**3. Gather Live Feedback**\n\n"
+            "Participants join to share their status "
+            "and ask/vote on questions.",
+        )
 
 
 def show_user_status_selection(room: ClientState) -> None:
@@ -178,7 +208,7 @@ def show_active_room_header(room_id: str) -> None:
     with col_1:
         st.write("**Room ID:**")
     with col_2:
-        st.code(room_id, language=None)
+        st.markdown(f"**`{room_id}`**")
 
     st.divider()
 
@@ -231,28 +261,30 @@ def show_active_room_client(client_state: ClientState) -> None:
     with col_right:
         show_room_statistics(client_state)
 
-    st.divider()
-
     def handle_question_submit() -> None:
         question = st.session_state.question_input
         if question and question.strip():
             client_state.submit_question(question.strip())
             st.session_state.question_input = ""
 
-    st.text_input(
-        "Ask a Question",
-        key="question_input",
-        placeholder="Type your question here... (Press Enter to submit)",
-        on_change=handle_question_submit,
-    )
+    with st.form("question_form"):
+        st.text_area(
+            "Ask a Question",
+            key="question_input",
+            placeholder="Type your question here...",
+        )
 
-    st.divider()
+        st.form_submit_button(
+            "Submit Question",
+            key="submit_question",
+            on_click=handle_question_submit,
+        )
 
     show_open_questions(client_state)
 
 
 def run() -> None:
-    st_autorefresh(interval=AUTOREFRESH_INTERNAL_MS, key="data_refresh")
+    st_autorefresh(interval=AUTOREFRESH_INTERVAL_MS, key="data_refresh")
 
     state_provider = StateProvider()
     cleanup = state_provider.get_cleanup(USER_REMOVAL_TIMEOUT_SECONDS)
