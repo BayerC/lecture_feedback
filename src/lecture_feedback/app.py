@@ -137,6 +137,7 @@ def get_statistics_data_frame(room: RoomState) -> pd.DataFrame:
 
 
 def show_room_statistics(room: HostState | ClientState) -> None:
+    st.subheader("Room Overview")
     df = get_statistics_data_frame(room)
 
     if df.sum().sum() == 0:
@@ -190,7 +191,7 @@ def generate_qr_code_image(room_id: str) -> bytes:
 
     url_qr_code = qrcode.QRCode(
         border=0,
-        box_size=4,
+        box_size=3,
     )
     url_qr_code.add_data(join_url)
     url_qr_code.make(fit=True)
