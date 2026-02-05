@@ -24,13 +24,32 @@ class Question:
         return len(self.voter_ids)
 
 
+@dataclass
+class StatusSnapshot:
+    timestamp: float
+    green_count: int
+    yellow_count: int
+    red_count: int
+    unknown_count: int
+
+
 class Room:
-    def __init__(self, room_id: str, host_id: str) -> None:
+    def __init__(
+        self,
+        room_id: str,
+        host_id: str,
+        snapshot_interval_seconds: int = 1,
+        max_snapshot_count: int = 100,
+    ) -> None:
         self._room_id = room_id
         self._sessions: ThreadSafeDict[UserSession] = ThreadSafeDict()
         self._host_id = host_id
         self._host_last_seen = time.time()
         self._questions: ThreadSafeDict[Question] = ThreadSafeDict()
+        self._status_history: list[StatusSnapshot] = []
+        self._session_start_time = time.time()
+        self._snapshot_interval_seconds = snapshot_interval_seconds
+        self._max_snapshot_count = max_snapshot_count
 
     def is_host(self, session_id: str) -> bool:
         return self._host_id == session_id
@@ -38,8 +57,36 @@ class Room:
     def update_host_last_seen(self) -> None:
         self._host_last_seen = time.time()
 
+    def _record_status_snapshot(self) -> None:
+        if self._status_history:
+            last_snapshot_time = self._status_history[-1].timestamp
+            if time.time() - last_snapshot_time < self._snapshot_interval_seconds:
+                return
+
+        counts = {
+            UserStatus.GREEN: 0,
+            UserStatus.YELLOW: 0,
+            UserStatus.RED: 0,
+            UserStatus.UNKNOWN: 0,
+        }
+        for user_session in self._sessions.values():
+            counts[user_session.status] += 1
+
+        snapshot = StatusSnapshot(
+            timestamp=time.time(),
+            green_count=counts[UserStatus.GREEN],
+            yellow_count=counts[UserStatus.YELLOW],
+            red_count=counts[UserStatus.RED],
+            unknown_count=counts[UserStatus.UNKNOWN],
+        )
+        self._status_history.append(snapshot)
+        if len(self._status_history) > self._max_snapshot_count:
+            excess_count = len(self._status_history) - self._max_snapshot_count
+            del self._status_history[:excess_count]
+
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = UserSession(status, time.time())
+        self._record_status_snapshot()
 
     def get_session_status(self, session_id: str) -> UserStatus:
         return self._sessions[session_id].status
@@ -95,3 +142,10 @@ class Room:
 
     def close_question(self, question_id: str) -> None:
         del self._questions[question_id]
+
+    def get_status_history(self) -> list[StatusSnapshot]:
+        return self._status_history
+
+    @property
+    def session_start_time(self) -> float:
+        return self._session_start_time
