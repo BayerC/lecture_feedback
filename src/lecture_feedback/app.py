@@ -204,11 +204,7 @@ def show_active_room_header(room_id: str) -> None:
     with right:
         st.image(generate_qr_code_image(room_id), width="content")
 
-    col_1, col_2 = st.columns([1, 4], vertical_alignment="center")
-    with col_1:
-        st.write("**Room ID:**")
-    with col_2:
-        st.markdown(f"**`{room_id}`**")
+    st.markdown(f"**Room ID:** {room_id}")
 
     st.divider()
 
@@ -219,25 +215,28 @@ def show_open_questions(state: HostState | ClientState) -> None:
     if not open_questions:
         st.info("No questions yet.")
     else:
+        left_col, right_col = st.columns([8, 1], vertical_alignment="center")
         for question in open_questions:
-            col1, col3 = st.columns([5, 1], vertical_alignment="center")
-            with col1:
-                st.write(question.text)
-            with col3:
+            with left_col:
+                st.info(question.text)
+            with right_col:
                 if isinstance(state, HostState):
                     if st.button(
-                        f"{question.vote_count} ✅",
+                        f"{question.vote_count} ⬆️",
                         key=f"close_{question.id}",
                         help="Close question",
+                        width="stretch",
                     ):
                         state.close_question(question.id)
                         st.rerun()
                 elif isinstance(state, ClientState):
                     has_voted = state.has_voted(question)
                     if st.button(
-                        f"{question.vote_count} 🆙",
+                        f"{question.vote_count} ⬆️",
                         key=f"upvote_{question.id}",
                         disabled=has_voted,
+                        help="Vote for question",
+                        width="stretch",
                     ):
                         state.upvote_question(question.id)
                         st.rerun()
