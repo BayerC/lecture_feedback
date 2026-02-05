@@ -186,6 +186,7 @@ def generate_qr_code_image(room_id: str) -> bytes:
 
     url_qr_code = qrcode.QRCode(
         border=0,
+        box_size=4,
     )
     url_qr_code.add_data(join_url)
     url_qr_code.make(fit=True)
@@ -198,13 +199,15 @@ def generate_qr_code_image(room_id: str) -> bytes:
 
 def show_active_room_header(room_id: str) -> None:
     st.query_params["room_id"] = room_id
-    left, right = st.columns([4, 1], vertical_alignment="center")
-    with left:
-        st.title("Active Room")
-    with right:
-        st.image(generate_qr_code_image(room_id), width="content")
+    st.title("Active Room")
+    left_col, right_col = st.columns([2, 1], gap="large")
 
-    st.markdown(f"**Room ID:** {room_id}")
+    with left_col:
+        st.subheader("Room ID")
+        st.markdown(f"**{room_id}**")
+        st.caption("Share this ID with participants to let them join")
+    with right_col:
+        st.image(generate_qr_code_image(room_id), width="content")
 
     st.divider()
 
