@@ -5,7 +5,7 @@ import streamlit as st
 from lecture_feedback.application_state import ApplicationState
 from lecture_feedback.room import Question, Room
 from lecture_feedback.session_state import SessionState
-from lecture_feedback.user_status import UserStatus
+from lecture_feedback.types import UserStatus
 
 
 class LobbyState:
