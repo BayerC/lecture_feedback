@@ -1,36 +1,29 @@
 import time
 import uuid
 from collections.abc import Iterator
-from dataclasses import dataclass
 
+from lecture_feedback.stats_tracker import StatsTracker
 from lecture_feedback.thread_safe_dict import ThreadSafeDict
-from lecture_feedback.user_status import UserStatus
-
-
-@dataclass
-class UserSession:
-    status: UserStatus
-    last_seen: float
-
-
-@dataclass
-class Question:
-    id: str
-    text: str
-    voter_ids: set[str]
-
-    @property
-    def vote_count(self) -> int:
-        return len(self.voter_ids)
+from lecture_feedback.types import Question, StatusSnapshot, UserSession, UserStatus
 
 
 class Room:
-    def __init__(self, room_id: str, host_id: str) -> None:
+    def __init__(
+        self,
+        room_id: str,
+        host_id: str,
+        snapshot_interval_seconds: int = 1,
+        max_snapshot_count: int = 100,
+    ) -> None:
         self._room_id = room_id
         self._sessions: ThreadSafeDict[UserSession] = ThreadSafeDict()
         self._host_id = host_id
         self._host_last_seen = time.time()
         self._questions: ThreadSafeDict[Question] = ThreadSafeDict()
+        self._stats_tracker = StatsTracker(
+            snapshot_interval_seconds,
+            max_snapshot_count,
+        )
 
     def is_host(self, session_id: str) -> bool:
         return self._host_id == session_id
@@ -40,6 +33,7 @@ class Room:
 
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = UserSession(status, time.time())
+        self._stats_tracker.record_status_snapshot(self._sessions.values())
 
     def get_session_status(self, session_id: str) -> UserStatus:
         return self._sessions[session_id].status
@@ -98,3 +92,10 @@ class Room:
 
     def close_question(self, question_id: str) -> None:
         del self._questions[question_id]
+
+    def get_status_history(self) -> list[StatusSnapshot]:
+        return self._stats_tracker.status_history
+
+    @property
+    def session_start_time(self) -> float:
+        return self._stats_tracker.session_start_time

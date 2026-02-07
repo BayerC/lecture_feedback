@@ -13,7 +13,7 @@ from lecture_feedback.state_provider import (
     RoomState,
     StateProvider,
 )
-from lecture_feedback.user_status import UserStatus
+from lecture_feedback.types import UserStatus
 
 AUTOREFRESH_INTERVAL_MS = 2000
 USER_REMOVAL_TIMEOUT_SECONDS = (
