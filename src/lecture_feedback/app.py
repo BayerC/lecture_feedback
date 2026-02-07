@@ -173,8 +173,8 @@ def show_room_statistics(room: HostState | ClientState) -> None:
         "staticPlot": True,
     }
 
-    _, col2, _ = st.columns([1, 3, 1])
-    with col2:
+    left_col, _ = st.columns([3, 2])
+    with left_col:
         st.plotly_chart(fig, config=disable_interactions_config)
         participant_count = df.sum().sum()
         st.markdown(
