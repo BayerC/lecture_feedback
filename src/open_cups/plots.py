@@ -81,10 +81,6 @@ def show_room_statistics(room: HostState | ClientState) -> None:
 def show_status_history_chart(host_state: HostState) -> None:
     status_history = host_state.get_status_history()
 
-    if not status_history:
-        st.info("No status history yet. Waiting for participants to join...")
-        return
-
     latest_snapshot_time = status_history[-1].timestamp
 
     data = {
