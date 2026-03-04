@@ -83,7 +83,8 @@ def show_room_statistics(room: HostState | ClientState) -> None:
 
 
 def add_future_timestamp(
-    timestamps: list[float], relative_extension: float
+    timestamps: list[float],
+    relative_extension: float,
 ) -> list[float]:
     total_range = timestamps[-1] - timestamps[0] if len(timestamps) > 1 else 1
     absolute_extension = total_range * relative_extension
