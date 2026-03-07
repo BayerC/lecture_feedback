@@ -12,8 +12,6 @@ from open_cups.state_provider import (
 )
 from open_cups.types import UserStatus
 
-MAX_NUMBER_OF_TICKS = 10
-
 GREY_COLOR = "#9CA3AF"
 RED_COLOR = "#EF4444"
 YELLOW_COLOR = "#FBBF24"
@@ -137,8 +135,9 @@ def show_status_history_chart(host_state: HostState) -> None:
         annotation_position="top right",
     )
 
+    max_number_of_ticks = 10
     x_range_size = timestamps_extended[-1] - timestamps_extended[0]
-    x_dtick = max(1, math.ceil(x_range_size / MAX_NUMBER_OF_TICKS))
+    x_dtick = max(1, math.ceil(x_range_size / max_number_of_ticks))
 
     fig.update_layout(
         xaxis={
