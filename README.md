@@ -55,8 +55,8 @@ The presenter sees an aggregate view of the responses and can adjust the lecture
 ## Contributing
 
 1. [Run locally steps](#run-locally)
-2. Hook pre-commit into git: `uv run pre-commit install`
-3. To run pre-commit manually run: `uv run pre-commit run --all-files`
+2. Hook [prek](https://github.com/j178/prek) (pre-commit) into git: `uv run prek install`
+3. To run prek manually run: `uv run prek run --all-files`
 
 ### Dependency Management
 
