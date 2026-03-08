@@ -50,8 +50,9 @@ def i_should_see_distribution_history_empty_state(
 
     for trace in spec["data"]:
         y_values = _get_trace_y_values(trace)
-        assert len(y_values) == 1, (
-            "Empty state should have exactly one data point per trace"
+        assert len(y_values) == 2, (
+            "Empty state should have exactly two data points "
+            "per trace (original + extended)"
         )
         assert all(val == 0 for val in y_values), (
             f"Trace '{trace['name']}' should have all zero values in empty state"
@@ -63,7 +64,6 @@ def i_should_see_distribution_history_chart(context: dict[str, AppTest]) -> None
     time.sleep(
         1.0,
     )  # this is actually needed, proper place would be in second_user_joins_room
-    # Discuss how to proceed
     refresh_all_apps(context)
     plotly_charts = context["me"].get("plotly_chart")
     assert len(plotly_charts) == 1, "Expected exactly one plotly chart"
