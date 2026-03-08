@@ -12,8 +12,6 @@ from open_cups.state_provider import (
 )
 from open_cups.types import UserStatus
 
-MAX_NUMBER_OF_TICKS = 10
-
 GREY_COLOR = "#9CA3AF"
 RED_COLOR = "#EF4444"
 YELLOW_COLOR = "#FBBF24"
@@ -96,10 +94,6 @@ def add_future_timestamp(
 def show_status_history_chart(host_state: HostState) -> None:
     status_history = host_state.get_status_history()
 
-    if not status_history:
-        st.info("No status history yet. Waiting for participants to join...")
-        return
-
     latest_snapshot_time = status_history[-1].timestamp
 
     timestamps = [
@@ -141,8 +135,9 @@ def show_status_history_chart(host_state: HostState) -> None:
         annotation_position="top right",
     )
 
+    max_number_of_ticks = 10
     x_range_size = timestamps_extended[-1] - timestamps_extended[0]
-    x_dtick = max(1, math.ceil(x_range_size / MAX_NUMBER_OF_TICKS))
+    x_dtick = max(1, math.ceil(x_range_size / max_number_of_ticks))
 
     fig.update_layout(
         xaxis={
