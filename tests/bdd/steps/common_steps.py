@@ -2,7 +2,7 @@ from pytest_bdd import given, parsers, then, when
 from streamlit.testing.v1 import AppTest
 
 from open_cups.types import UserStatus
-from tests.bdd.fixture import run_wrapper
+from tests.bdd.fixture import get_active_mock_time, run_wrapper
 from tests.bdd.test_helper import get_room_id, refresh_all_apps
 
 STATUS_VALUES = {status.value: status for status in UserStatus}
@@ -20,7 +20,11 @@ def click_create_room(context: dict[str, AppTest]) -> None:
 
 
 @when("a second user joins the room")
-def second_user_joins_room(context: dict[str, AppTest]) -> None:
+def second_user_joins_room(
+    context: dict[str, AppTest],
+) -> None:
+    if (mock_time := get_active_mock_time()) is not None:
+        mock_time.advance(1.5)
     context["second_user"] = AppTest.from_function(run_wrapper)
     context["second_user"].run()
     context["second_user"].text_input(key="join_room_id").set_value(

@@ -1,12 +1,12 @@
 import base64
 import json
 import struct
-import time
 
 from pytest_bdd import scenario, then
 from streamlit.testing.v1 import AppTest
 
 from open_cups.types import UserStatus
+from tests.bdd.fixture import MockTime
 from tests.bdd.test_helper import refresh_all_apps
 
 
@@ -30,7 +30,7 @@ def _get_trace_y_values(trace: dict) -> list:
     "features/distribution_history.feature",
     "Host views distribution history",
 )
-def test_host_views_distribution_history() -> None:
+def test_host_views_distribution_history(mock_time: MockTime) -> None:
     pass
 
 
@@ -61,9 +61,6 @@ def i_should_see_distribution_history_empty_state(
 
 @then("I should see the user on the distribution history chart")
 def i_should_see_distribution_history_chart(context: dict[str, AppTest]) -> None:
-    time.sleep(
-        1.0,
-    )  # this is actually needed, proper place would be in second_user_joins_room
     refresh_all_apps(context)
     plotly_charts = context["me"].get("plotly_chart")
     assert len(plotly_charts) == 1, "Expected exactly one plotly chart"

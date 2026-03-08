@@ -1,3 +1,5 @@
+import time
+from collections.abc import Generator
 from typing import TYPE_CHECKING
 
 import pandas as pd
@@ -58,3 +60,31 @@ def capture_application_state(monkeypatch: pytest.MonkeyPatch) -> None:
         captured.application_state = context.application_state
 
     monkeypatch.setattr(Context, "__init__", wrapped_init)
+
+
+class MockTime:
+    def __init__(self) -> None:
+        self._current_time = time.time()
+
+    def time(self) -> float:
+        return self._current_time
+
+    def advance(self, seconds: float) -> None:
+        self._current_time += seconds
+
+
+_active_mock_time: MockTime | None = None
+
+
+@pytest.fixture
+def mock_time(monkeypatch: pytest.MonkeyPatch) -> Generator:
+    global _active_mock_time  # noqa: PLW0603 - we want to modify the global variable here
+    mock_time_instance = MockTime()
+    _active_mock_time = mock_time_instance
+    monkeypatch.setattr(time, "time", mock_time_instance.time)
+    yield mock_time_instance
+    _active_mock_time = None
+
+
+def get_active_mock_time() -> MockTime | None:
+    return _active_mock_time
