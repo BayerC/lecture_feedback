@@ -27,6 +27,8 @@ class Room:
 
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = UserSession(status, time.time())
+
+    def record_status_snapshot(self) -> None:
         with self._lock:
             self._stats_tracker.record_status_snapshot(self._sessions.values())
 

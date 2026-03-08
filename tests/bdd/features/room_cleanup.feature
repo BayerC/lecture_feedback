@@ -2,7 +2,7 @@ Feature: Room cleanup
 
   Scenario: Disconnected user is removed from user status after timeout
     Given I host a room
-    Then I should see info message "No status history yet"
+    Then I should see info message "No questions yet"
     When a second user joins the room
     Then there should be more than zero participants in my room
     Then one user should be in the room

@@ -53,6 +53,9 @@ class HostState(RoomState):
     def close_question(self, question_id: str) -> None:
         self._room.close_question(question_id)
 
+    def update_status_history(self) -> None:
+        self._room.record_status_snapshot()
+
     def get_status_history(self) -> list[StatusSnapshot]:
         return self._room.get_status_history()
 

@@ -217,6 +217,7 @@ def show_open_questions(state: HostState | ClientState) -> None:
 def show_active_room_host(host_state: HostState) -> None:
     show_active_room_header(host_state.room_id)
 
+    host_state.update_status_history()
     show_status_history_chart(host_state)
 
     st.divider()

@@ -1,5 +1,6 @@
 import pytest
 
+from conftest import MockTime
 from open_cups.stats_tracker import Config, StatsTracker
 from open_cups.types import UserSession, UserStatus
 
@@ -39,23 +40,8 @@ def test_config_errors() -> None:
         )
 
 
-class FakeTime:
-    def __init__(self, initial_time: float = 0.0) -> None:
-        self.current_time = initial_time
-
-    def __call__(self) -> float:
-        return self.current_time
-
-
-@pytest.fixture
-def fake_time(monkeypatch: pytest.MonkeyPatch) -> FakeTime:
-    time_mock = FakeTime()
-    monkeypatch.setattr("open_cups.stats_tracker.time.time", time_mock)
-    return time_mock
-
-
-def test_status_history_snapshot_interval(fake_time: FakeTime) -> None:
-    fake_time.current_time = 10.0
+def test_status_history_snapshot_interval(mock_time: MockTime) -> None:
+    mock_time.current_time = 10.0
 
     unit = StatsTracker(
         config=Config(
@@ -76,7 +62,7 @@ def test_status_history_snapshot_interval(fake_time: FakeTime) -> None:
     assert history[0].counts[UserStatus.RED] == 0
     assert history[0].counts[UserStatus.UNKNOWN] == 0
 
-    fake_time.current_time = 11.0
+    mock_time.current_time = 11.0
     unit.record_status_snapshot(
         [UserSession(UserStatus.GREEN, 0.0), UserSession(UserStatus.YELLOW, 0.0)],
     )
@@ -86,7 +72,7 @@ def test_status_history_snapshot_interval(fake_time: FakeTime) -> None:
     assert history[-1].counts[UserStatus.YELLOW] == 1
 
 
-def test_status_history_trims_old_snapshots(fake_time: FakeTime) -> None:
+def test_status_history_trims_old_snapshots(mock_time: MockTime) -> None:
     unit = StatsTracker(
         config=Config(
             dense_snapshot_interval_seconds=1,
@@ -96,13 +82,13 @@ def test_status_history_trims_old_snapshots(fake_time: FakeTime) -> None:
         ),
     )
 
-    fake_time.current_time = 1.0
+    mock_time.current_time = 1.0
     unit.record_status_snapshot([UserSession(UserStatus.GREEN, 0.0)])
-    fake_time.current_time = 6.0
+    mock_time.current_time = 6.0
     unit.record_status_snapshot([UserSession(UserStatus.YELLOW, 0.0)])
-    fake_time.current_time = 11.0
+    mock_time.current_time = 11.0
     unit.record_status_snapshot([UserSession(UserStatus.RED, 0.0)])
-    fake_time.current_time = 27.0
+    mock_time.current_time = 27.0
     unit.record_status_snapshot([UserSession(UserStatus.GREEN, 0.0)])
 
     history = unit.status_history
@@ -112,7 +98,7 @@ def test_status_history_trims_old_snapshots(fake_time: FakeTime) -> None:
     assert history[2].timestamp == 27.0
 
 
-def test_sparse_sampling_outside_dense_window(fake_time: FakeTime) -> None:
+def test_sparse_sampling_outside_dense_window(mock_time: MockTime) -> None:
     unit = StatsTracker(
         Config(
             dense_snapshot_interval_seconds=1,
@@ -123,7 +109,7 @@ def test_sparse_sampling_outside_dense_window(fake_time: FakeTime) -> None:
     )
 
     for i in range(30):
-        fake_time.current_time = float(i)
+        mock_time.current_time = float(i)
         unit.record_status_snapshot([UserSession(UserStatus.GREEN, 0.0)])
 
     history = unit.status_history
@@ -145,7 +131,7 @@ def test_sparse_sampling_outside_dense_window(fake_time: FakeTime) -> None:
 
 
 def test_disregard_samples_provided_quicker_than_dense_interval(
-    fake_time: FakeTime,
+    mock_time: MockTime,
 ) -> None:
     unit = StatsTracker(
         Config(
@@ -157,7 +143,7 @@ def test_disregard_samples_provided_quicker_than_dense_interval(
     )
 
     for i in range(10):
-        fake_time.current_time = float(i)
+        mock_time.current_time = float(i)
         unit.record_status_snapshot([UserSession(UserStatus.GREEN, 0.0)])
 
     history = unit.status_history
