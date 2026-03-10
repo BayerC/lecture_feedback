@@ -13,14 +13,14 @@ permissions:
   contents: read
 
 jobs:
-  pre-commit:
+  prek:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
-      - run: uv python install
+      - run: uv python install 3.13
       - run: uv sync --group dev
-      - run: SKIP=no-commit-to-branch uv run pre-commit run --all-files
+      - run: SKIP=no-commit-to-branch uv run prek run --all-files
 
       # Create the XML report for Codecov
       - name: Generate coverage.xml
