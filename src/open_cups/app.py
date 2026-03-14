@@ -2,8 +2,10 @@ import io
 
 import qrcode
 import streamlit as st
+import streamlit.components.v1 as components
 from streamlit_autorefresh import st_autorefresh
 
+from open_cups.leave_server import LEAVE_SERVER_PORT, start_leave_server
 from open_cups.plots import show_room_statistics, show_status_history_chart
 from open_cups.state_provider import (
     ClientState,
@@ -14,9 +16,7 @@ from open_cups.state_provider import (
 from open_cups.types import UserStatus
 
 AUTOREFRESH_INTERVAL_MS = 2000
-USER_REMOVAL_TIMEOUT_SECONDS = (
-    60  # if we go lower, chrome's background tab throttling causes faulty user removal
-)
+USER_REMOVAL_TIMEOUT_SECONDS = 14400  # 4h fallback for zombie session cleanup
 
 
 def show_room_selection_screen(lobby: LobbyState) -> None:
@@ -225,8 +225,39 @@ def show_active_room_host(host_state: HostState) -> None:
     show_open_questions(host_state)
 
 
+def inject_leave_detection_script(session_id: str, port: int) -> None:
+    # Runs inside a srcdoc iframe, so we must use window.parent.location
+    # to get the actual page hostname. We also attach listeners to
+    # window.parent so they fire when the top-level tab closes.
+    leave_script = f"""
+    <script>
+        let leaving = false;
+        function handleLeave() {{
+            if (leaving) return;
+            leaving = true;
+            const loc = window.parent.location;
+            const url = loc.protocol + '//' + loc.hostname + ':{port}/leave';
+            navigator.sendBeacon(url, '{session_id}');
+        }}
+        try {{
+            window.parent.addEventListener('pagehide', handleLeave);
+            window.parent.addEventListener('beforeunload', handleLeave);
+        }} catch (e) {{
+            window.addEventListener('pagehide', handleLeave);
+            window.addEventListener('beforeunload', handleLeave);
+        }}
+    </script>
+    """
+    components.html(leave_script, height=0)
+
+
 def show_active_room_client(client_state: ClientState) -> None:
     show_active_room_header(client_state.room_id)
+
+    inject_leave_detection_script(
+        st.session_state.session_id,
+        LEAVE_SERVER_PORT,
+    )
 
     col_left, col_right = st.columns(2, gap="medium")
     with col_left:
@@ -255,11 +286,18 @@ def show_active_room_client(client_state: ClientState) -> None:
 
     show_open_questions(client_state)
 
+    st.divider()
+    if st.button("Leave Room", key="leave_room"):
+        client_state.leave_room()
+        st.rerun()
+
 
 def run() -> None:
     st_autorefresh(interval=AUTOREFRESH_INTERVAL_MS, key="data_refresh")
 
     state_provider = StateProvider()
+    start_leave_server(state_provider.context.application_state)
+
     cleanup = state_provider.get_cleanup(USER_REMOVAL_TIMEOUT_SECONDS)
     cleanup.cleanup_all()
 

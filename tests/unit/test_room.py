@@ -1,6 +1,21 @@
 import pytest
 
 from open_cups.room import Room
+from open_cups.types import UserStatus
+
+
+def test_remove_session_deletes_existing_session() -> None:
+    room = Room("room-id", "host-id")
+    room.set_session_status("user-1", UserStatus.GREEN)
+    assert room.has_session("user-1")
+
+    room.remove_session("user-1")
+    assert not room.has_session("user-1")
+
+
+def test_remove_session_ignores_nonexistent_session() -> None:
+    room = Room("room-id", "host-id")
+    room.remove_session("nonexistent-session")
 
 
 def test_upvote_nonexistent_question_does_not_crash() -> None:

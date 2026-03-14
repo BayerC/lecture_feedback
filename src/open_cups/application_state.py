@@ -25,6 +25,10 @@ class ApplicationState:
             raise ValueError(message)
         self.rooms[room_id].set_session_status(session_id, UserStatus.UNKNOWN)
 
+    def disconnect_session(self, session_id: str) -> None:
+        if (room := self.get_session_room(session_id)):
+            room.remove_session(session_id)
+
     def remove_rooms_with_inactive_hosts(self, timeout_seconds: int) -> None:
         inactive_room_ids = [
             room_id

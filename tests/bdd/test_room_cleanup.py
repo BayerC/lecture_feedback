@@ -3,7 +3,7 @@ from pytest_bdd import parsers, scenario, then, when
 from streamlit.testing.v1 import AppTest
 
 from tests.bdd.fixture import captured
-from tests.bdd.test_helper import get_page_content, get_room_id
+from tests.bdd.test_helper import get_room_id
 
 
 @pytest.fixture(autouse=True)
@@ -24,9 +24,17 @@ def assert_session_count_in_room(
 
 @scenario(
     "features/room_cleanup.feature",
-    "Disconnected user is removed from user status after timeout",
+    "User who explicitly leaves is removed immediately",
 )
-def test_disconnected_user_is_removed_from_user_status_after_timeout() -> None:
+def test_user_who_explicitly_leaves_is_removed_immediately() -> None:
+    pass
+
+
+@scenario(
+    "features/room_cleanup.feature",
+    "Zombie user is removed after timeout",
+)
+def test_zombie_user_is_removed_after_timeout() -> None:
     pass
 
 
@@ -60,14 +68,24 @@ def one_user_should_be_in_the_room(context: dict[str, AppTest]) -> None:
     assert_session_count_in_room(context, expected_count=1)
 
 
+@when("the second user leaves the room")
+def second_user_leaves_the_room(context: dict[str, AppTest]) -> None:
+    assert captured.application_state is not None
+    second_user_session_id = str(
+        context["second_user"].session_state.session_id,
+    )
+    captured.application_state.disconnect_session(second_user_session_id)
+    context["me"].run()
+
+
 @when("the second user closes their session")
 def second_user_closes_their_session(context: dict[str, AppTest]) -> None:
-    del context["second_user"]  # prevent running second user further
+    del context["second_user"]
 
 
 @when("I close my session")
 def i_close_my_session(context: dict[str, AppTest]) -> None:
-    del context["me"]  # prevent running me further
+    del context["me"]
 
 
 @then("the second user should be on the room selection screen")
@@ -83,7 +101,6 @@ def given_timeout_has_passed(
 ) -> None:
     time_to_pass = 5
     step_time = 2
-    # patch this in any case to be independent of the production value
     monkeypatch.setattr("open_cups.app.USER_REMOVAL_TIMEOUT_SECONDS", 3)
 
     for current_time in range(0, time_to_pass, step_time):
@@ -98,3 +115,10 @@ def given_timeout_has_passed(
 @then("no more users should be in the room")
 def no_more_users_should_be_in_the_room(context: dict[str, AppTest]) -> None:
     assert_session_count_in_room(context, expected_count=0)
+
+
+def get_page_content(app: AppTest) -> str:
+    markdown_content = "\n".join(element.value for element in app.markdown)
+    text_content = "\n".join(element.value for element in app.text)
+    info_content = "\n".join(element.value for element in app.info)
+    return f"{markdown_content}\n{text_content}\n{info_content}"

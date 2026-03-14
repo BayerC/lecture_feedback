@@ -55,6 +55,10 @@ class Room:
         current_time = time.time()
         return current_time - self._host_last_seen > timeout_seconds
 
+    def remove_session(self, session_id: str) -> None:
+        if session_id in self._sessions:
+            del self._sessions[session_id]
+
     def remove_inactive_sessions(self, timeout_seconds: int) -> None:
         current_time = time.time()
         users_to_remove = [

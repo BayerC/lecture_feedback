@@ -80,6 +80,9 @@ class ClientState(RoomState):
     def has_voted(self, question: Question) -> bool:
         return self._session_id in question.voter_ids
 
+    def leave_room(self) -> None:
+        self._room.remove_session(self._session_id)
+
 
 class CleanupState:
     def __init__(
