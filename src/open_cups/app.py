@@ -2,8 +2,10 @@ import io
 
 import qrcode
 import streamlit as st
+import streamlit.components.v1 as components_v1
 from streamlit_autorefresh import st_autorefresh
 
+from open_cups import leave_server
 from open_cups.plots import show_room_statistics, show_status_history_chart
 from open_cups.state_provider import (
     ClientState,
@@ -223,6 +225,7 @@ def show_active_room_host(host_state: HostState) -> None:
     st.divider()
 
     show_open_questions(host_state)
+    _inject_leave_beacon(host_state._session_id)
 
 
 def show_active_room_client(client_state: ClientState) -> None:
@@ -254,12 +257,26 @@ def show_active_room_client(client_state: ClientState) -> None:
         )
 
     show_open_questions(client_state)
+    _inject_leave_beacon(client_state._session_id)
+
+
+def _inject_leave_beacon(session_id: str) -> None:
+    components_v1.html(
+        f"""<script>
+    window.parent.addEventListener('pagehide', () =>
+        navigator.sendBeacon('http://localhost:8502', '{session_id}')
+    );
+    </script>""",
+        height=0,
+    )
 
 
 def run() -> None:
+
     st_autorefresh(interval=AUTOREFRESH_INTERVAL_MS, key="data_refresh")
 
     state_provider = StateProvider()
+    leave_server.start(state_provider.context.application_state)
     cleanup = state_provider.get_cleanup(USER_REMOVAL_TIMEOUT_SECONDS)
     cleanup.cleanup_all()
 
