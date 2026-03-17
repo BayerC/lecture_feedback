@@ -17,6 +17,8 @@ RED_COLOR = "#EF4444"
 YELLOW_COLOR = "#FBBF24"
 GREEN_COLOR = "#10B981"
 
+INACTIVE_OPACITY = 0.6
+
 ORDERED_STATUS_COLOR_MAP = [
     (UserStatus.UNKNOWN, GREY_COLOR),
     (UserStatus.RED, RED_COLOR),
@@ -24,32 +26,63 @@ ORDERED_STATUS_COLOR_MAP = [
     (UserStatus.GREEN, GREEN_COLOR),
 ]
 
+
+def hex_to_rgba(hex_color: str, opacity: float) -> str:
+    hex_color = hex_color.lstrip("#")
+    r, g, b = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
+    return f"rgba({r}, {g}, {b}, {opacity})"
+
+
 STREAMLIT_DISABLE_INTERACTIONS_CONFIG = {
     "displayModeBar": False,
     "staticPlot": True,
 }
 
 
-def get_statistics_data_frame(room: RoomState) -> pd.DataFrame:
-    participants = room.get_room_participants()
-    counts = {
-        status.value: sum(1 for _, s in participants if s == status)
+def get_statistics_data_frame(
+    room: RoomState,
+    inactivity_timeout_seconds: float,
+) -> pd.DataFrame:
+    active_participants, inactive_participants = room.get_participants_by_activity(
+        inactivity_timeout_seconds,
+    )
+    active_counts = {
+        status.value: sum(1 for _, s in active_participants if s == status)
         for status in UserStatus
     }
-    df = pd.DataFrame([counts])
-    column_order = [status.value for status, _ in ORDERED_STATUS_COLOR_MAP]
+    inactive_counts = {
+        f"{status.value} (inactive)": sum(
+            1 for _, s in inactive_participants if s == status
+        )
+        for status in UserStatus
+    }
+    df = pd.DataFrame([{**active_counts, **inactive_counts}])
+    column_order = [
+        col
+        for status, _ in ORDERED_STATUS_COLOR_MAP
+        for col in [status.value, f"{status.value} (inactive)"]
+    ]
     return df[[col for col in column_order if col in df.columns]]
 
 
-def show_room_statistics(room: HostState | ClientState) -> None:
+def show_room_statistics(
+    room: HostState | ClientState,
+    inactivity_timeout_seconds: float,
+) -> None:
     st.subheader("Room Overview")
-    df = get_statistics_data_frame(room)
+    df = get_statistics_data_frame(room, inactivity_timeout_seconds)
+
+    color_sequence = [
+        c
+        for _, hex_color in ORDERED_STATUS_COLOR_MAP
+        for c in [hex_color, hex_to_rgba(hex_color, INACTIVE_OPACITY)]
+    ]
 
     fig = px.bar(
         df,
         x=df.index,
         y=df.columns,
-        color_discrete_sequence=[color for _, color in ORDERED_STATUS_COLOR_MAP],
+        color_discrete_sequence=color_sequence,
     )
 
     fig.update_layout(
@@ -104,10 +137,14 @@ def show_status_history_chart(host_state: HostState) -> None:
 
     data = {"Time (minutes)": timestamps_extended}
     for user_status in UserStatus:
-        counts = [snapshot.counts[user_status] for snapshot in status_history]
-        data[user_status.value] = [
-            *counts,
-            counts[-1],
+        active_counts = [snapshot.counts[user_status] for snapshot in status_history]
+        inactive_counts = [
+            snapshot.inactive_counts[user_status] for snapshot in status_history
+        ]
+        data[user_status.value] = [*active_counts, active_counts[-1]]
+        data[f"{user_status.value} (inactive)"] = [
+            *inactive_counts,
+            inactive_counts[-1],
         ]  # repeat last value in future timestamp
 
     df = pd.DataFrame(data)
@@ -115,6 +152,7 @@ def show_status_history_chart(host_state: HostState) -> None:
     fig = go.Figure()
 
     for user_status, color in ORDERED_STATUS_COLOR_MAP:
+        inactive_color = hex_to_rgba(color, INACTIVE_OPACITY)
         fig.add_trace(
             go.Scatter(
                 x=df["Time (minutes)"],
@@ -122,6 +160,18 @@ def show_status_history_chart(host_state: HostState) -> None:
                 name=user_status.value,
                 mode="lines",
                 line={"color": color, "width": 2},
+                fillcolor=color,
+                stackgroup="one",
+            ),
+        )
+        fig.add_trace(
+            go.Scatter(
+                x=df["Time (minutes)"],
+                y=df[f"{user_status.value} (inactive)"],
+                name=f"{user_status.value} (inactive)",
+                mode="lines",
+                line={"color": inactive_color, "width": 2},
+                fillcolor=inactive_color,
                 stackgroup="one",
             ),
         )

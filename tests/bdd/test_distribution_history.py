@@ -45,7 +45,9 @@ def i_should_see_distribution_history_empty_state(
     spec = json.loads(chart_proto.spec)
 
     trace_names = {trace["name"] for trace in spec["data"]}
-    expected_names = {status.value for status in UserStatus}
+    expected_names = {status.value for status in UserStatus} | {
+        f"{status.value} (inactive)" for status in UserStatus
+    }
     assert trace_names == expected_names
 
     for trace in spec["data"]:
@@ -69,7 +71,9 @@ def i_should_see_distribution_history_chart(context: dict[str, AppTest]) -> None
     spec = json.loads(chart_proto.spec)
 
     trace_names = {trace["name"] for trace in spec["data"]}
-    expected_names = {status.value for status in UserStatus}
+    expected_names = {status.value for status in UserStatus} | {
+        f"{status.value} (inactive)" for status in UserStatus
+    }
     assert trace_names == expected_names
 
     all_y_values = []

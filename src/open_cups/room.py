@@ -28,9 +28,12 @@ class Room:
     def set_session_status(self, session_id: str, status: UserStatus) -> None:
         self._sessions[session_id] = UserSession(status, time.time())
 
-    def record_status_snapshot(self) -> None:
+    def record_status_snapshot(self, inactivity_timeout_seconds: float) -> None:
         with self._lock:
-            self._stats_tracker.record_status_snapshot(self._sessions.values())
+            self._stats_tracker.record_status_snapshot(
+                self._sessions.values(),
+                inactivity_timeout_seconds,
+            )
 
     def get_session_status(self, session_id: str) -> UserStatus:
         return self._sessions[session_id].status
@@ -43,6 +46,20 @@ class Room:
         if session_id in self._sessions:
             return True
         return bool(self.is_host(session_id))
+
+    def get_participants_by_activity(
+        self,
+        inactivity_timeout_seconds: float,
+    ) -> tuple[list[tuple[str, UserStatus]], list[tuple[str, UserStatus]]]:
+        current_time = time.time()
+        active = []
+        inactive = []
+        for session_id, user_session in self._sessions.items():
+            if current_time - user_session.last_seen > inactivity_timeout_seconds:
+                inactive.append((session_id, user_session.status))
+            else:
+                active.append((session_id, user_session.status))
+        return active, inactive
 
     def __iter__(self) -> Iterator[tuple[str, UserStatus]]:
         return ((k, v.status) for k, v in self._sessions.items())

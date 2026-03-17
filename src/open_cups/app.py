@@ -14,9 +14,8 @@ from open_cups.state_provider import (
 from open_cups.types import UserStatus
 
 AUTOREFRESH_INTERVAL_MS = 2000
-USER_REMOVAL_TIMEOUT_SECONDS = (
-    60  # if we go lower, chrome's background tab throttling causes faulty user removal
-)
+USER_REMOVAL_TIMEOUT_SECONDS = 60
+USER_INACTIVITY_TIMEOUT_SECONDS = 30
 
 
 def show_room_selection_screen(lobby: LobbyState) -> None:
@@ -217,7 +216,7 @@ def show_open_questions(state: HostState | ClientState) -> None:
 def show_active_room_host(host_state: HostState) -> None:
     show_active_room_header(host_state.room_id)
 
-    host_state.update_status_history()
+    host_state.update_status_history(USER_INACTIVITY_TIMEOUT_SECONDS)
     show_status_history_chart(host_state)
 
     st.divider()
@@ -232,7 +231,7 @@ def show_active_room_client(client_state: ClientState) -> None:
     with col_left:
         show_user_status_selection(client_state)
     with col_right:
-        show_room_statistics(client_state)
+        show_room_statistics(client_state, USER_INACTIVITY_TIMEOUT_SECONDS)
 
     def handle_question_submit() -> None:
         question = st.session_state.question_input

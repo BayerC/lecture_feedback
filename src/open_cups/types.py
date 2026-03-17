@@ -39,3 +39,4 @@ class Question:
 class StatusSnapshot:
     timestamp: float
     counts: dict[UserStatus, int]
+    inactive_counts: dict[UserStatus, int]
