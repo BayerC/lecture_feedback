@@ -80,7 +80,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
         "🟡 Yellow → Need more explanation  \n"
         "🔴 Red → Cannot follow\n\n"
         "The presenter sees an aggregate view of the responses "
-        "and can adjust the lecture accordingly.",
+        "and can adjust the presentation accordingly.",
     )
 
     st.subheader("How to Use This App")
@@ -130,7 +130,7 @@ def show_user_status_selection(room: ClientState) -> None:
 
     index = status_options.index(current_user_status)
     selected_user_status = st.radio(
-        "How well can you follow the lecture?",
+        "How well can you follow the presentation?",
         status_options,
         index=index,
         format_func=lambda s: s.value,
