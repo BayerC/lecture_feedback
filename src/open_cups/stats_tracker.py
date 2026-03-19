@@ -110,7 +110,6 @@ def create_snapshot(
         UserStatus.GREEN: 0,
         UserStatus.YELLOW: 0,
         UserStatus.RED: 0,
-        UserStatus.UNKNOWN: 0,
     }
     snapshot = StatusSnapshot(
         timestamp=current_time,

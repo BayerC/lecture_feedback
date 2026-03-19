@@ -61,7 +61,6 @@ def test_status_history_snapshot_interval(mock_time: MockTime) -> None:
     assert history[0].counts[UserStatus.GREEN] == 1
     assert history[0].counts[UserStatus.YELLOW] == 1
     assert history[0].counts[UserStatus.RED] == 0
-    assert history[0].counts[UserStatus.UNKNOWN] == 0
 
     mock_time.current_time = 11.0
     unit.record_status_snapshot(

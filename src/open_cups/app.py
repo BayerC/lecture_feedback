@@ -79,7 +79,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
         "🟡 Yellow → Need more explanation  \n"
         "🔴 Red → Cannot follow\n\n"
         "The presenter sees an aggregate view of the responses "
-        "and can adjust the lecture accordingly.",
+        "and can adjust the presentation accordingly.",
     )
 
     st.subheader("How to Use This App")
@@ -121,17 +121,25 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 def show_user_status_selection(room: ClientState) -> None:
     st.subheader("Your Status")
     current_user_status = room.get_user_status()
+    st.markdown(
+        """
+        <style>
+        div[data-testid="stRadio"] label {
+            padding: 6px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
     status_options = [
         UserStatus.GREEN,
         UserStatus.YELLOW,
         UserStatus.RED,
     ]
-    if current_user_status == UserStatus.UNKNOWN:
-        status_options.append(UserStatus.UNKNOWN)
 
     index = status_options.index(current_user_status)
     selected_user_status = st.radio(
-        "How well can you follow the lecture?",
+        "How well can you follow the presentation?",
         status_options,
         index=index,
         format_func=lambda s: s.value,
@@ -139,13 +147,6 @@ def show_user_status_selection(room: ClientState) -> None:
         key="user_status_selection",
     )
     room.set_user_status(selected_user_status)
-
-    has_user_transitioned_away_from_unknown_status = (
-        current_user_status == UserStatus.UNKNOWN
-        and selected_user_status != UserStatus.UNKNOWN
-    )
-    if has_user_transitioned_away_from_unknown_status:
-        st.rerun()
 
 
 def generate_qr_code_image(room_id: str) -> bytes:

@@ -5,12 +5,12 @@ Feature: Multiple sessions
     When a second user wants to join with invalid URL
     Then the second user should see warning message "Room ID from URL not found"
     When a third user wants to join with my room URL
-    Then "me, third_user" should see status "Unknown"
+    Then "me, third_user" should see status "🟢 Green"
 
   Scenario: Two users in one room share statistics
     Given I host a room
     When a second user joins the room
-    Then "me, second_user" should see status "Unknown"
+    Then "me, second_user" should see status "🟢 Green"
     When the second user selects the status "<status>"
     Then "me, second_user" should see status "<status>"
     Examples:
