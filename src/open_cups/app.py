@@ -127,8 +127,6 @@ def show_user_status_selection(room: ClientState) -> None:
         UserStatus.YELLOW,
         UserStatus.RED,
     ]
-    if current_user_status == UserStatus.UNKNOWN:
-        status_options.append(UserStatus.UNKNOWN)
 
     index = status_options.index(current_user_status)
     selected_user_status = st.radio(
@@ -140,13 +138,6 @@ def show_user_status_selection(room: ClientState) -> None:
         key="user_status_selection",
     )
     room.set_user_status(selected_user_status)
-
-    has_user_transitioned_away_from_unknown_status = (
-        current_user_status == UserStatus.UNKNOWN
-        and selected_user_status != UserStatus.UNKNOWN
-    )
-    if has_user_transitioned_away_from_unknown_status:
-        st.rerun()
 
 
 def generate_qr_code_image(room_id: str) -> bytes:
