@@ -46,7 +46,7 @@ def i_should_see_distribution_history_empty_state(
 
     trace_names = {trace["name"] for trace in spec["data"]}
     expected_names = {status.value for status in UserStatus} | {
-        f"{status.value} (inactive)" for status in UserStatus
+        status.value_inactive for status in UserStatus
     }
     assert trace_names == expected_names
 
@@ -72,7 +72,7 @@ def i_should_see_distribution_history_chart(context: dict[str, AppTest]) -> None
 
     trace_names = {trace["name"] for trace in spec["data"]}
     expected_names = {status.value for status in UserStatus} | {
-        f"{status.value} (inactive)" for status in UserStatus
+        status.value_inactive for status in UserStatus
     }
     assert trace_names == expected_names
 

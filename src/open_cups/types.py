@@ -17,6 +17,10 @@ class UserStatus(Enum):
         }
         return captions[self]
 
+    @property
+    def value_inactive(self) -> str:
+        return f"{self.value} (inactive)"
+
 
 @dataclass
 class UserSession:

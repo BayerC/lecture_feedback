@@ -51,16 +51,14 @@ def get_statistics_data_frame(
         for status in UserStatus
     }
     inactive_counts = {
-        f"{status.value} (inactive)": sum(
-            1 for _, s in inactive_participants if s == status
-        )
+        status.value_inactive: sum(1 for _, s in inactive_participants if s == status)
         for status in UserStatus
     }
     df = pd.DataFrame([{**active_counts, **inactive_counts}])
     column_order = [
         col
         for status, _ in ORDERED_STATUS_COLOR_MAP
-        for col in [status.value, f"{status.value} (inactive)"]
+        for col in [status.value, status.value_inactive]
     ]
     return df[[col for col in column_order if col in df.columns]]
 
@@ -142,7 +140,7 @@ def show_status_history_chart(host_state: HostState) -> None:
             snapshot.inactive_counts[user_status] for snapshot in status_history
         ]
         data[user_status.value] = [*active_counts, active_counts[-1]]
-        data[f"{user_status.value} (inactive)"] = [
+        data[user_status.value_inactive] = [
             *inactive_counts,
             inactive_counts[-1],
         ]  # repeat last value in future timestamp
@@ -167,8 +165,8 @@ def show_status_history_chart(host_state: HostState) -> None:
         fig.add_trace(
             go.Scatter(
                 x=df["Time (minutes)"],
-                y=df[f"{user_status.value} (inactive)"],
-                name=f"{user_status.value} (inactive)",
+                y=df[user_status.value_inactive],
+                name=user_status.value_inactive,
                 mode="lines",
                 line={"color": inactive_color, "width": 2},
                 fillcolor=inactive_color,
