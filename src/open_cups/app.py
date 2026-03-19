@@ -122,6 +122,16 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 def show_user_status_selection(room: ClientState) -> None:
     st.subheader("Your Status")
     current_user_status = room.get_user_status()
+    st.markdown(
+        """
+        <style>
+        div[data-testid="stRadio"] label {
+            padding: 6px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
     status_options = [
         UserStatus.GREEN,
         UserStatus.YELLOW,
