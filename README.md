@@ -40,7 +40,7 @@ Participants indicate their level of understanding (originally done plastic cups
 
 🔴 Red → Cannot follow
 
-The presenter sees an aggregate view of the responses and can adjust the lecture accordingly.
+The presenter sees an aggregate view of the responses and can adjust the presentation accordingly.
 
 
 

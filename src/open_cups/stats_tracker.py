@@ -102,7 +102,6 @@ def create_snapshot(user_sessions: Iterable[UserSession]) -> StatusSnapshot:
             UserStatus.GREEN: 0,
             UserStatus.YELLOW: 0,
             UserStatus.RED: 0,
-            UserStatus.UNKNOWN: 0,
         },
     )
 

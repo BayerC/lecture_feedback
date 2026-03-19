@@ -23,7 +23,7 @@ class ApplicationState:
         if room_id not in self.rooms:
             message = f"Room {room_id} does not exist"
             raise ValueError(message)
-        self.rooms[room_id].set_session_status(session_id, UserStatus.UNKNOWN)
+        self.rooms[room_id].set_session_status(session_id, UserStatus.GREEN)
 
     def remove_rooms_with_inactive_hosts(self, timeout_seconds: int) -> None:
         inactive_room_ids = [
