@@ -1,6 +1,8 @@
 import pytest
 
+from conftest import MockTime
 from open_cups.room import Room
+from open_cups.types import UserStatus
 
 
 def test_upvote_nonexistent_question_does_not_crash() -> None:
@@ -100,3 +102,21 @@ def test_integration_with_stats_tracker(monkeypatch: pytest.MonkeyPatch) -> None
     room = Room("room-id", "host-id")
 
     assert room.get_status_history() == []
+
+
+def test_get_participants_by_activity_separates_active_and_inactive(
+    mock_time: MockTime,
+) -> None:
+    mock_time.current_time = 0.0
+    room = Room("room-id", "host-id")
+    room.set_session_status("old-user", UserStatus.RED)
+
+    mock_time.current_time = 100.0
+    room.set_session_status("new-user", UserStatus.GREEN)
+
+    active, inactive = room.get_participants_by_activity(inactivity_timeout_seconds=10)
+
+    assert len(active) == 1
+    assert active[0] == ("new-user", UserStatus.GREEN)
+    assert len(inactive) == 1
+    assert inactive[0] == ("old-user", UserStatus.RED)

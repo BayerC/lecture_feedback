@@ -38,9 +38,6 @@ class RoomState:
     def room_id(self) -> str:
         return self._room.room_id
 
-    def get_room_participants(self) -> list[tuple[str, UserStatus]]:
-        return list(self._room)
-
     def get_participants_by_activity(
         self,
         inactivity_timeout_seconds: float,

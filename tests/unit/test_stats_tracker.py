@@ -1,7 +1,7 @@
 import pytest
 
 from conftest import MockTime
-from open_cups.stats_tracker import Config, StatsTracker
+from open_cups.stats_tracker import Config, StatsTracker, create_snapshot
 from open_cups.types import UserSession, UserStatus
 
 
@@ -152,3 +152,18 @@ def test_disregard_samples_provided_quicker_than_dense_interval(
     assert len(history) == 2
     assert history[0].timestamp == 0.0
     assert history[1].timestamp == 5.0
+
+
+def test_create_snapshot_counts_inactive_users(mock_time: MockTime) -> None:
+    mock_time.current_time = 100.0
+    snapshot = create_snapshot(
+        [
+            UserSession(UserStatus.RED, last_seen=0.0),
+            UserSession(UserStatus.GREEN, last_seen=90.0),
+        ],
+        inactivity_timeout_seconds=30,
+    )
+    assert snapshot.inactive_counts[UserStatus.RED] == 1
+    assert snapshot.counts[UserStatus.RED] == 0
+    assert snapshot.counts[UserStatus.GREEN] == 1
+    assert snapshot.inactive_counts[UserStatus.GREEN] == 0
