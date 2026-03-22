@@ -14,8 +14,8 @@ from open_cups.state_provider import (
 from open_cups.types import UserStatus
 
 AUTOREFRESH_INTERVAL_MS = 2000
-USER_REMOVAL_TIMEOUT_SECONDS = 60
-USER_INACTIVITY_TIMEOUT_SECONDS = 30
+USER_REMOVAL_TIMEOUT_SECONDS = 60 * 60  # 1h
+USER_INACTIVITY_TIMEOUT_SECONDS = 15 * 60  # 15min
 
 
 def show_room_selection_screen(lobby: LobbyState) -> None:
