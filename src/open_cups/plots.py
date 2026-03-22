@@ -70,9 +70,9 @@ def show_room_statistics(
     df = get_statistics_data_frame(room, inactivity_timeout_seconds)
 
     color_sequence = [
-        c
+        color
         for _, hex_color in ORDERED_STATUS_COLOR_MAP
-        for c in [hex_color, hex_to_rgba(hex_color, INACTIVE_OPACITY)]
+        for color in [hex_color, hex_to_rgba(hex_color, INACTIVE_OPACITY)]
     ]
 
     fig = px.bar(
