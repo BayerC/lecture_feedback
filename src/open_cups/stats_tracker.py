@@ -106,15 +106,11 @@ def create_snapshot(
     inactivity_timeout_seconds: float,
 ) -> StatusSnapshot:
     current_time = time.time()
-    empty_counts: dict[UserStatus, int] = {
-        UserStatus.GREEN: 0,
-        UserStatus.YELLOW: 0,
-        UserStatus.RED: 0,
-    }
+    empty_counts: dict[UserStatus, int] = dict.fromkeys(UserStatus, 0)
     snapshot = StatusSnapshot(
         timestamp=current_time,
-        counts=dict(empty_counts),
-        inactive_counts=dict(empty_counts),
+        counts=empty_counts.copy(),
+        inactive_counts=empty_counts.copy(),
     )
 
     for user_session in user_sessions:
