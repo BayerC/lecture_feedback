@@ -41,8 +41,11 @@ def capture_stats(monkeypatch: pytest.MonkeyPatch) -> None:
     captured.room_data.clear()
     original_func = get_statistics_data_frame
 
-    def capture_wrapper(room: RoomState) -> pd.DataFrame:
-        df = original_func(room)
+    def capture_wrapper(
+        room: RoomState,
+        inactivity_timeout_seconds: float,
+    ) -> pd.DataFrame:
+        df = original_func(room, inactivity_timeout_seconds)
         captured.room_data[room.room_id] = df
         return df
 

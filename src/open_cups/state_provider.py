@@ -38,8 +38,11 @@ class RoomState:
     def room_id(self) -> str:
         return self._room.room_id
 
-    def get_room_participants(self) -> list[tuple[str, UserStatus]]:
-        return list(self._room)
+    def get_participants_by_activity(
+        self,
+        inactivity_timeout_seconds: float,
+    ) -> tuple[list[tuple[str, UserStatus]], list[tuple[str, UserStatus]]]:
+        return self._room.get_participants_by_activity(inactivity_timeout_seconds)
 
     def get_open_questions(self) -> list[Question]:
         return self._room.get_open_questions()
@@ -53,8 +56,8 @@ class HostState(RoomState):
     def close_question(self, question_id: str) -> None:
         self._room.close_question(question_id)
 
-    def update_status_history(self) -> None:
-        self._room.record_status_snapshot()
+    def update_status_history(self, inactivity_timeout_seconds: float) -> None:
+        self._room.record_status_snapshot(inactivity_timeout_seconds)
 
     def get_status_history(self) -> list[StatusSnapshot]:
         return self._room.get_status_history()

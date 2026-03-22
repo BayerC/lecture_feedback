@@ -15,6 +15,10 @@ class UserStatus(Enum):
         }
         return captions[self]
 
+    @property
+    def value_inactive(self) -> str:
+        return f"{self.value} (inactive)"
+
 
 @dataclass
 class UserSession:
@@ -37,3 +41,4 @@ class Question:
 class StatusSnapshot:
     timestamp: float
     counts: dict[UserStatus, int]
+    inactive_counts: dict[UserStatus, int]

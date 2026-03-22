@@ -42,13 +42,19 @@ class StatsTracker:
         )
         self._config = config
 
-    def record_status_snapshot(self, user_sessions: Iterable[UserSession]) -> None:
+    def record_status_snapshot(
+        self,
+        user_sessions: Iterable[UserSession],
+        inactivity_timeout_seconds: float,
+    ) -> None:
         current_time = time.time()
 
         if not self._should_record_snapshot(current_time):
             return
 
-        self._dense_status_history.append(create_snapshot(user_sessions))
+        self._dense_status_history.append(
+            create_snapshot(user_sessions, inactivity_timeout_seconds),
+        )
 
         snapshots_to_move = self._extract_old_snapshots_from_dense_history(current_time)
         self._append_to_sparse_history(snapshots_to_move)
@@ -95,17 +101,22 @@ class StatsTracker:
         return list(self._sparse_status_history) + self._dense_status_history
 
 
-def create_snapshot(user_sessions: Iterable[UserSession]) -> StatusSnapshot:
+def create_snapshot(
+    user_sessions: Iterable[UserSession],
+    inactivity_timeout_seconds: float,
+) -> StatusSnapshot:
+    current_time = time.time()
+    empty_counts: dict[UserStatus, int] = dict.fromkeys(UserStatus, 0)
     snapshot = StatusSnapshot(
-        timestamp=time.time(),
-        counts={
-            UserStatus.GREEN: 0,
-            UserStatus.YELLOW: 0,
-            UserStatus.RED: 0,
-        },
+        timestamp=current_time,
+        counts=empty_counts.copy(),
+        inactive_counts=empty_counts.copy(),
     )
 
     for user_session in user_sessions:
-        snapshot.counts[user_session.status] += 1
+        if current_time - user_session.last_seen > inactivity_timeout_seconds:
+            snapshot.inactive_counts[user_session.status] += 1
+        else:
+            snapshot.counts[user_session.status] += 1
 
     return snapshot
