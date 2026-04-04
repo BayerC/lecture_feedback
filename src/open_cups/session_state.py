@@ -12,9 +12,9 @@ class SessionState:
 
     def __init__(self) -> None:
         if "session_id" not in st.session_state:
-            existing = st.query_params.get("session_id")
-            st.session_state.session_id = existing or str(uuid.uuid4())
-        st.query_params["session_id"] = st.session_state.session_id
+            st.session_state.session_id = st.context.cookies.get(
+                "ajs_anonymous_id",
+            ) or str(uuid.uuid4())
 
     @property
     def session_id(self) -> str:
