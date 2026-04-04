@@ -1,5 +1,3 @@
-import uuid
-
 import streamlit as st
 
 
@@ -12,9 +10,7 @@ class SessionState:
 
     def __init__(self) -> None:
         if "session_id" not in st.session_state:
-            st.session_state.session_id = st.context.cookies.get(
-                "ajs_anonymous_id",
-            ) or str(uuid.uuid4())
+            st.session_state.session_id = st.context.cookies["ajs_anonymous_id"]
 
     @property
     def session_id(self) -> str:
