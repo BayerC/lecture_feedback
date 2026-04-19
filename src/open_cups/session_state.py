@@ -25,7 +25,8 @@ class SessionState:
 
     @staticmethod
     def _resolve_session_id() -> str:  # pragma: no cover
-        if existing := st.context.cookies.get(_SESSION_COOKIE_NAME):
+        existing = st.context.cookies.get(_SESSION_COOKIE_NAME)
+        if isinstance(existing, str) and existing:
             return existing
         new_id = str(uuid.uuid4())
         cookie_manager = CookieManager(key="open_cups_cookie_manager")
