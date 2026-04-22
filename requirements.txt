@@ -85,10 +85,6 @@ colorama==0.4.6 ; sys_platform == 'win32' \
     # via
     #   click
     #   qrcode
-extra-streamlit-components==0.1.81 \
-    --hash=sha256:11a4651dbd03cac04edfbb8711757b1d10e3cdf280b8fa3a43f970d05e684619 \
-    --hash=sha256:eb9beb7bacfe8b3d238f1888a21c78ac6cfa569341be484bca08c3ea0b15f20d
-    # via open-cups
 gitdb==4.0.12 \
     --hash=sha256:5ef71f855d191a3326fcfbc0d5da835f26b13fbcba60c32c21091c349ffdb571 \
     --hash=sha256:67073e15955400952c6565cc3e707c554a4eea2e428946f7a4c162fab9bd9bcf
@@ -454,7 +450,6 @@ streamlit==1.56.0 \
     --hash=sha256:1176acfa89ae1318b79078e8efe689a9d02e8d58e325c00fc0e55fa2f3fe8d6a \
     --hash=sha256:8677a335734a30a51bc57ad0ec910e365d95f7c456fc02c60032927cd0729dc5
     # via
-    #   extra-streamlit-components
     #   open-cups
     #   streamlit-autorefresh
 streamlit-autorefresh==1.0.1 \
