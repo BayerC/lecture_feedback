@@ -1,6 +1,7 @@
 import uuid
 
 import streamlit as st
+from streamlit.components.v1 import html as components_html
 
 COOKIE_NAME = "OPEN_CUPS_SESSION_ID"
 
@@ -21,11 +22,11 @@ class SessionState:
             session_id = st.context.cookies.get(COOKIE_NAME)
             if session_id is None:
                 session_id = str(uuid.uuid4())
-                st.html(
-                    f"<script>document.cookie = "
+                components_html(
+                    "<script>document.cookie = "
                     f'"{COOKIE_NAME}={session_id}; path=/; SameSite=Strict";'
-                    f"</script>",
-                    unsafe_allow_javascript=True,
+                    "</script>",
+                    height=0,
                 )
             st.session_state.session_id = session_id
 
