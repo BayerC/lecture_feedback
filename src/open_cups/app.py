@@ -259,7 +259,7 @@ def show_active_room_client(client_state: ClientState) -> None:
 def run() -> None:
     st_autorefresh(interval=AUTOREFRESH_INTERVAL_MS, key="data_refresh")
 
-    state_provider = StateProvider()
+    state_provider = StateProvider(USER_REMOVAL_TIMEOUT_SECONDS)
     cleanup = state_provider.get_cleanup(USER_REMOVAL_TIMEOUT_SECONDS)
     cleanup.cleanup_all()
 

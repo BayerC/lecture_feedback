@@ -103,9 +103,9 @@ class CleanupState:
 
 
 class Context:
-    def __init__(self) -> None:
+    def __init__(self, user_removal_timeout: int) -> None:
         self.application_state: ApplicationState = self._get_application_state()
-        self.session_state = SessionState()
+        self.session_state = SessionState(user_removal_timeout=user_removal_timeout)
 
     @staticmethod
     @st.cache_resource
@@ -114,8 +114,8 @@ class Context:
 
 
 class StateProvider:
-    def __init__(self) -> None:
-        self.context = Context()
+    def __init__(self, user_removal_timeout: int) -> None:
+        self.context = Context(user_removal_timeout=user_removal_timeout)
 
     def get_cleanup(self, timeout_seconds: int) -> CleanupState:
         return CleanupState(self.context.application_state, timeout_seconds)
