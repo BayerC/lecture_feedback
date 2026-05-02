@@ -19,7 +19,8 @@ class SessionState:
                 session_id = str(uuid.uuid4())
                 components_html(
                     "<script>document.cookie = "
-                    f'"{COOKIE_NAME}={session_id}; path=/; Max-Age={user_removal_timeout}; SameSite=Strict";'
+                    f'"{COOKIE_NAME}={session_id}; path=/; '
+                    f'Max-Age={user_removal_timeout}; SameSite=Strict";'
                     "</script>",
                     height=0,
                 )
