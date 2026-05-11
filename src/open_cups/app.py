@@ -32,7 +32,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 
     left, right = st.columns([2, 1])
     with left:
-        st.title("Welcome to OpenCups")
+        st.title("Welcome to branched OpenCups")
         st.write("Host or join a room to share feedback.")
     with right:
         st.image("assets/logo.png", width="content")
