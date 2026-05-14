@@ -257,6 +257,10 @@ def show_active_room_client(client_state: ClientState) -> None:
 
 
 def run() -> None:
+    headers = st.context.headers
+    ip_address = headers.get("X-Forwarded-For", "Unknown")
+
+    st.write(f"Connecting from: {ip_address}")
     st_autorefresh(interval=AUTOREFRESH_INTERVAL_MS, key="data_refresh")
 
     state_provider = StateProvider()
