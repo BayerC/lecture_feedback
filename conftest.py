@@ -1,4 +1,5 @@
 import time
+import uuid
 from collections.abc import Generator
 
 import pytest
@@ -7,6 +8,20 @@ pytest_plugins = [
     "tests.bdd.fixture",
     "tests.bdd.steps.common_steps",
 ]
+
+
+@pytest.fixture(autouse=True)
+def fake_browser_session_id(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Bypass the browser-backed local storage component during tests.
+
+    ``streamlit.testing.v1.AppTest`` cannot run the local storage frontend, so
+    the real component would block forever. Each simulated session instead gets
+    a fresh id, matching how distinct browsers behave in production.
+    """
+    monkeypatch.setattr(
+        "open_cups.session_state.load_or_create_session_id",
+        lambda: str(uuid.uuid4()),
+    )
 
 
 class MockTime:

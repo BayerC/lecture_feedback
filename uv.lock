@@ -618,6 +618,7 @@ dependencies = [
     { name = "qrcode" },
     { name = "streamlit" },
     { name = "streamlit-autorefresh" },
+    { name = "streamlit-local-storage" },
 ]
 
 [package.dev-dependencies]
@@ -640,6 +641,7 @@ requires-dist = [
     { name = "qrcode", specifier = ">=8.1" },
     { name = "streamlit", specifier = ">=1.49.1" },
     { name = "streamlit-autorefresh", specifier = ">=1.0.1" },
+    { name = "streamlit-local-storage", specifier = ">=0.0.25" },
 ]
 
 [package.metadata.requires-dev]
@@ -1203,6 +1205,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/88/8c/e48bee687408fe563652bda4a7f2f5ef85d5a527b1883513fdcb05f1e66b/streamlit-autorefresh-1.0.1.tar.gz", hash = "sha256:a89abf23f2c4e52d37be442115cd5566b41f382e3c09ff08817e17a25f50b8ed", size = 351385, upload-time = "2023-06-25T18:58:34.889Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/20/82/e378f178498f1d99a672d81df71ebe9693a106cec6a628ee52ce3288cd6d/streamlit_autorefresh-1.0.1-py3-none-any.whl", hash = "sha256:8f0a772eff9d56807d19dc422e44ef92d900bbb22b1b85de31d8d82ea7d875f1", size = 700771, upload-time = "2023-06-25T18:58:33.195Z" },
+]
+
+[[package]]
+name = "streamlit-local-storage"
+version = "0.0.25"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "streamlit" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d1/ad/5e92a9355c2f32c162f0e2a2262b90697385edf0fe64bc66a27eb652ac95/streamlit_local_storage-0.0.25.tar.gz", hash = "sha256:9b7c3e8ae7c14a68b47c980b167306181292213736dfa71850c8d3204dc2a9cd", size = 538392, upload-time = "2024-11-18T16:22:09.432Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/a6/502b00b6db10c3d467ec57d822d6647a35f0328ef03668aa5b6dd160f966/streamlit_local_storage-0.0.25-py3-none-any.whl", hash = "sha256:0ef85618ed8c44f347b7acffb2d104da5b6915e6a4e24612f12a4d2cc355b951", size = 543746, upload-time = "2024-11-18T16:22:07.305Z" },
 ]
 
 [[package]]

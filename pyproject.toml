@@ -10,6 +10,7 @@ dependencies = [
     "qrcode>=8.1",
     "streamlit>=1.49.1",
     "streamlit-autorefresh>=1.0.1",
+    "streamlit-local-storage>=0.0.25",
 ]
 
 [dependency-groups]
@@ -75,6 +76,7 @@ mypy_path = "src"
 module = [
     "streamlit.*",
     "streamlit_autorefresh.*",
+    "streamlit_local_storage.*",
     "plotly.*",
 ]
 ignore_missing_imports = true
