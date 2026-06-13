@@ -59,8 +59,8 @@ def capture_stats(monkeypatch: pytest.MonkeyPatch) -> None:
 def capture_application_state(monkeypatch: pytest.MonkeyPatch) -> None:
     original_init = Context.__init__
 
-    def wrapped_init(context: Context) -> None:
-        original_init(context)
+    def wrapped_init(context: Context, user_removal_timeout: int) -> None:
+        original_init(context, user_removal_timeout)
         captured.application_state = context.application_state
 
     monkeypatch.setattr(Context, "__init__", wrapped_init)

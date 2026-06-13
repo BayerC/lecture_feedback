@@ -32,7 +32,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 
     left, right = st.columns([2, 1])
     with left:
-        st.title("Welcome to OpenCups")
+        st.title("Welcome to branched OpenCups")
         st.write("Host or join a room to share feedback.")
     with right:
         st.image("assets/logo.png", width="content")
@@ -259,7 +259,7 @@ def show_active_room_client(client_state: ClientState) -> None:
 def run() -> None:
     st_autorefresh(interval=AUTOREFRESH_INTERVAL_MS, key="data_refresh")
 
-    state_provider = StateProvider()
+    state_provider = StateProvider(USER_REMOVAL_TIMEOUT_SECONDS)
     cleanup = state_provider.get_cleanup(USER_REMOVAL_TIMEOUT_SECONDS)
     cleanup.cleanup_all()
 
