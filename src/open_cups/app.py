@@ -5,6 +5,7 @@ import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
 from open_cups.plots import show_room_statistics, show_status_history_chart
+from open_cups.session_state import COOKIE_NAME
 from open_cups.state_provider import (
     ClientState,
     HostState,
@@ -32,7 +33,7 @@ def show_room_selection_screen(lobby: LobbyState) -> None:
 
     left, right = st.columns([2, 1])
     with left:
-        st.title("Welcome to OpenCups with Cookie")
+        st.title("Welcome to OpenCups")
         st.write("Host or join a room to share feedback.")
     with right:
         st.image("assets/logo.png", width="content")
@@ -256,10 +257,28 @@ def show_active_room_client(client_state: ClientState) -> None:
     show_open_questions(client_state)
 
 
+def _show_cookie_debug_panel(session_id: str) -> None:  # pragma: no cover
+    try:
+        cookies = dict(st.context.cookies)
+        cookies_note = ""
+    except Exception as error:  # noqa: BLE001
+        cookies = {}
+        cookies_note = f" (read failed: {error})"
+    cookie_value = cookies.get(COOKIE_NAME)
+    st.code(
+        "DEBUG (temporary)\n"
+        f"session_id : {session_id}\n"
+        f"cookie     : {cookie_value}{cookies_note}\n"
+        f"reused     : {cookie_value == session_id}\n"
+        f"cookie_keys: {sorted(cookies)}",
+    )
+
+
 def run() -> None:
     st_autorefresh(interval=AUTOREFRESH_INTERVAL_MS, key="data_refresh")
 
     state_provider = StateProvider()
+    _show_cookie_debug_panel(state_provider.context.session_state.session_id)
     cleanup = state_provider.get_cleanup(USER_REMOVAL_TIMEOUT_SECONDS)
     cleanup.cleanup_all()
 
