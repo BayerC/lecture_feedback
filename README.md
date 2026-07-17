@@ -45,6 +45,14 @@ The presenter sees an aggregate view of the responses and can adjust the present
 
 
 
+## Privacy
+
+The app stores a single functional cookie (`OPEN_CUPS_SESSION_ID`) holding a
+random identifier. It keeps you attached to your room when your device
+reconnects (e.g. after a phone locks) and is never used for tracking or shared
+with third parties. As a strictly necessary cookie it does not require a
+consent banner under GDPR/ePrivacy.
+
 ## Run locally
 
 1. `git clone https://github.com/BayerC/open_cups.git`
