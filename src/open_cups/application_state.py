@@ -15,6 +15,12 @@ class ApplicationState:
                 return room
         return None
 
+    def is_session_live(self, session_id: str, timeout_seconds: float) -> bool:
+        room = self.get_session_room(session_id)
+        if room is None:
+            return False
+        return room.is_session_live(session_id, timeout_seconds)
+
     def create_room(self, room_id: str, session_id: str) -> None:
         room = Room(room_id, session_id)
         self.rooms[room_id] = room

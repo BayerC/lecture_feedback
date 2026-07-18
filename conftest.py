@@ -9,20 +9,6 @@ pytest_plugins = [
 ]
 
 
-@pytest.fixture(autouse=True)
-def isolate_browser_cookies(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Bypass the browser-backed cookie during tests.
-
-    ``AppTest`` has no browser, so each simulated session gets a fresh identity
-    by minting a new id (empty cookie), matching how distinct browsers behave.
-    """
-    monkeypatch.setattr("open_cups.session_state._read_session_cookie", lambda: None)
-    monkeypatch.setattr(
-        "open_cups.session_state._write_session_cookie",
-        lambda session_id: None,  # noqa: ARG005
-    )
-
-
 class MockTime:
     def __init__(self, initial_time: float | None = None) -> None:
         self._current_time = initial_time if initial_time is not None else time.time()
