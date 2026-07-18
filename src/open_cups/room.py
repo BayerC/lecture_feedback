@@ -47,6 +47,14 @@ class Room:
             return True
         return bool(self.is_host(session_id))
 
+    def is_session_live(self, session_id: str, timeout_seconds: float) -> bool:
+        current_time = time.time()
+        if self.is_host(session_id):
+            return current_time - self._host_last_seen <= timeout_seconds
+        if session_id not in self._sessions:
+            return False
+        return current_time - self._sessions[session_id].last_seen <= timeout_seconds
+
     def get_participants_by_activity(
         self,
         inactivity_timeout_seconds: float,

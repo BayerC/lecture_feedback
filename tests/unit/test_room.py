@@ -104,6 +104,41 @@ def test_integration_with_stats_tracker(monkeypatch: pytest.MonkeyPatch) -> None
     assert room.get_status_history() == []
 
 
+def test_is_session_live_true_for_recent_host(mock_time: MockTime) -> None:
+    mock_time.current_time = 0.0
+    room = Room("room-id", "host-id")
+
+    mock_time.current_time = 5.0
+
+    assert room.is_session_live("host-id", timeout_seconds=10)
+
+
+def test_is_session_live_true_for_recent_client(mock_time: MockTime) -> None:
+    mock_time.current_time = 0.0
+    room = Room("room-id", "host-id")
+    room.set_session_status("user", UserStatus.GREEN)
+
+    mock_time.current_time = 5.0
+
+    assert room.is_session_live("user", timeout_seconds=10)
+
+
+def test_is_session_live_false_for_stale_client(mock_time: MockTime) -> None:
+    mock_time.current_time = 0.0
+    room = Room("room-id", "host-id")
+    room.set_session_status("user", UserStatus.GREEN)
+
+    mock_time.current_time = 20.0
+
+    assert not room.is_session_live("user", timeout_seconds=10)
+
+
+def test_is_session_live_false_for_unknown_session() -> None:
+    room = Room("room-id", "host-id")
+
+    assert not room.is_session_live("unknown-id", timeout_seconds=10)
+
+
 def test_get_participants_by_activity_separates_active_and_inactive(
     mock_time: MockTime,
 ) -> None:

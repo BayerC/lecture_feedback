@@ -105,7 +105,7 @@ class CleanupState:
 class Context:
     def __init__(self) -> None:
         self.application_state: ApplicationState = self._get_application_state()
-        self.session_state = SessionState()
+        self.session_state = SessionState(self.application_state)
 
     @staticmethod
     @st.cache_resource
